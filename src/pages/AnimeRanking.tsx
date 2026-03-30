@@ -3,8 +3,11 @@ import animeData from '../data/anime-ranking.json'
 import { Trophy, TrendingUp, Minus, TrendingDown } from 'lucide-react'
 import { setSeoData } from '../utils/seo'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const AnimeRanking = () => {
+  const { t } = useTranslation()
+
   useEffect(() => {
     setSeoData('AI漫剧榜 - Scenescoreai', '探索Scenescoreai最新的AI漫剧排名，发现最优质的视听盛宴。')
   }, [])
@@ -14,10 +17,10 @@ export const AnimeRanking = () => {
       <div className="mb-12">
         <h1 className="text-4xl font-bold text-white flex items-center gap-3">
           <Trophy className="text-blue-500 w-10 h-10" />
-          AI 漫剧风云榜
+          {t('ranking.animeTitle')}
         </h1>
         <p className="mt-4 text-slate-400 max-w-3xl text-lg">
-          结合视听质量、剧情叙事与观众反响，为您筛选出本月最具影响力的 AI 漫剧作品。榜单每月1号更新。
+          {t('ranking.animeDesc')}
         </p>
       </div>
 
@@ -63,13 +66,13 @@ export const AnimeRanking = () => {
 
               <div className="mt-6 flex items-center justify-between border-t border-slate-800 pt-4">
                 <div className="flex items-center gap-2 text-sm text-slate-400">
-                  <span className="font-medium text-slate-500">走势:</span>
-                  {item.trend === 'up' && <span className="flex items-center text-green-400"><TrendingUp className="w-4 h-4 mr-1"/> 上升</span>}
-                  {item.trend === 'down' && <span className="flex items-center text-red-400"><TrendingDown className="w-4 h-4 mr-1"/> 下降</span>}
-                  {item.trend === 'stable' && <span className="flex items-center text-slate-400"><Minus className="w-4 h-4 mr-1"/> 稳定</span>}
+                  <span className="font-medium text-slate-500">{t('ranking.trend')}</span>
+                  {item.trend === 'up' && <span className="flex items-center text-green-400"><TrendingUp className="w-4 h-4 mr-1"/> {t('ranking.trendUp')}</span>}
+                  {item.trend === 'down' && <span className="flex items-center text-red-400"><TrendingDown className="w-4 h-4 mr-1"/> {t('ranking.trendDown')}</span>}
+                  {item.trend === 'stable' && <span className="flex items-center text-slate-400"><Minus className="w-4 h-4 mr-1"/> {t('ranking.trendStable')}</span>}
                 </div>
                 <button className="px-6 py-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg font-medium transition-colors">
-                  查看详情
+                  {t('ranking.details')}
                 </button>
               </div>
             </div>

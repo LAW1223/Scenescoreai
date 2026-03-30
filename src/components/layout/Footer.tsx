@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import { Globe, MessageCircle, Mail } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export const Footer = () => {
+  const { t } = useTranslation()
+
   return (
     <footer className="bg-slate-950 border-t border-slate-800 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -11,7 +14,7 @@ export const Footer = () => {
               Scenescoreai
             </span>
             <p className="mt-4 text-slate-400 max-w-sm">
-              客观、专业、前沿的 AI 视频内容评估榜单，为您发现最新鲜的优质AI漫剧与短剧。
+              {t('footer.desc')}
             </p>
             <div className="mt-6 flex space-x-6">
               <a href="#" className="text-slate-400 hover:text-white">
@@ -29,27 +32,27 @@ export const Footer = () => {
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">快捷链接</h3>
+            <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">{t('footer.links')}</h3>
             <ul className="mt-4 space-y-4">
               <li>
-                <Link to="/ranking/anime" className="text-base text-slate-400 hover:text-white">AI漫剧榜</Link>
+                <Link to="/ranking/anime" className="text-base text-slate-400 hover:text-white">{t('nav.anime')}</Link>
               </li>
               <li>
-                <Link to="/ranking/short" className="text-base text-slate-400 hover:text-white">AI短剧榜</Link>
+                <Link to="/ranking/short" className="text-base text-slate-400 hover:text-white">{t('nav.short')}</Link>
               </li>
               <li>
-                <Link to="/rules" className="text-base text-slate-400 hover:text-white">评分规则</Link>
+                <Link to="/rules" className="text-base text-slate-400 hover:text-white">{t('nav.rules')}</Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">了解更多</h3>
+            <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">{t('footer.more')}</h3>
             <ul className="mt-4 space-y-4">
               <li>
-                <Link to="/about" className="text-base text-slate-400 hover:text-white">关于我们</Link>
+                <Link to="/about" className="text-base text-slate-400 hover:text-white">{t('nav.about')}</Link>
               </li>
               <li>
-                <Link to="/contact" className="text-base text-slate-400 hover:text-white">商务合作</Link>
+                <Link to="/contact" className="text-base text-slate-400 hover:text-white">{t('nav.contact')}</Link>
               </li>
             </ul>
           </div>
@@ -57,7 +60,7 @@ export const Footer = () => {
         <div className="mt-8 border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
           <p>&copy; {new Date().getFullYear()} Scenescoreai. All rights reserved.</p>
           <div className="mt-4 md:mt-0 space-x-4">
-            <span>Power by React & Vite</span>
+            <span>{t('footer.power')}</span>
           </div>
         </div>
       </div>

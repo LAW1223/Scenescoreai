@@ -1,21 +1,28 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Globe } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const location = useLocation()
+  const { t, i18n } = useTranslation()
 
   const navLinks = [
-    { name: '首页', path: '/' },
-    { name: 'AI漫剧榜', path: '/ranking/anime' },
-    { name: 'AI短剧榜', path: '/ranking/short' },
-    { name: '榜单规则', path: '/rules' },
-    { name: '关于我们', path: '/about' },
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.anime'), path: '/ranking/anime' },
+    { name: t('nav.short'), path: '/ranking/short' },
+    { name: t('nav.rules'), path: '/rules' },
+    { name: t('nav.about'), path: '/about' },
   ]
 
   const isActive = (path: string) => location.pathname === path
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('app-language', lng);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
@@ -44,8 +51,22 @@ export const Header = () => {
               to="/contact"
               className="ml-4 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
             >
-              联系合作
+              {t('nav.contact')}
             </Link>
+
+            {/* Language Switcher */}
+            <div className="ml-6 relative flex items-center group cursor-pointer text-slate-300 hover:text-white transition">
+              <Globe className="w-5 h-5 mr-1" />
+              <select 
+                value={i18n.language} 
+                onChange={(e) => changeLanguage(e.target.value)}
+                className="bg-transparent text-sm appearance-none outline-none cursor-pointer pr-4"
+              >
+                <option value="zh-CN" className="bg-slate-900 text-white">简体中文</option>
+                <option value="zh-TW" className="bg-slate-900 text-white">繁體中文</option>
+                <option value="en" className="bg-slate-900 text-white">English</option>
+              </select>
+            </div>
           </nav>
 
           {/* Mobile menu button */}
@@ -94,8 +115,23 @@ export const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="block w-full text-center mt-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700"
               >
-                联系合作
+                {t('nav.contact')}
               </Link>
+              <div className="mt-4 px-3 py-2 flex items-center justify-between text-slate-300">
+                <div className="flex items-center">
+                  <Globe className="w-5 h-5 mr-2" />
+                  <span>Language</span>
+                </div>
+                <select 
+                  value={i18n.language} 
+                  onChange={(e) => changeLanguage(e.target.value)}
+                  className="bg-slate-800 text-sm rounded px-2 py-1 outline-none"
+                >
+                  <option value="zh-CN">简体中文</option>
+                  <option value="zh-TW">繁體中文</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
             </div>
           </motion.div>
         )}

@@ -3,8 +3,11 @@ import shortData from '../data/short-ranking.json'
 import { Flame, TrendingUp, Minus, TrendingDown } from 'lucide-react'
 import { setSeoData } from '../utils/seo'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const ShortRanking = () => {
+  const { t } = useTranslation()
+
   useEffect(() => {
     setSeoData('AI短剧榜 - Scenescoreai', '探索Scenescoreai最新的AI短剧排名，最快最爽的情绪爆发点。')
   }, [])
@@ -14,10 +17,10 @@ export const ShortRanking = () => {
       <div className="mb-12">
         <h1 className="text-4xl font-bold text-white flex items-center gap-3">
           <Flame className="text-indigo-500 w-10 h-10" />
-          AI 短剧风云榜
+          {t('ranking.shortTitle')}
         </h1>
         <p className="mt-4 text-slate-400 max-w-3xl text-lg">
-          聚焦短平快的爽点爆发与视觉冲击，挖掘当下最热门的 AI 生成微短剧。榜单每月1日、15日更新。
+          {t('ranking.shortDesc')}
         </p>
       </div>
 
@@ -64,14 +67,14 @@ export const ShortRanking = () => {
               <div className="flex items-center justify-between mt-auto">
                 <div className="flex gap-4">
                   <div className="flex items-center gap-1 text-sm">
-                    <span className="text-slate-500">热度趋势:</span>
+                    <span className="text-slate-500">{t('ranking.trend')}</span>
                     {item.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-400"/>}
                     {item.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500"/>}
                     {item.trend === 'stable' && <Minus className="w-4 h-4 text-slate-400"/>}
                   </div>
                 </div>
                 <button className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-1.5 rounded-lg transition">
-                  立即观看
+                  {t('ranking.watch')}
                 </button>
               </div>
             </div>

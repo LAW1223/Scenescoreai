@@ -4,8 +4,11 @@ import animeData from '../data/anime-ranking.json'
 import shortData from '../data/short-ranking.json'
 import { setSeoData } from '../utils/seo'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const Home = () => {
+  const { t } = useTranslation()
+
   useEffect(() => {
     setSeoData('首页 - Scenescoreai', 'Scenescoreai 提供客观、专业、前沿的 AI 视频内容评估榜单框架')
   }, [])
@@ -38,9 +41,9 @@ export const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6"
           >
-            发现最硬核的
+            {t('home.title1')}
             <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
-              AI 创作宇宙
+              {t('home.title2')}
             </span>
           </motion.h1>
           <motion.p 
@@ -49,7 +52,7 @@ export const Home = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-4 max-w-2xl text-xl text-slate-400 mx-auto mb-10"
           >
-            客观、专业、前沿的 AI 视频评估平台，为你呈现最顶尖的漫剧与短剧。
+            {t('home.subtitle')}
           </motion.p>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -58,10 +61,10 @@ export const Home = () => {
             className="flex justify-center space-x-4"
           >
             <Link to="/ranking/anime" className="px-8 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-900/50">
-              探索漫剧榜
+              {t('home.btnAnime')}
             </Link>
             <Link to="/ranking/short" className="px-8 py-3 rounded-full bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition border border-slate-700">
-              探索短剧榜
+              {t('home.btnShort')}
             </Link>
           </motion.div>
         </div>
@@ -75,10 +78,10 @@ export const Home = () => {
           <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <div className="flex justify-between items-end mb-6">
               <div>
-                <h2 className="text-3xl font-bold">AI漫剧榜 TOP 3</h2>
-                <p className="text-slate-400 mt-1">极致视听盛宴</p>
+                <h2 className="text-3xl font-bold">{t('home.animePreviewTitle')}</h2>
+                <p className="text-slate-400 mt-1">{t('home.animePreviewSub')}</p>
               </div>
-              <Link to="/ranking/anime" className="text-blue-400 hover:text-blue-300 text-sm font-medium">查看完整榜单 &rarr;</Link>
+              <Link to="/ranking/anime" className="text-blue-400 hover:text-blue-300 text-sm font-medium">{t('home.viewAll')} &rarr;</Link>
             </div>
             <div className="space-y-4">
               {topAnime.map((item, index) => (
@@ -101,10 +104,10 @@ export const Home = () => {
           <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <div className="flex justify-between items-end mb-6">
               <div>
-                <h2 className="text-3xl font-bold">AI短剧榜 TOP 3</h2>
-                <p className="text-slate-400 mt-1">爆点与情绪的艺术</p>
+                <h2 className="text-3xl font-bold">{t('home.shortPreviewTitle')}</h2>
+                <p className="text-slate-400 mt-1">{t('home.shortPreviewSub')}</p>
               </div>
-              <Link to="/ranking/short" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium">查看完整榜单 &rarr;</Link>
+              <Link to="/ranking/short" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium">{t('home.viewAll')} &rarr;</Link>
             </div>
             <div className="space-y-4">
               {topShorts.map((item, index) => (
