@@ -2,11 +2,12 @@ import { motion } from 'framer-motion'
 import animeData from '../data/anime-ranking.json'
 import { Trophy, TrendingUp, Minus, TrendingDown } from 'lucide-react'
 import { setSeoData } from '../utils/seo'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const AnimeRanking = () => {
   const { t } = useTranslation()
+  const [timeframe, setTimeframe] = useState<'daily'|'monthly'|'yearly'>('monthly')
 
   useEffect(() => {
     setSeoData('AI漫剧榜 - Scenescoreai', '探索Scenescoreai最新的AI漫剧排名，发现最优质的视听盛宴。')
@@ -24,6 +25,27 @@ export const AnimeRanking = () => {
         </p>
       </div>
 
+      <div className="flex space-x-2 mb-8 border-b border-slate-800 pb-4">
+        <button 
+          onClick={() => setTimeframe('daily')}
+          className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'daily' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
+        >
+          {t('ranking.daily')}
+        </button>
+        <button 
+          onClick={() => setTimeframe('monthly')}
+          className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'monthly' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
+        >
+          {t('ranking.monthly')}
+        </button>
+        <button 
+          onClick={() => setTimeframe('yearly')}
+          className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'yearly' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
+        >
+          {t('ranking.yearly')}
+        </button>
+      </div>
+
       <div className="grid gap-6">
         {animeData.map((item, index) => (
           <motion.div 
@@ -35,7 +57,14 @@ export const AnimeRanking = () => {
           >
             {/* Left Image & Rank */}
             <div className="relative md:w-64 flex-shrink-0">
-              <img src={item.thumbnail} alt={item.title} className="w-full h-48 md:h-full object-cover" />
+              <img 
+                src={item.thumbnail} 
+                alt={item.title} 
+                className="w-full h-48 md:h-full object-cover" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = `https://placehold.co/400x300/1e293b/3b82f6?text=${encodeURIComponent(item.title)}`;
+                }}
+              />
               <div className="absolute top-0 left-0 bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold w-12 h-12 flex items-center justify-center rounded-br-2xl shadow-lg">
                 #{index + 1}
               </div>

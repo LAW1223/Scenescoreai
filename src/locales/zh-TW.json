@@ -41,6 +41,8 @@
     "feature2Desc": "不僅看流量，更看「AI含量」。我們獨家評級體系會標註作品的AI應用深度（涵蓋AI劇本、AI圖生視頻、AI配音等），並以 Scene Score（場景得分） 進行量化呈現，定義 AI 內容的「純度」與「深度」。",
     "feature3Title": "3. 商業閉環：",
     "feature3Desc": "透過付費點擊與完播率，我們發布的「商業潛力榜」已成為許多投資方判斷新銳團隊價值的重要參考依據。",
+    "judgesTitle": "特邀評審陣容",
+    "judgesDesc": "黃栢高 (Paco Wong)、彭健身 (Peng Jianshen)",
     "mission": "讓好的AI內容被看見，讓數據成為生產力——這是 Scene Score AI 的使命。"
   },
   "rules": {
@@ -76,7 +78,10 @@
     "trendStable": "穩定",
     "details": "查看詳情",
     "watch": "立即觀看",
-    "tagPrefix": "標籤"
+    "tagPrefix": "標籤",
+    "daily": "日榜",
+    "monthly": "月榜",
+    "yearly": "年榜"
   },
   "contact": {
     "title": "與我們取得聯繫",

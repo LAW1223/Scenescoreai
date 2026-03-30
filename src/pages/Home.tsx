@@ -89,7 +89,14 @@ export const Home = () => {
                   <div className="text-4xl font-extrabold text-slate-700 mr-4 w-12 text-center group-hover:text-blue-500/20 transition">
                     {index + 1}
                   </div>
-                  <img src={item.thumbnail} alt={item.title} className="w-20 h-28 object-cover rounded-xl shadow-md" />
+                  <img 
+                    src={item.thumbnail} 
+                    alt={item.title} 
+                    className="w-20 h-28 object-cover rounded-xl shadow-md" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://placehold.co/400x300/1e293b/3b82f6?text=${encodeURIComponent(item.title)}`;
+                    }}
+                  />
                   <div className="ml-4 flex-grow">
                     <h3 className="text-lg font-bold text-slate-200">{item.title}</h3>
                     <p className="text-sm text-slate-400 mt-1 line-clamp-2">{item.description}</p>
@@ -115,7 +122,14 @@ export const Home = () => {
                   <div className="text-4xl font-extrabold text-slate-700 mr-4 w-12 text-center group-hover:text-indigo-500/20 transition">
                     {index + 1}
                   </div>
-                  <img src={item.thumbnail} alt={item.title} className="w-20 h-28 object-cover rounded-xl shadow-md" />
+                  <img 
+                    src={item.thumbnail} 
+                    alt={item.title} 
+                    className="w-20 h-28 object-cover rounded-xl shadow-md" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://placehold.co/400x300/1e293b/6366f1?text=${encodeURIComponent(item.title)}`;
+                    }}
+                  />
                   <div className="ml-4 flex-grow">
                     <h3 className="text-lg font-bold text-slate-200">{item.title}</h3>
                     <p className="text-sm text-slate-400 mt-1 line-clamp-2">{item.description}</p>

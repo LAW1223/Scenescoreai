@@ -2,11 +2,12 @@ import { motion } from 'framer-motion'
 import shortData from '../data/short-ranking.json'
 import { Flame, TrendingUp, Minus, TrendingDown } from 'lucide-react'
 import { setSeoData } from '../utils/seo'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const ShortRanking = () => {
   const { t } = useTranslation()
+  const [timeframe, setTimeframe] = useState<'daily'|'monthly'|'yearly'>('monthly')
 
   useEffect(() => {
     setSeoData('AI短剧榜 - Scenescoreai', '探索Scenescoreai最新的AI短剧排名，最快最爽的情绪爆发点。')
@@ -24,6 +25,27 @@ export const ShortRanking = () => {
         </p>
       </div>
 
+      <div className="flex space-x-2 mb-8 border-b border-slate-800 pb-4">
+        <button 
+          onClick={() => setTimeframe('daily')}
+          className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'daily' ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
+        >
+          {t('ranking.daily')}
+        </button>
+        <button 
+          onClick={() => setTimeframe('monthly')}
+          className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'monthly' ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
+        >
+          {t('ranking.monthly')}
+        </button>
+        <button 
+          onClick={() => setTimeframe('yearly')}
+          className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'yearly' ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
+        >
+          {t('ranking.yearly')}
+        </button>
+      </div>
+
       <div className="grid gap-6">
         {shortData.map((item, index) => (
           <motion.div 
@@ -38,7 +60,14 @@ export const ShortRanking = () => {
               <div className="absolute top-2 left-2 bg-indigo-600 text-white font-bold px-3 py-1 rounded-full text-sm z-10 shadow">
                 Top {index + 1}
               </div>
-              <img src={item.thumbnail} alt={item.title} className="w-full h-48 md:h-full object-cover opacity-90 transition hover:opacity-100" />
+              <img 
+                src={item.thumbnail} 
+                alt={item.title} 
+                className="w-full h-48 md:h-full object-cover opacity-90 transition hover:opacity-100" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = `https://placehold.co/400x300/1e293b/6366f1?text=${encodeURIComponent(item.title)}`;
+                }}
+              />
             </div>
 
             {/* Content */}

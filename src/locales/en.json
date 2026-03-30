@@ -41,6 +41,8 @@
     "feature2Desc": "We measure \"AI Content Volume\" beyond traffic. Our exclusive rating system highlights the depth of AI application (script, text-to-video, AI dubbing) and quantifies it with Scene Score to define \"purity\" and \"depth\".",
     "feature3Title": "3. Commercial Loop:",
     "feature3Desc": "Through paid clicks and completion rates, our published \"Commercial Potential Ranking\" serves as a crucial reference for investors.",
+    "judgesTitle": "Distinguished Jury",
+    "judgesDesc": "Paco Wong, Peng Jianshen",
     "mission": "Making excellent AI content visible, turning data into productivity — This is the mission of Scene Score AI."
   },
   "rules": {
@@ -76,7 +78,10 @@
     "trendStable": "Stable",
     "details": "Details",
     "watch": "Watch Now",
-    "tagPrefix": "Tag"
+    "tagPrefix": "Tag",
+    "daily": "Daily",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
   },
   "contact": {
     "title": "Get in Touch",

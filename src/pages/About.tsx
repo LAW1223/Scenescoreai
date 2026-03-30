@@ -45,6 +45,13 @@ export const About = () => {
           </ul>
         </div>
 
+        <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 space-y-4 text-center">
+          <h2 className="text-2xl font-bold text-white mb-4">{t('about.judgesTitle')}</h2>
+          <p className="text-xl text-slate-300 font-medium tracking-wide">
+            {t('about.judgesDesc')}
+          </p>
+        </div>
+
         <div className="text-center p-8">
           <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
             {t('about.mission')}
