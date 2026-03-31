@@ -26,8 +26,8 @@ export const Contact = () => {
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">{t('contact.emailCol')}</h3>
           <p className="text-slate-400 mb-4">{t('contact.emailDesc')}</p>
-          <a href="mailto:contact@scenescoreai.com" className="text-blue-400 font-medium hover:underline">
-            contact@scenescoreai.com
+          <a href="mailto:Marketing@scenescore.ai" className="text-blue-400 font-medium hover:underline">
+            Marketing@scenescore.ai
           </a>
         </div>
 

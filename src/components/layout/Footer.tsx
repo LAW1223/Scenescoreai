@@ -25,7 +25,7 @@ export const Footer = () => {
                 <span className="sr-only">Website</span>
                 <Globe className="h-6 w-6" />
               </a>
-              <a href="mailto:contact@scenescoreai.com" className="text-slate-400 hover:text-white">
+              <a href="mailto:Marketing@scenescore.ai" className="text-slate-400 hover:text-white">
                 <span className="sr-only">Email</span>
                 <Mail className="h-6 w-6" />
               </a>
