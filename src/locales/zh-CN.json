@@ -81,7 +81,8 @@
     "tagPrefix": "标签",
     "daily": "日榜",
     "monthly": "月榜",
-    "yearly": "年榜"
+    "yearly": "年榜",
+    "comingSoon": "详情页即将上线，敬请期待！"
   },
   "contact": {
     "title": "与我们取得联系",
@@ -100,7 +101,10 @@
     "fEmailPh": "your@email.com",
     "fMsg": "留言内容",
     "fMsgPh": "请简述您的合作意向或作品链接...",
-    "fSend": "发送消息"
+    "fSend": "发送消息",
+    "successTitle": "消息已发送！",
+    "successDesc": "感谢您的留言，我们将尽快与您联系。",
+    "sendAnother": "再发一条"
   },
   "footer": {
     "desc": "客观、专业、前沿的 AI 视频内容评估榜单，为您发现最新鲜的优质AI漫剧与短剧。",

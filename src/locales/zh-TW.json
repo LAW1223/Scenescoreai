@@ -81,7 +81,8 @@
     "tagPrefix": "標籤",
     "daily": "日榜",
     "monthly": "月榜",
-    "yearly": "年榜"
+    "yearly": "年榜",
+    "comingSoon": "詳情頁即將上線，敬請期待！"
   },
   "contact": {
     "title": "與我們取得聯繫",
@@ -100,7 +101,10 @@
     "fEmailPh": "your@email.com",
     "fMsg": "留言內容",
     "fMsgPh": "請簡述您的合作意向或作品鏈接...",
-    "fSend": "發送消息"
+    "fSend": "發送消息",
+    "successTitle": "消息已發送！",
+    "successDesc": "感謝您的留言，我們將盡快與您聯繫。",
+    "sendAnother": "再發一條"
   },
   "footer": {
     "desc": "客觀、專業、前沿的 AI 視頻內容評估榜單，為您發現最新鮮的優質AI漫劇與短劇。",

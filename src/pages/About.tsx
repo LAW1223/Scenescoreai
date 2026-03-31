@@ -3,11 +3,14 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const About = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
-    setSeoData('关于我们 - Scenescoreai', '了解 Scenescoreai 的创建初衷和品牌愿景。')
-  }, [])
+    setSeoData(
+      `${t('about.title')} - Scenescoreai`,
+      t('about.subtitle')
+    )
+  }, [i18n.language, t])
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

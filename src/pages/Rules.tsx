@@ -3,11 +3,14 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const Rules = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
-    setSeoData('评分规则 - Scenescoreai', 'Scenescoreai 榜单的收录条件及评分逻辑详细说明。')
-  }, [])
+    setSeoData(
+      `${t('rules.title')} - Scenescoreai`,
+      t('rules.scoreDesc')
+    )
+  }, [i18n.language, t])
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

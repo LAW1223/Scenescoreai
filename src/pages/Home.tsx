@@ -7,11 +7,14 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const Home = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
-    setSeoData('首页 - Scenescoreai', 'Scenescoreai 提供客观、专业、前沿的 AI 视频内容评估榜单框架')
-  }, [])
+    setSeoData(
+      `Scenescoreai - ${t('home.subtitle')}`.slice(0, 60),
+      t('home.subtitle')
+    )
+  }, [i18n.language, t])
 
   const topAnime = animeData.slice(0, 3)
   const topShorts = shortData.slice(0, 3)

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Globe } from 'lucide-react'
+import { Menu, X, Globe, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
@@ -55,17 +55,20 @@ export const Header = () => {
             </Link>
 
             {/* Language Switcher */}
-            <div className="ml-6 relative flex items-center group cursor-pointer text-slate-300 hover:text-white transition">
+            <div className="ml-6 relative flex items-center text-slate-300 hover:text-white transition">
               <Globe className="w-5 h-5 mr-1" />
-              <select 
-                value={i18n.language} 
-                onChange={(e) => changeLanguage(e.target.value)}
-                className="bg-transparent text-sm appearance-none outline-none cursor-pointer pr-4"
-              >
-                <option value="zh-CN" className="bg-slate-900 text-white">简体中文</option>
-                <option value="zh-TW" className="bg-slate-900 text-white">繁體中文</option>
-                <option value="en" className="bg-slate-900 text-white">English</option>
-              </select>
+              <div className="relative flex items-center">
+                <select
+                  value={i18n.language}
+                  onChange={(e) => changeLanguage(e.target.value)}
+                  className="bg-transparent text-sm appearance-none outline-none cursor-pointer pr-5"
+                >
+                  <option value="zh-CN" className="bg-slate-900 text-white">简体中文</option>
+                  <option value="zh-TW" className="bg-slate-900 text-white">繁體中文</option>
+                  <option value="en" className="bg-slate-900 text-white">English</option>
+                </select>
+                <ChevronDown className="w-3 h-3 absolute right-0 pointer-events-none" />
+              </div>
             </div>
           </nav>
 

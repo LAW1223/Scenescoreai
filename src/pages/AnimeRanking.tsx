@@ -6,12 +6,17 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const AnimeRanking = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [timeframe, setTimeframe] = useState<'daily'|'monthly'|'yearly'>('monthly')
 
   useEffect(() => {
-    setSeoData('AI漫剧榜 - Scenescoreai', '探索Scenescoreai最新的AI漫剧排名，发现最优质的视听盛宴。')
-  }, [])
+    setSeoData(
+      `${t('ranking.animeTitle')} - Scenescoreai`,
+      t('ranking.animeDesc')
+    )
+  }, [i18n.language, t])
+
+  const displayData = timeframe === 'daily' ? animeData.slice(0, 3) : animeData
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -26,19 +31,19 @@ export const AnimeRanking = () => {
       </div>
 
       <div className="flex space-x-2 mb-8 border-b border-slate-800 pb-4">
-        <button 
+        <button
           onClick={() => setTimeframe('daily')}
           className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'daily' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
         >
           {t('ranking.daily')}
         </button>
-        <button 
+        <button
           onClick={() => setTimeframe('monthly')}
           className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'monthly' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
         >
           {t('ranking.monthly')}
         </button>
-        <button 
+        <button
           onClick={() => setTimeframe('yearly')}
           className={`px-6 py-2 rounded-full font-medium transition ${timeframe === 'yearly' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}`}
         >
@@ -47,8 +52,8 @@ export const AnimeRanking = () => {
       </div>
 
       <div className="grid gap-6">
-        {animeData.map((item, index) => (
-          <motion.div 
+        {displayData.map((item, index) => (
+          <motion.div
             key={item.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -57,10 +62,10 @@ export const AnimeRanking = () => {
           >
             {/* Left Image & Rank */}
             <div className="relative md:w-64 flex-shrink-0">
-              <img 
-                src={item.thumbnail} 
-                alt={item.title} 
-                className="w-full h-48 md:h-full object-cover" 
+              <img
+                src={item.thumbnail}
+                alt={item.title}
+                className="w-full h-48 md:h-full object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = `https://placehold.co/400x300/1e293b/3b82f6?text=${encodeURIComponent(item.title)}`;
                 }}
@@ -76,10 +81,10 @@ export const AnimeRanking = () => {
                 <div className="flex justify-between items-start">
                   <h2 className="text-2xl font-bold text-white">{item.title}</h2>
                   <div className="flex items-center gap-2 text-2xl font-black text-blue-400">
-                    {item.score} <span className="text-sm font-normal text-slate-500">PT</span>
+                    {item.score} <span className="text-sm font-normal text-slate-500">{t('ranking.pts')}</span>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2 mt-3">
                   {item.tags.map((tag, i) => (
                     <span key={i} className="px-3 py-1 bg-slate-800 text-blue-300 text-xs rounded-full border border-slate-700">
@@ -100,7 +105,10 @@ export const AnimeRanking = () => {
                   {item.trend === 'down' && <span className="flex items-center text-red-400"><TrendingDown className="w-4 h-4 mr-1"/> {t('ranking.trendDown')}</span>}
                   {item.trend === 'stable' && <span className="flex items-center text-slate-400"><Minus className="w-4 h-4 mr-1"/> {t('ranking.trendStable')}</span>}
                 </div>
-                <button className="px-6 py-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg font-medium transition-colors">
+                <button
+                  onClick={() => alert(t('ranking.comingSoon'))}
+                  className="px-6 py-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg font-medium transition-colors"
+                >
                   {t('ranking.details')}
                 </button>
               </div>

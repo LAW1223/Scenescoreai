@@ -81,7 +81,8 @@
     "tagPrefix": "Tag",
     "daily": "Daily",
     "monthly": "Monthly",
-    "yearly": "Yearly"
+    "yearly": "Yearly",
+    "comingSoon": "Detail page coming soon, stay tuned!"
   },
   "contact": {
     "title": "Get in Touch",
@@ -100,7 +101,10 @@
     "fEmailPh": "your@email.com",
     "fMsg": "Message",
     "fMsgPh": "Please briefly describe your intent or paste work link...",
-    "fSend": "Send Message"
+    "fSend": "Send Message",
+    "successTitle": "Message Sent!",
+    "successDesc": "Thank you for reaching out. We'll get back to you shortly.",
+    "sendAnother": "Send Another"
   },
   "footer": {
     "desc": "Objective, professional, cutting-edge AI video evaluation platform.",
