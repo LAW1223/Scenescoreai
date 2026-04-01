@@ -1,6 +1,8 @@
 import { setSeoData } from '../utils/seo'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import { Target, Eye } from 'lucide-react'
 
 export const About = () => {
   const { t, i18n } = useTranslation()
@@ -22,6 +24,25 @@ export const About = () => {
       </div>
 
       <div className="space-y-12 text-slate-300 leading-relaxed text-lg">
+
+        {/* Mission & Vision */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-blue-900/30 to-slate-900 p-8 rounded-2xl border border-blue-800/40">
+            <div className="flex items-center gap-3 mb-4">
+              <Target className="w-7 h-7 text-blue-400 flex-shrink-0" />
+              <h2 className="text-2xl font-bold text-white">{t('about.missionTitle')}</h2>
+            </div>
+            <p className="text-slate-300 text-base leading-relaxed">{t('about.missionText')}</p>
+          </div>
+          <div className="bg-gradient-to-br from-indigo-900/30 to-slate-900 p-8 rounded-2xl border border-indigo-800/40">
+            <div className="flex items-center gap-3 mb-4">
+              <Eye className="w-7 h-7 text-indigo-400 flex-shrink-0" />
+              <h2 className="text-2xl font-bold text-white">{t('about.visionTitle')}</h2>
+            </div>
+            <p className="text-slate-300 text-base leading-relaxed">{t('about.visionText')}</p>
+          </div>
+        </div>
+
         <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 space-y-4">
           <h2 className="text-2xl font-semibold text-white mb-4">{t('about.companyTitle')}</h2>
           <p>{t('about.companyP1')}</p>
@@ -53,6 +74,12 @@ export const About = () => {
           <p className="text-xl text-slate-300 font-medium tracking-wide">
             {t('about.judgesDesc')}
           </p>
+          <Link
+            to="/judges"
+            className="inline-block mt-2 text-blue-400 hover:text-blue-300 font-medium transition"
+          >
+            {t('about.judgesLink')}
+          </Link>
         </div>
 
         <div className="text-center p-8">

@@ -15,6 +15,7 @@ export const Header = () => {
     { name: t('nav.short'), path: '/ranking/short' },
     { name: t('nav.rules'), path: '/rules' },
     { name: t('nav.about'), path: '/about' },
+    { name: t('nav.judges'), path: '/judges' },
   ]
 
   const isActive = (path: string) => location.pathname === path
