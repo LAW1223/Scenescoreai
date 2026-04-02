@@ -13,6 +13,8 @@ export const Header = () => {
     { name: t('nav.home'), path: '/' },
     { name: t('nav.anime'), path: '/ranking/anime' },
     { name: t('nav.short'), path: '/ranking/short' },
+    { name: t('nav.music'), path: '/ranking/music' },
+    { name: t('nav.tools'), path: '/ranking/tools' },
     { name: t('nav.rules'), path: '/rules' },
     { name: t('nav.about'), path: '/about' },
     { name: t('nav.judges'), path: '/judges' },

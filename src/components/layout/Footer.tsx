@@ -41,6 +41,12 @@ export const Footer = () => {
                 <Link to="/ranking/short" className="text-base text-slate-400 hover:text-white">{t('nav.short')}</Link>
               </li>
               <li>
+                <Link to="/ranking/music" className="text-base text-slate-400 hover:text-white">{t('nav.music')}</Link>
+              </li>
+              <li>
+                <Link to="/ranking/tools" className="text-base text-slate-400 hover:text-white">{t('nav.tools')}</Link>
+              </li>
+              <li>
                 <Link to="/rules" className="text-base text-slate-400 hover:text-white">{t('nav.rules')}</Link>
               </li>
             </ul>
