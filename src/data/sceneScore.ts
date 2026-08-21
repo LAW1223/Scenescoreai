@@ -4,6 +4,15 @@ export type SceneWork = {
   year: string
   title: string
   director: string
+  rankingTitle: string
+  rankingTitleZhHant: string
+  rankingDescription: string
+  rankingDescriptionZhHant: string
+  score: number
+  rankingStyle: string
+  rankingStyleZhHant: string
+  rankingTags: string[]
+  rankingTagsZhHant: string[]
   type: string
   status: string
   accent: 'red' | 'blue' | 'gold' | 'green' | 'violet'
@@ -19,6 +28,15 @@ export const works: SceneWork[] = [
     year: '2026',
     title: 'SAMPLE FILM A',
     director: 'Director name',
+    rankingTitle: 'The Actress Who Walked Away from the Script',
+    rankingTitleZhHant: '影后不接劇本走',
+    rankingDescription: 'A retired screen queen is pulled into a fight over a script. Through layered schemes, she climbs back to the top and finds the life she truly wants',
+    rankingDescriptionZhHant: '隱退影后意外捲入劇本爭奪，在重重算計中重返巔峰，也重新找回真正想要的人生',
+    score: 8.7,
+    rankingStyle: 'Showbiz · Comeback Drama',
+    rankingStyleZhHant: '娛樂圈・逆襲劇',
+    rankingTags: ['Actress', 'Showbiz', 'Reversal', 'Growth'],
+    rankingTagsZhHant: ['影后', '娛樂圈', '逆襲', '成長'],
     type: 'Featured',
     status: 'Score pending',
     accent: 'red',
@@ -32,6 +50,15 @@ export const works: SceneWork[] = [
     year: '2026',
     title: 'SAMPLE FILM B',
     director: 'Director name',
+    rankingTitle: 'A Guide to Surviving Retirement in the Cold Palace',
+    rankingTitleZhHant: '冷宮養老院通關指南',
+    rankingDescription: 'Sent to the cold palace, a consort decides to retire in peace, but her wit and talent for human connection lead her down an unexpected road back to power',
+    rankingDescriptionZhHant: '被打入冷宮的妃子決定躺平養老，卻憑藉智慧和人情經營，意外走出一條逆襲之路',
+    score: 8.2,
+    rankingStyle: 'Period · Light Comedy',
+    rankingStyleZhHant: '古裝・輕喜劇',
+    rankingTags: ['Cold Palace', 'Court Politics', 'Retirement', 'Reversal'],
+    rankingTagsZhHant: ['冷宮', '宮鬥', '養老', '逆襲'],
     type: 'Featured',
     status: 'Score pending',
     accent: 'blue',
@@ -45,6 +72,15 @@ export const works: SceneWork[] = [
     year: '2025',
     title: 'SAMPLE FILM C',
     director: 'Director name',
+    rankingTitle: 'The Hospital Boss Keeps Her Ex Waiting',
+    rankingTitleZhHant: '掌舵大醫院，前夫請排隊掛號',
+    rankingDescription: 'She moves from behind the scenes to the centre of the medical industry, while the ex who once overlooked her has to take a number and wait',
+    rankingDescriptionZhHant: '她從幕後走到醫療行業中心，事業一路開掛，曾經錯過她的前夫只能重新排隊',
+    score: 8.5,
+    rankingStyle: 'Urban · Workplace Drama',
+    rankingStyleZhHant: '都市・職場爽劇',
+    rankingTags: ['Medical', 'Workplace', 'Strong Lead', 'Pursuit'],
+    rankingTagsZhHant: ['醫療', '職場', '女強', '追妻'],
     type: 'Short Film',
     status: 'Score pending',
     accent: 'gold',
@@ -58,6 +94,15 @@ export const works: SceneWork[] = [
     year: '2025',
     title: 'SAMPLE FILM D',
     director: 'Director name',
+    rankingTitle: 'Who Knew? I Draft Memorials in the Madhouse',
+    rankingTitleZhHant: '誰懂啊！我在瘋人院批奏摺',
+    rankingDescription: 'After an accidental journey into a madhouse, she handles the absurd daily routine while using a calm mind to uncover the danger hidden beneath it',
+    rankingDescriptionZhHant: '意外穿越進瘋人院，她一邊應對荒誕日常，一邊憑藉冷靜頭腦破解隱藏危機',
+    score: 7.9,
+    rankingStyle: 'Period · Absurd Comedy',
+    rankingStyleZhHant: '古裝・荒誕喜劇',
+    rankingTags: ['Time Travel', 'Madhouse', 'Power Games', 'Comedy'],
+    rankingTagsZhHant: ['穿越', '瘋人院', '權謀', '喜劇'],
     type: 'Series',
     status: 'Score pending',
     accent: 'green',
@@ -71,6 +116,15 @@ export const works: SceneWork[] = [
     year: '2025',
     title: 'SAMPLE FILM E',
     director: 'Director name',
+    rankingTitle: 'The Maxed-Out Player Rebuilds a Tycoon Dating Show',
+    rankingTitleZhHant: '滿級大佬重整豪門戀綜',
+    rankingDescription: 'A maxed-out player drops into a tycoon dating show and decides to rewrite the rules when old grudges and complicated relationships close in',
+    rankingDescriptionZhHant: '滿級玩家空降豪門戀綜，面對複雜關係和舊日恩怨，她決定重新制定遊戲規則',
+    score: 8.4,
+    rankingStyle: 'Tycoon · Dating Show Drama',
+    rankingStyleZhHant: '豪門・戀綜爽劇',
+    rankingTags: ['Tycoon', 'Dating Show', 'Rivalry', 'Strong Lead'],
+    rankingTagsZhHant: ['豪門', '戀綜', '修羅場', '女強'],
     type: 'Featured',
     status: 'Score pending',
     accent: 'violet',
@@ -98,7 +152,19 @@ export type JudgeProfileSection = {
   paragraphs: string[]
 }
 
-export const judges: Judge[] = [
+export type AcademicJudge = {
+  id: string
+  nameZhHant: string
+  nameEn: string
+  focusZhHant: string
+  focusEn: string
+  bioZhHant: string
+  bioEn: string
+  profileZhHant: string[]
+  profileEn: string[]
+}
+
+const judgeDirectory: Judge[] = [
   {
     id: 'paco-wong',
     name: '黃柏高',
@@ -187,6 +253,130 @@ export const judges: Judge[] = [
     bioZhHant: [
       '由新聞節目導演轉入電影編劇，參與《葉問》系列、《狂舞派》及《九龍城寨之圍城》等作品，累積逾二十年敘事經驗',
       '首部導演作品《黃金花》以細膩家庭關係連結香港城市處境，並延續以本土視角書寫人物韌性的創作方向',
+    ],
+  },
+]
+
+export const judges: Judge[] = [
+  'paco-wong',
+  'chen-tai-lee',
+  'bennett-pang',
+  'edmond-wong',
+  'ck-chan',
+]
+  .map((id) => judgeDirectory.find((judge) => judge.id === id))
+  .filter((judge): judge is Judge => Boolean(judge))
+
+export const academicJudges: AcademicJudge[] = [
+  {
+    id: 'tianrui-zhou',
+    nameZhHant: '\u5468\u738b\u6625\u6f8d 博士',
+    nameEn: 'Wangchun Zhou, PhD',
+    focusZhHant: '人工智慧、AGI 與大型語言模型研究員',
+    focusEn: 'AGI and large language model researcher',
+    bioZhHant: '研究通用人工智慧、智能代理與自然語言處理，並參與大型模型的角色理解與效率研究',
+    bioEn: 'Researches AGI, language agents and natural language processing, with work spanning role understanding and model efficiency',
+    profileZhHant: [
+      '他是人工智慧領域的知名研究人員，目前任職於字節跳動（Bytedance）及 M-A-P 中心，研究核心集中在通用人工智慧（AGI）、大型語言模型（LLM）、智能代理（Language Agents）以及自然語言處理（NLP）',
+      '截至目前，他的學術成就斐然，總引用次數已接近 7,000 次，h 指數（h-index）達 44，反映出他在極短時間內產出了大量具備高度影響力的研究成果',
+      '他在大型語言模型領域有多項代表作，參與開發的《RoleLLM》旨在提升模型的角色扮演能力，《Agents》框架則為開發自主語言代理提供開源基礎；《BERT-of-Theseus》提出透過模組替換壓縮模型，《BERT loses patience》則探討以提前退出機制實現快速推理',
+      '近年來，他的研究觸角進一步延伸至模型評估（如 SuperGPQA）、長文本建模、多模態視覺語言任務（如 X-VLM），以及 AI 安全與風險評估，持續為業界的大模型應用提供關鍵技術支持',
+    ],
+    profileEn: [
+      'A recognised artificial intelligence researcher working with Bytedance and the M-A-P centre, with research spanning artificial general intelligence, large language models, language agents and natural language processing',
+      'His work has received nearly 7,000 citations and an h-index of 44, reflecting a sustained record of influential research produced over a relatively short period',
+      'His representative language-model work includes RoleLLM for role-playing ability, the open-source Agents framework, BERT-of-Theseus for modular model compression and BERT loses patience for early-exit inference',
+      'Recent work extends to model evaluation through SuperGPQA, long-context modelling, multimodal vision-language tasks such as X-VLM and the evaluation of AI safety risks',
+    ],
+  },
+  {
+    id: 'ruisong-yuan',
+    nameZhHant: '\u8881\u745e\u6ff1 博士',
+    nameEn: 'Ruibin Yuan, PhD',
+    focusZhHant: 'AI 音樂、多模態與音樂資訊檢索學者',
+    focusEn: 'AI music and multimodal scholar',
+    bioZhHant: '研究音樂生成、音樂資訊檢索與電腦音樂，探索音樂、語音及影像的多模態理解',
+    bioEn: 'Studies music generation, music information retrieval and computer music across multimodal understanding',
+    profileZhHant: [
+      '他是香港科技大學（HKUST）博士生，同時與卡內基梅隆大學（CMU）保持密切學術聯繫，研究核心聚焦於人工智慧、音樂生成、音樂資訊檢索（MIR）及電腦音樂',
+      '在學術成就方面，他的論文引用次數已超過 6,000 次，其共同撰寫的《MMMU》基準測試論文曾獲 CVPR 2024 最佳論文提名',
+      '在音樂大模型與生成方向，他開發了 ChatMusician、YuE 及 MERT，分別探索 LLM 的音樂理解與生成、長文本音樂生成，以及基於大規模自監督訓練的音樂音頻理解',
+      '在評測基準與基礎模型方向，他參與構建 MMMU、CMMMU、MARBLE 等多模態理解與音樂音頻表示評測基準',
+      '他亦對 AnyGPT、OmniBench 等統一多模態大模型有重要貢獻，致力於推動 AI 對音樂、語音及影像的深層理解，打破音樂與語言之間的隔閡',
+    ],
+    profileEn: [
+      'A PhD researcher at HKUST with close academic ties to Carnegie Mellon University, focusing on artificial intelligence, music generation, music information retrieval and computer music',
+      'His work has received more than 6,000 citations, and the MMMU benchmark paper he co-authored was nominated for the CVPR 2024 Best Paper Award',
+      'His music-model work includes ChatMusician for language-model music understanding and generation, YuE for long-context music generation and MERT for self-supervised music-audio understanding',
+      'He has helped build influential multimodal and music-audio benchmarks including MMMU, CMMMU and MARBLE',
+      'His contributions to unified multimodal models such as AnyGPT and OmniBench connect music, speech and vision, helping general-purpose models develop more professional musical understanding and creation',
+    ],
+  },
+  {
+    id: 'ziyang-ma',
+    nameZhHant: '馬子陽 博士',
+    nameEn: 'Ziyang Ma, PhD',
+    focusZhHant: '語音、語言與多模態學習研究員',
+    focusEn: 'Senior researcher at Shanghai Jiao Tong University',
+    bioZhHant: '現為上海交通大學研究人員，專注於語音語言模型、自監督學習與多模態學習',
+    bioEn: 'A Shanghai Jiao Tong University researcher working on speech-language models, self-supervised learning and multimodal systems',
+    profileZhHant: [
+      '他是一位活躍於人工智慧與音訊處理領域的資深研究人員，現為上海交通大學研究人員，研究核心聚焦於語音與語言處理、語音語言模型、自監督學習以及多模態學習',
+      '他的 Google Scholar 引用次數已超過 4,700 次，h 指數（h-index）達到 33，展現出在音訊理解、生成與複雜推理方向的持續影響力',
+      '他參與了 Qwen-omni、FunAudioLLM、CosyVoice、F5-TTS 及 emotion2vec 等重量級 AI 專案，研究成果頻繁發表於 AAAI、ACL、NeurIPS 及 ICASSP 等國際頂級會議',
+      '他不僅推動語音技術與大語言模型的深度融合，也為開源社區提供多項具備實際應用價值的基準與模型工具',
+    ],
+    profileEn: [
+      'A senior researcher at Shanghai Jiao Tong University working across speech and language processing, speech-language models, self-supervised learning and multimodal learning',
+      'With more than 4,700 Google Scholar citations and an h-index of 33, his work has made a sustained impact on audio understanding, generation and complex reasoning',
+      'He has contributed to major projects including Qwen-omni, FunAudioLLM, CosyVoice, F5-TTS and emotion2vec, with research published at AAAI, ACL, NeurIPS and ICASSP',
+      'His work brings speech technology into closer conversation with large language models while contributing practical benchmarks and model tools to the open-source community',
+    ],
+  },
+  {
+    id: 'jiaheng-liu',
+    nameZhHant: '劉佳恒 博士',
+    nameEn: 'Jiaheng Liu, PhD',
+    focusZhHant: '大型語言模型與角色扮演研究員',
+    focusEn: 'Nanjing University and M-A-P research collaborator',
+    bioZhHant: '與南京大學及 M-A-P 開源社區保持學術聯繫，研究模型蒸餾、長文本建模與角色扮演能力',
+    bioEn: 'A researcher connected with Nanjing University and M-A-P, focused on distillation, long-context modelling and role-playing',
+    profileZhHant: [
+      '他是一位專注於人工智慧領域的前沿研究者，目前主要與南京大學（NJU）及 M-A-P 開源社區保持緊密學術聯繫，研究核心聚焦大型語言模型、多模態大模型、模型蒸餾、長文本建模以及角色扮演能力增強',
+      '截至 2026 年 5 月，他的論文總引用次數已超過 6,100 次，h 指數（h-index）達 37，並曾於 ICCV、CVPR、NeurIPS、ACL 及 ICLR 發表多篇高質量論文',
+      '其代表作包括早期知識蒸餾研究《Correlation Congruence for Knowledge Distillation》，以及近期的《RoleLLM》與《MT-Bench-101》，後者為評估大模型多輪對話中的細粒度表現提供重要基準',
+      '他亦積極參與開源社區與產業協作，合作夥伴涵蓋字節跳動、阿里巴巴、快手及上海 AI Lab，並在自動化數據科學（AutoKaggle）與代碼大模型（OpenCoder）等實際場景貢獻關鍵技術',
+    ],
+    profileEn: [
+      'A frontier AI researcher connected with Nanjing University and the M-A-P open-source community, focusing on large language models, multimodal models, knowledge distillation, long-context modelling and role-playing',
+      'As of May 2026, his work has received more than 6,100 citations and an h-index of 37, with publications at ICCV, CVPR, NeurIPS, ACL and ICLR',
+      'His representative work includes Correlation Congruence for Knowledge Distillation, RoleLLM and MT-Bench-101, a benchmark for fine-grained evaluation of multi-turn dialogue',
+      'He also works across open-source and industry collaboration with partners including Bytedance, Alibaba, Kuaishou and Shanghai AI Lab, contributing to AutoKaggle and the OpenCoder code model',
+    ],
+  },
+  {
+    id: 'yexin-liu',
+    nameZhHant: '劉業鑫 博士',
+    nameEn: 'Yexin Liu, PhD',
+    focusZhHant: '生成式 AI、多模態模型與計算機視覺研究員',
+    focusEn: 'AI PhD researcher',
+    bioZhHant: '深耕生成式 AI、影片生成與計算機視覺，具備從數據、模型到訓練微調的完整工程經驗',
+    bioEn: 'A generative AI and computer vision researcher with end-to-end experience across data, models and training',
+    profileZhHant: [
+      '他目前就讀於香港科技大學 AI 博士學位，深耕生成式 AI、多模態大模型（MLLM）及計算機視覺；他先後於湖南大學取得機械工程碩士學位，並在香港科技大學（廣州）取得 AI 碩士學位，曾多次獲得國家級獎學金及數學競賽獎項',
+      '在研究與實作方面，他已在 CVPR、ICCV、NeurIPS、IEEE TMI 等頂級國際會議與期刊發表多篇論文，展現紮實的學術產出與研究能力',
+      '他曾於 Everlyn 擔任首席研究員，帶領團隊進行影片生成技術研發、數據管理與模型訓練協調，具備跨研究與工程團隊的技術領導力',
+      '他是開源項目 OmniGen2 的核心貢獻者，並在影片擴散模型、音訊驅動說話人臉合成及醫療影像分析等領域取得重要突破',
+      '他精通 Python、PyTorch 及 TensorFlow，具備從數據採集、模型架構設計到預訓練與微調的全流程開發經驗',
+      '他把深厚的理論基礎與工程實踐能力結合，持續推動下一代多模態智慧技術的發展',
+    ],
+    profileEn: [
+      'An AI PhD researcher at HKUST focused on generative AI, multimodal large language models and computer vision, with master’s degrees in mechanical engineering from Hunan University and AI from HKUST Guangzhou, plus national scholarships and mathematics awards',
+      'He has published across leading venues including CVPR, ICCV, NeurIPS and IEEE TMI, building a strong record of academic output in multimodal and visual intelligence',
+      'As a former chief researcher at Everlyn, he led video-generation research, data management and model-training coordination across research and engineering teams',
+      'He is a core contributor to the open-source OmniGen2 project and has advanced video diffusion, audio-driven talking-face synthesis and medical image analysis',
+      'His practical toolkit includes Python, PyTorch and TensorFlow, with end-to-end experience from data collection and model design through pre-training and fine-tuning',
+      'He combines deep theoretical training with strong engineering practice to advance the next generation of multimodal intelligence',
     ],
   },
 ]

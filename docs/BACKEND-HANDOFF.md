@@ -54,9 +54,10 @@ Windows PowerShell 也可以直接运行：
 | `/series/:id` | 作品详情 | `getWork(id)` |
 | `/judges` | 评委列表、照片、简介 | `judges` |
 | `/methodology` | 评分方法说明 | 页面静态文案 |
-| `/about` | 项目说明与联系入口 | 页面静态文案 |
+| `/about` | 项目说明与合作入口 | 页面静态文案 |
+| `/submission` | 投稿说明、邮箱和 mailto 表单 | `src/pages/Submission.tsx` |
 
-`/contact`、`/rules`、`/ranking/*` 是兼容性重定向。生产服务器必须配置 SPA fallback：未知路径返回 `index.html`，否则直接刷新 `/explore` 或 `/series/:id` 会 404。
+`/contact`、`/rules`、`/ranking/*` 是兼容性重定向。生产服务器必须配置 SPA fallback：未知路径返回 `index.html`，否则直接刷新 `/explore`、`/submission` 或 `/series/:id` 会 404。
 
 ## 4. 建议 API 边界
 
@@ -189,5 +190,7 @@ npm run check
 - 从 Explore、Judges、Methodology、About 切回 Home，纸张转场完整且无明显卡顿。
 - Explore 的筛选、Grid/List、Reset、Top 均可用。
 - Judges 五张照片完整显示，点击评委会同步切换简介。
+- Judges 的教授评审列表按文档顺序展示，五行「博士」职衔在固定列对齐。
+- Submission 页面显示 `marketing@scenescore.ai`，提交表单先生成 mailto，不依赖后端接口。
 - 作品详情直达刷新不 404。
 - 桌面与窄屏无横向溢出。

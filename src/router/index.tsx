@@ -7,6 +7,7 @@ import JudgeDetail from '../pages/JudgeDetail'
 import Methodology from '../pages/Methodology'
 import Explore from '../pages/Explore'
 import SeriesDetail from '../pages/SeriesDetail'
+import Submission from '../pages/Submission'
 
 export const AppRouter = () => (
   <Routes>
@@ -18,7 +19,8 @@ export const AppRouter = () => (
       <Route path="/judges" element={<Judges />} />
       <Route path="/methodology" element={<Methodology />} />
       <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Navigate to="/about#contact" replace />} />
+      <Route path="/submission" element={<Submission />} />
+      <Route path="/contact" element={<Navigate to="/submission#submission-form" replace />} />
       <Route path="/rules" element={<Navigate to="/methodology" replace />} />
       <Route path="/ranking/*" element={<Navigate to="/explore" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />

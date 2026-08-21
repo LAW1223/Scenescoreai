@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { judges } from '../data/sceneScore'
+import { academicJudges, judges } from '../data/sceneScore'
 
 const RevealLine = ({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) => (
   <span className={`judge-feature__line ${className}`}>
@@ -18,39 +18,44 @@ const RevealLine = ({ children, delay = 0, className = '' }: { children: ReactNo
   </span>
 )
 
+const splitAcademicName = (name: string, isTraditional: boolean) => {
+  const suffix = isTraditional ? '博士' : 'PhD'
+  const suffixIndex = name.lastIndexOf(suffix)
+
+  if (suffixIndex === -1) return { person: name, degree: '' }
+
+  return {
+    person: name.slice(0, suffixIndex).trim(),
+    degree: suffix,
+  }
+}
+
 export default function Judges() {
   const [activeId, setActiveId] = useState(judges[0].id)
+  const [academicActiveId, setAcademicActiveId] = useState(academicJudges[0].id)
   const navigate = useNavigate()
   const { i18n } = useTranslation()
   const active = judges.find((judge) => judge.id === activeId) ?? judges[0]
+  const academicActive = academicJudges.find((judge) => judge.id === academicActiveId) ?? academicJudges[0]
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const localeKey = isTraditional ? 'zh-Hant' : 'en'
   const pageCopy = isTraditional
     ? {
-        kicker: '/ 特邀評審',
-        title: <>評審<br /><em>聚焦</em></>,
-        description: '五種來自電影、音樂、攝影與文化產業的專業視角，移入名字可預覽，點擊即可固定目前畫面',
         listLabel: '評審名單',
         frame: '/ 當前人物',
       }
     : {
-        kicker: '/ SCENE SCORE AI',
-        title: <>JURY<br /><em>SPOTLIGHT</em></>,
-        description: 'Five perspectives from film, music, photography and culture. Hover a name to preview the frame; select it to keep that voice in focus.',
         listLabel: 'Jury list',
         frame: '/ CURRENT FRAME',
       }
 
   return (
     <div className="judges-page page-pad" lang={localeKey}>
-      <section className="page-hero page-hero--split">
-        <span className="section-kicker">{pageCopy.kicker}</span>
-        <h1>{pageCopy.title}</h1>
-        <p>{pageCopy.description}</p>
-      </section>
-
       <section className="judges-showcase">
         <div className="judge-list" aria-label={pageCopy.listLabel}>
+          <div className="judge-list__heading">
+            <h2>{isTraditional ? '星級評審' : 'Star Jury'}</h2>
+          </div>
           {judges.map((judge, index) => (
             <button
               className={`judge-list__item ${judge.id === activeId ? 'is-active' : ''}`}
@@ -101,6 +106,57 @@ export default function Judges() {
               <Link className="text-link judge-feature__profile-link" to={`/judges/${active.id}`}>
                 {isTraditional ? '查看完整資料' : 'VIEW FULL PROFILE'} <ArrowUpRight aria-hidden="true" />
               </Link>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+      <section className="academic-jury" aria-labelledby="academic-jury-title">
+        <div className="academic-jury__list">
+          <div className="judge-list__heading academic-jury__header">
+            <h2 id="academic-jury-title">{isTraditional ? '教授評審' : 'Academic Jury'}</h2>
+            <p>
+              {isTraditional
+                ? '由人工智慧、音樂生成與多模態研究領域的學者組成，為作品的技術想像與創作方法補上另一種專業視角'
+                : 'Researchers across artificial intelligence, music generation and multimodal systems bring a second professional lens to the work.'}
+            </p>
+          </div>
+          {academicJudges.map((academicJudge, index) => (
+            <button
+              className={`judge-list__item ${academicJudge.id === academicActiveId ? 'is-active' : ''}`}
+              key={academicJudge.id}
+              type="button"
+              onMouseEnter={() => setAcademicActiveId(academicJudge.id)}
+              onFocus={() => setAcademicActiveId(academicJudge.id)}
+              onClick={() => setAcademicActiveId(academicJudge.id)}
+            >
+              <span>0{index + 1}</span>
+              <strong className="academic-jury__name">
+                <span>{splitAcademicName(isTraditional ? academicJudge.nameZhHant : academicJudge.nameEn, isTraditional).person}</span>
+                <span>{splitAcademicName(isTraditional ? academicJudge.nameZhHant : academicJudge.nameEn, isTraditional).degree}</span>
+              </strong>
+              <i>↗</i>
+            </button>
+          ))}
+        </div>
+        <div className="academic-feature">
+          <AnimatePresence mode="wait">
+            <motion.div
+              className="academic-feature__content"
+              key={`${academicActive.id}-${localeKey}`}
+              initial={{ opacity: 0, x: -18 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 18 }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <RevealLine className="academic-feature__kicker" delay={0.04}>{isTraditional ? '/ 當前研究' : '/ CURRENT RESEARCH'}</RevealLine>
+              <RevealLine className="academic-feature__name" delay={0.1}>{isTraditional ? academicActive.nameZhHant : academicActive.nameEn}</RevealLine>
+              <RevealLine className="academic-feature__focus" delay={0.16}>{isTraditional ? academicActive.focusZhHant : academicActive.focusEn}</RevealLine>
+              {(isTraditional ? academicActive.profileZhHant : academicActive.profileEn).map((paragraph, index) => (
+                <RevealLine className="academic-feature__bio" delay={0.24 + index * 0.08} key={`${academicActive.id}-${index}`}>{paragraph}</RevealLine>
+              ))}
+              <span className="academic-feature__note">
+                {isTraditional ? '教授評審 · 研究資料' : 'ACADEMIC JURY · RESEARCH PROFILE'}
+              </span>
             </motion.div>
           </AnimatePresence>
         </div>

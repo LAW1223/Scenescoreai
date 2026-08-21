@@ -70,10 +70,11 @@ node .\scripts\serve-dist.mjs
 
 1. 首页 `/`：向下滚动，确认橙色遮罩先从右下向左上离开，视频在第一阶段不抖动。
 2. 继续向下滚动：确认橙色遮罩完全消失后视频才进入第二阶段，且视频自动循环播放。
-3. 点击顶部 `EXPLORE`、`JURY SPOTLIGHT`、`BEHIND THE SCORE`、`ABOUT US`：确认新页面像纸张一样从左下进入，旧页面向右退出，转场约 1.25 秒。
+3. 点击顶部 `排行榜`、`特邀评审`、`评分方法`、`投稿`：确认新页面像纸张一样从左下进入，旧页面向右退出，转场约 1.25 秒；切换到 `EN` 后对应菜单会显示为 `RANKING`、`JURY SPOTLIGHT`、`METHODOLOGY`、`SUBMISSION`。
 4. `/explore`：切换网格/列表，点击 `All / Featured / Short Film / Series` 筛选。
-5. `/judges`：点击五位评委，确认照片完整显示、简介同步切换。
-6. `/series/sample-film-a`：确认作品详情页和返回索引可用。
+5. `/judges`：点击五位评委，确认照片完整显示、简介同步切换；向下滚动到 `教授评审`，确认五行「博士」职衔在同一列对齐。
+6. `/methodology`、`/submission`：确认评分方法与投稿页使用纸张底、黑字、红色强调配色，并可看到投稿邮箱 `marketing@scenescore.ai`。
+7. `/series/sample-film-a`：确认作品详情页和返回索引可用。
 
 ## 当前演示限制
 

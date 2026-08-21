@@ -21,16 +21,12 @@ export default function JudgeDetail() {
   const copy = isTraditional
     ? {
         back: '返回評審總覽',
-        kicker: '/ 特邀評審',
-        profile: '/ 評審資料',
         previous: '上一位評審',
         next: '下一位評審',
         view: '查看評審總覽',
       }
     : {
         back: 'BACK TO JURY',
-        kicker: '/ JURY SPOTLIGHT',
-        profile: '/ FULL PROFILE',
         previous: 'PREVIOUS JUDGE',
         next: 'NEXT JUDGE',
         view: 'VIEW ALL JUDGES',
@@ -45,7 +41,6 @@ export default function JudgeDetail() {
           <span className="judge-detail-hero__index">0{index + 1} / 05</span>
         </div>
         <div className="judge-detail-hero__copy">
-          <span className="section-kicker">{copy.kicker}</span>
           <h1>{isTraditional ? judge.name : judge.romanized}</h1>
           <p className="judge-detail-hero__headline">{isTraditional ? judge.headlineZhHant : judge.headline}</p>
           <p className="judge-detail-hero__role">{isTraditional ? judge.roleZhHant : judge.role}</p>
@@ -55,7 +50,6 @@ export default function JudgeDetail() {
 
       <section className="judge-detail-profile page-pad">
         <div className="judge-detail-profile__heading">
-          <span className="section-kicker">{copy.profile}</span>
           <p>{isTraditional ? '從創作、產業到文化觀察，了解評審帶進 Scene Score 的視角' : 'The experience and point of view behind the jury seat.'}</p>
         </div>
         <div className="judge-detail-profile__body">

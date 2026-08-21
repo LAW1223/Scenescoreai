@@ -13,10 +13,10 @@ export const Header = () => {
   const uiCopy = isTraditional
     ? {
         home: '首頁',
-        explore: '探索',
+        explore: '排行榜',
         judges: '特邀評審',
         methodology: '評分方法',
-        about: '關於我們',
+        submission: '投稿',
         primaryNavigation: '主要導航',
         language: '語言',
         status: '狀態',
@@ -27,10 +27,10 @@ export const Header = () => {
       }
     : {
         home: 'Home',
-        explore: 'Explore',
+        explore: 'Ranking',
         judges: 'Jury Spotlight',
         methodology: 'Behind the Score',
-        about: 'About Us',
+        submission: 'Submission',
         primaryNavigation: 'Primary navigation',
         language: 'Language',
         status: 'Status',
@@ -57,14 +57,14 @@ export const Header = () => {
         { name: uiCopy.explore, path: '/explore' },
         { name: uiCopy.judges, path: '/judges' },
         { name: uiCopy.methodology, path: '/methodology' },
-        { name: uiCopy.about, path: '/about' },
+        { name: uiCopy.submission, path: '/submission' },
       ]
     : [
         { name: uiCopy.home, path: '/' },
         { name: uiCopy.explore, path: '/explore' },
         { name: uiCopy.judges, path: '/judges' },
         { name: uiCopy.methodology, path: '/methodology' },
-        { name: uiCopy.about, path: '/about' },
+        { name: uiCopy.submission, path: '/submission' },
       ]
 
   const changeLanguage = (language: 'en' | 'zh-TW') => {
@@ -79,7 +79,6 @@ export const Header = () => {
       <Link to="/" className="site-logo" aria-label="Scene Score home">
         <img className="site-logo__mark site-logo__mark--dark" src="/images/logo/scenescore-logo-long-black.png" alt="" />
         <img className="site-logo__mark site-logo__mark--light" src="/images/logo/scenescore-logo-long-white.png" alt="" />
-        <i aria-hidden="true" />
       </Link>
 
       <nav
@@ -113,10 +112,12 @@ export const Header = () => {
         <button type="button" className={isTraditional ? 'is-active' : ''} aria-pressed={isTraditional} onClick={() => changeLanguage('zh-TW')}>繁中</button>
       </div>
 
-      <div className="header-meta" aria-label={uiCopy.status}>
-        <span className="status-dot" />
-        <span>{uiCopy.allTime}</span>
-      </div>
+      {pathname !== '/' && (
+        <div className="header-meta" aria-label={uiCopy.status}>
+          <span className="status-dot" />
+          <span>{uiCopy.allTime}</span>
+        </div>
+      )}
 
       <button
         className="menu-trigger"
@@ -153,7 +154,7 @@ export const Header = () => {
                 <span aria-hidden="true">/</span>
                 <button type="button" className={isTraditional ? 'is-active' : ''} aria-pressed={isTraditional} onClick={() => changeLanguage('zh-TW')}>繁中</button>
               </div>
-              <div className="mobile-nav__status"><span className="status-dot" /> {uiCopy.mobileStatus}</div>
+              {pathname !== '/' && <div className="mobile-nav__status"><span className="status-dot" /> {uiCopy.mobileStatus}</div>}
             </div>
           </motion.div>
         )}

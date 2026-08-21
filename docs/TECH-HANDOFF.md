@@ -12,7 +12,7 @@ Scene Score 是一个面向影视/屏幕作品的公开索引原型。当前交�
 - 页面之间的“纸张”式路由切换。
 - 作品索引、筛选、网格/列表视图和作品详情。
 - 评委 Spotlight 列表、照片和简介切换。
-- 评分方法说明和 About/Contact 页面。
+- 评分方法说明、投稿入口和 About 页面。
 
 品牌素材、评委图片、Logo、临时视频均为 Scene Score 项目自己的本地素材；The Line Studio 仅作为交互参考。
 
@@ -93,8 +93,9 @@ npm run preview
 | `/series/:id` | 单个作品详情 | `getWork(id)` |
 | `/judges` | 评委列表、选中评委照片和简介 | `judges` 静态数组 |
 | `/methodology` | 评分方法公开预览 | 页面内静态文案 |
-| `/about` | 项目说明和 Contact 锚点 | 页面内静态文案 |
-| `/contact` | 重定向到 `/about#contact` | Router redirect |
+| `/about` | 项目说明和合作入口 | 页面内静态文案 |
+| `/submission` | 投稿说明、投稿邮箱和 mailto 表单 | `src/pages/Submission.tsx` 内静态文案 |
+| `/contact` | 重定向到 `/submission#submission-form` | Router redirect |
 | `/rules` | 重定向到 `/methodology` | Router redirect |
 | `/ranking/*` | 重定向到 `/explore` | Router redirect |
 
@@ -261,9 +262,11 @@ npm run check
 浏览器至少检查：
 
 - `/` 首次滚动：橙色遮罩先移动，视频不抖动；遮罩消失后视频才进入第二阶段。
-- 从 `/explore`、`/judges`、`/methodology`、`/about` 切回 `/`：1.25 秒纸张转场结束后首页 pin 正常。
+- 从 `/explore`、`/judges`、`/methodology`、`/submission` 切回 `/`：1.25 秒纸张转场结束后首页 pin 正常。
 - `/explore` 的筛选与网格/列表按钮。
 - `/judges` 点击五位评委，照片不被灰色边框挤压且显示完整。
+- `/judges` 的 `教授评审` 列表中，姓名与「博士」拆为固定视觉列，五行职衔保持对齐。
+- `/submission` 能看到 `marketing@scenescore.ai`，表单使用 mailto，不假设后端已接收投稿。
 - `/series/sample-film-a` 刷新不 404（本地 Vite dev 默认支持；生产服务器需配置 fallback）。
 - 1440px 桌面宽度与窄屏宽度下无横向溢出。
 

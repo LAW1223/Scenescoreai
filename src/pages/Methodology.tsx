@@ -1,64 +1,158 @@
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Check, ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-
-const framework = [
-  ['Scoring dimensions', 'Story, image, performance and context form the reading frame for every entry.'],
-  ['Weighting logic', 'The published release will show how each dimension contributes to a result.'],
-  ['Jury protocol', 'Every entry is read through a documented multi-judge process.'],
-  ['Exceptions & conflicts', 'Outliers, conflicts and later changes are disclosed with the ranking.'],
-]
 
 export default function Methodology() {
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const copy = isTraditional
     ? {
-        kicker: '/ 評分方法',
-        title: <>公開<br /><em>方法</em></>,
-        hero: '先說清楚，再讓數字成為訊號。公開預覽會展示已準備好的框架，並標示仍待正式確認的部分',
-        ranking: '/ 全時段排名',
-        introTitle: '數字成為訊號之前，方法必須先被看見',
-        intro: 'Scene Score 是一個公開瀏覽體驗，現階段展示評分框架，不虛構分數、留言系統、社交互動或付費牆',
-        cta: '正式權重、評審人數與異常處理規則確認後，這個頁面會成為每項公開排名的參考基準',
-        return: '返回探索',
-        status: '框架 / 公開預覽',
-        panels: [
-          ['評分維度', '以故事、影像、表演與語境建立每項作品的閱讀框架'],
-          ['權重邏輯', '正式發布時公開各項維度如何共同形成結果'],
-          ['評審規程', '每項作品都會經過已記錄的多位評審閱讀'],
-          ['異常與衝突', '離群值、利益衝突與修訂會隨排名一併說明'],
-        ],
+        heroKicker: '評分方法',
+        heroTitle: <>榜單<br /><em>規則</em></>,
+        heroDescription: '一套清晰、公開的閱讀框架，說明哪些作品可以進入索引、如何計分，以及榜單何時更新',
+        eligibility: {
+          kicker: '收錄條件',
+          title: '先確認作品，再談排名',
+          description: '符合以下條件的作品，才會進入 Scene Score 公開索引',
+          points: [
+            '包含超過 50% 的 AI 生成畫面（Midjourney、Stable Diffusion、Runway、Pika 等）',
+            '故事主線清晰，人物與邏輯具備連貫性',
+            '成片已發布於公開串流或社交平台（B站、抖音、紅果短劇、YouTube、TikTok、Drama Wave 等）',
+            '無低俗、侵權或嚴重違規內容',
+          ],
+        },
+        scoring: {
+          kicker: '評分邏輯',
+          title: '滿分 10 分',
+          description: '最終得分由以下四個維度加權得出',
+          dimensions: [
+            { number: '01', title: '視聽質量', weight: '30%', description: '畫面的連貫性、人物一致性、光影審美，以及聲音與畫面的契合度' },
+            { number: '02', title: '劇本敘事', weight: '30%', description: '故事節奏、懸念設置、邏輯自洽，以及台詞水準' },
+            { number: '03', title: '觀眾反響', weight: '20%', description: '全網播放量、點讚率、評論互動率及好評比例' },
+            { number: '04', title: '技術突破', weight: '20%', description: '是否運用了新的 AI 流程，突破常規生成限制或實現高難度動態效果' },
+          ],
+        },
+        updates: {
+          kicker: '更新頻率',
+          title: '榜單保持新鮮',
+          points: [
+            'AI 漫劇：每季度更新，呈現本季度最優質的 AI 漫劇作品',
+            'AI 短劇：每季度更新，精選本季度最具焦點與影響力的 AI 短劇',
+          ],
+        },
+        return: '返回排行榜',
       }
     : {
-        kicker: '/ BEHIND THE SCORE',
-        title: <>THE<br /><em>METHOD</em></>,
-        hero: 'Explainable by default. The public preview makes the framework visible while clearly labelling what still needs a final decision.',
-        ranking: '/ ALL-TIME RANKING',
-        introTitle: 'Before a number becomes a signal, the method has to be visible.',
-        intro: 'Scene Score is a public browsing experience. This preview shows the reading framework without inventing scores, comments, social actions or a paywall.',
-        cta: 'When the formal weights, jury count and exception rules are confirmed, this page becomes the reference point for every published rank.',
-        return: 'RETURN TO EXPLORE',
-        status: 'FRAMEWORK / PUBLIC PREVIEW',
-        panels: framework.map(([, title, description]) => [title, description]),
+        heroKicker: 'BEHIND THE SCORE',
+        heroTitle: <>RANKING<br /><em>RULES.</em></>,
+        heroDescription: 'A clear, public reading frame for what enters the index, how every entry is scored and when the ranking is refreshed.',
+        eligibility: {
+          kicker: 'ELIGIBILITY',
+          title: 'A clear frame comes before a rank.',
+          description: 'A work can enter the public index when it meets these conditions.',
+          points: [
+            'More than 50% of the finished image is AI-generated, using tools such as Midjourney, Stable Diffusion, Runway or Pika',
+            'The story line is clear, with coherent characters and internal logic',
+            'The finished work is publicly released on a streaming or social platform such as Bilibili, YouTube, TikTok or Drama Wave',
+            'No vulgar, infringing or seriously non-compliant content',
+          ],
+        },
+        scoring: {
+          kicker: 'SCORING LOGIC',
+          title: 'A 10-point reading frame.',
+          description: 'The final score is weighted across four dimensions.',
+          dimensions: [
+            { number: '01', title: 'AUDIOVISUAL QUALITY', weight: '30%', description: 'Visual continuity, character consistency, lighting, aesthetics and the fit between sound and image' },
+            { number: '02', title: 'SCRIPT & STORY', weight: '30%', description: 'Pacing, suspense, internal logic and the quality of the dialogue' },
+            { number: '03', title: 'AUDIENCE RESPONSE', weight: '20%', description: 'Reach, like rate, comment activity and the proportion of positive response' },
+            { number: '04', title: 'TECHNICAL BREAKTHROUGH', weight: '20%', description: 'New AI workflows, lifted generation limits or difficult dynamic effects' },
+          ],
+        },
+        updates: {
+          kicker: 'UPDATE FREQUENCY',
+          title: 'The ranking keeps moving.',
+          points: [
+            'AI animation: refreshed quarterly with the strongest AI animated works of the season',
+            'AI short drama: refreshed quarterly with the season’s most focused and influential short dramas',
+          ],
+        },
+        return: 'RETURN TO RANKING',
       }
 
   return (
-    <div className="methodology-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
-      <section className="page-hero page-hero--method">
-        <span className="section-kicker">{copy.kicker}</span>
-        <h1>{copy.title}</h1>
-        <p>{copy.hero}</p>
+    <div className="rules-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
+      <section className="rules-hero">
+        <span className="rules-kicker">{copy.heroKicker}</span>
+        <h1>{copy.heroTitle}</h1>
+        <p>{copy.heroDescription}</p>
       </section>
-      <section className="method-intro">
-        <span className="section-kicker">{copy.ranking}</span>
-        <h2>{copy.introTitle}</h2>
-        <p>{copy.intro}</p>
+
+      <section className="rules-board" aria-label={isTraditional ? '榜單規則' : 'Ranking rules'}>
+        <div className="rules-board__header">
+          <span className="rules-board__mark">SCENE SCORE / {isTraditional ? '公開索引' : 'PUBLIC INDEX'}</span>
+          <span className="rules-board__scale">{isTraditional ? '滿分 10 分' : '10 POINT SCALE'}</span>
+        </div>
+
+        <section className="rules-section rules-section--eligibility">
+          <div className="rules-section__heading">
+            <span className="rules-section__number">01</span>
+            <div>
+              <span className="rules-kicker">{copy.eligibility.kicker}</span>
+              <h2>{copy.eligibility.title}</h2>
+              <p>{copy.eligibility.description}</p>
+            </div>
+          </div>
+          <ul className="rules-checklist">
+            {copy.eligibility.points.map((point) => (
+              <li key={point}><Check aria-hidden="true" /><span>{point}</span></li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="rules-section rules-section--scoring">
+          <div className="rules-section__heading">
+            <span className="rules-section__number">02</span>
+            <div>
+              <span className="rules-kicker">{copy.scoring.kicker}</span>
+              <h2>{copy.scoring.title}</h2>
+              <p>{copy.scoring.description}</p>
+            </div>
+          </div>
+          <div className="rules-dimensions">
+            {copy.scoring.dimensions.map((dimension) => (
+              <article className="rules-dimension" key={dimension.number}>
+                <div className="rules-dimension__topline">
+                  <span>{dimension.number}</span>
+                  <strong>{dimension.weight}</strong>
+                </div>
+                <h3>{dimension.title}</h3>
+                <p>{dimension.description}</p>
+                <ChevronRight aria-hidden="true" />
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="rules-section rules-section--updates">
+          <div className="rules-section__heading">
+            <span className="rules-section__number">03</span>
+            <div>
+              <span className="rules-kicker">{copy.updates.kicker}</span>
+              <h2>{copy.updates.title}</h2>
+            </div>
+          </div>
+          <ul className="rules-update-list">
+            {copy.updates.points.map((point, index) => (
+              <li key={point}><span>0{index + 1}</span><p>{point}</p></li>
+            ))}
+          </ul>
+        </section>
       </section>
-      <section className="method-grid">
-        {copy.panels.map(([title, description], index) => <article className="method-panel" key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{description}</p><i>{copy.status}</i></article>)}
+
+      <section className="rules-cta">
+        <p>{isTraditional ? '評分規則會隨正式評審協議確認後持續更新，公開排名將同步標示版本與狀態' : 'The rules will continue to evolve with the formal jury protocol. Published rankings will carry the current version and status.'}</p>
+        <Link className="round-arrow-link" to="/explore"><span>{copy.return}</span><ArrowUpRight aria-hidden="true" /></Link>
       </section>
-      <section className="method-cta"><p>{copy.cta}</p><Link className="round-arrow-link" to="/explore"><span>{copy.return}</span><ArrowUpRight aria-hidden="true" /></Link></section>
     </div>
   )
 }

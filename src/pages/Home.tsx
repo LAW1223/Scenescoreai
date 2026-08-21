@@ -1,4 +1,4 @@
-import { ArrowUpRight, Play } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -10,7 +10,7 @@ import { judges, works } from '../data/sceneScore'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const juryStackOrder = ['paco-wong', 'edmond-wong', 'bennett-pang', 'ck-chan', 'chen-tai-lee']
+const juryStackOrder = ['paco-wong', 'chen-tai-lee', 'bennett-pang', 'edmond-wong', 'ck-chan']
 const juryPortraits = juryStackOrder
   .map((id) => judges.find((judge) => judge.id === id))
   .filter((judge): judge is (typeof judges)[number] => Boolean(judge))
@@ -101,18 +101,12 @@ export default function Home() {
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const homeCopy = isTraditional
     ? {
-        meta: '場景評分 AI',
-        caption: '下一幕的場域指南',
-        kicker: '/ 公開索引',
         title: '計算之力塑造形式',
         soul: '人性賦予靈魂',
         description: '聚焦銀幕故事的透明索引，由專業眼光與創作者共同塑造',
         explore: '探索排行榜',
       }
     : {
-        meta: 'SCENE SCORE AI',
-        caption: 'A FIELD GUIDE TO THE NEXT SCENE',
-        kicker: '/ PUBLIC INDEX',
         title: 'Computational power gives form',
         soul: 'Humanity gives soul',
         description: 'A transparent index for screen stories, shaped by professional eyes and the people who make them.',
@@ -121,51 +115,39 @@ export default function Home() {
 
   const sectionCopy = isTraditional
     ? {
-        highlightKicker: '/ 精選',
         highlightTitle: '讓第一格畫面留下印記',
         highlightLink: '探索',
-        featuredKicker: '/ 精選項目',
         featuredDescription: '公開排名資料將於評分維度與評審規程確認後完整呈現',
         openEntry: '開啟項目',
-        rankingKicker: '/ 前五名',
         rankingTitle: '每個項目都保留其脈絡',
         rankingLink: '查看完整排名',
-        howKicker: '/ 評分方式',
         howTitle: '透明始於設計',
         howSoul: '具體落實於實踐',
         howDescription: 'Scene Score 將在正式排名發布前公開評分維度、權重與異常處理方式',
         readMethod: '閱讀評分方式',
         howItems: ['評分維度', '權重配置', '評審規程'],
         pending: '待確認',
-        juryKicker: '/ 評審聚焦',
         juryTitle: '好的判斷',
         jurySoul: '需要觀看的角度',
         meetJury: '認識評審',
-        localNote: '公開索引 / 無需登入 / 公開瀏覽',
         juryAria: 'Scene Score 評審照片',
       }
     : {
-        highlightKicker: '/ HIGHLIGHT',
         highlightTitle: 'Make the first frame count.',
         highlightLink: 'EXPLORE',
-        featuredKicker: '/ FEATURED ENTRY',
         featuredDescription: 'Public ranking data is intentionally left open until the scoring dimensions and jury protocol are confirmed.',
         openEntry: 'OPEN ENTRY',
-        rankingKicker: '/ TOP 05',
         rankingTitle: 'Every entry keeps its context.',
         rankingLink: 'VIEW FULL RANKING',
-        howKicker: '/ HOW SCORING WORKS',
         howTitle: 'Transparent by design.',
         howSoul: 'Specific by practice.',
         howDescription: 'Scene Score will publish its scoring dimensions, weights and anomaly handling before formal rankings go live.',
         readMethod: 'READ THE METHOD',
         howItems: ['Dimensions', 'Weighting', 'Jury protocol'],
         pending: 'Pending confirmation',
-        juryKicker: '/ JURY SPOTLIGHT',
         juryTitle: 'Good judgment',
         jurySoul: 'needs a point of view.',
         meetJury: 'MEET THE JURY',
-        localNote: 'PUBLIC INDEX / NO LOGIN / OPEN BROWSING',
         juryAria: 'Scene Score jury portraits',
       }
   const workTypeLabel = (type: string) => isTraditional
@@ -267,10 +249,9 @@ export default function Home() {
 
       const hero = pageRef.current?.querySelector<HTMLElement>('.home-hero--immersive')
       const curtain = hero?.querySelector<HTMLElement>('.hero-curtain')
-      const heroMeta = hero?.querySelector<HTMLElement>('.home-hero__meta')
       const header = document.querySelector<HTMLElement>('.site-header')
 
-      if (!hero || !curtain || !heroMeta) return
+      if (!hero || !curtain) return
       initialized = true
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -304,7 +285,6 @@ export default function Home() {
       // scroll after the pinned hero releases.
       heroTimeline
         .to(curtain, { duration: 1, xPercent: -108, yPercent: -108, rotation: -4, autoAlpha: 0, ease: 'none' }, 0)
-        .to(heroMeta, { duration: 1, y: -34, autoAlpha: 0, ease: 'none' }, 0)
 
       pageRef.current?.querySelectorAll<HTMLElement>('.home-section').forEach((section) => {
         gsap.fromTo(
@@ -381,16 +361,10 @@ export default function Home() {
               </span>
             </div>
           </div>
-          <div className="hero-curtain__caption">{homeCopy.caption}</div>
           <span className="hero-curtain__rec"><i /> REC</span>
         </div>
 
-        <div className="home-hero__meta">
-          <span><span className="status-dot" /> {homeCopy.meta}</span>
-        </div>
-
         <div className="home-hero__copy">
-          <p className="section-kicker">{homeCopy.kicker}</p>
           <h1>{homeCopy.title}<br /><em>{homeCopy.soul}</em></h1>
           <p className="home-hero__description">{homeCopy.description}</p>
           <Link className="round-arrow-link" to="/explore" aria-label="Explore the all-time ranking">
@@ -398,11 +372,27 @@ export default function Home() {
           </Link>
         </div>
 
+        <button
+          className="home-next-cue"
+          type="button"
+          aria-label={isTraditional ? '前往下一段內容' : 'Scroll to next section'}
+          onClick={() => {
+            const nextSection = pageRef.current?.querySelector<HTMLElement>('#home-highlight')
+            nextSection?.scrollIntoView({
+              behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+              block: 'start',
+            })
+          }}
+        >
+          <span className="home-next-cue__chevron" aria-hidden="true" />
+          <span className="home-next-cue__chevron" aria-hidden="true" />
+        </button>
+
       </section>
 
-      <section className="home-section home-section--highlight">
+      <section id="home-highlight" className="home-section home-section--highlight">
         <div className="section-heading">
-          <div><span className="section-kicker">{sectionCopy.highlightKicker}</span><h2>{sectionCopy.highlightTitle}</h2></div>
+          <div><h2>{sectionCopy.highlightTitle}</h2></div>
           <Link className="text-link" to="/explore">{sectionCopy.highlightLink} <ArrowUpRight aria-hidden="true" /></Link>
         </div>
         <Reveal className="highlight-layout">
@@ -410,12 +400,10 @@ export default function Home() {
             <AmbientVideo src={works[0].video} className="scene-poster__video" />
             <span className="poster-index">01 / 26</span>
             <span className="poster-title">{works[0].title}</span>
-            <span className="poster-bottom">{workTypeLabel(works[0].type)} <em>/</em> {isTraditional ? '導演姓名' : works[0].director}</span>
             <span className="poster-hover-label">VIEW DETAIL <ArrowUpRight aria-hidden="true" /></span>
           </Link>
           <div className="highlight-copy">
             <span className="display-number">01</span>
-            <p className="section-kicker">{sectionCopy.featuredKicker}</p>
             <h3>SAMPLE FILM A</h3>
             <p>{sectionCopy.featuredDescription}</p>
             <Link className="text-link" to={'/series/' + works[0].id}>{sectionCopy.openEntry} <ArrowUpRight aria-hidden="true" /></Link>
@@ -425,7 +413,7 @@ export default function Home() {
 
       <section className="home-section home-section--ranking">
         <div className="section-heading">
-          <div><span className="section-kicker">{sectionCopy.rankingKicker}</span><h2>{sectionCopy.rankingTitle}</h2></div>
+          <div><h2>{sectionCopy.rankingTitle}</h2></div>
           <Link className="text-link" to="/explore">{sectionCopy.rankingLink} <ArrowUpRight aria-hidden="true" /></Link>
         </div>
         <div className="home-ranking-list">
@@ -433,7 +421,6 @@ export default function Home() {
             <Link to={'/series/' + work.id} className="home-ranking-row" key={work.id}>
               <span className="home-ranking-row__index">{work.index}</span>
               <span className="home-ranking-row__title">{work.title}</span>
-              <span>{work.director}</span>
               <span>{workTypeLabel(work.type)}</span>
               <span className="score-placeholder">—</span>
               <ArrowUpRight aria-hidden="true" />
@@ -444,7 +431,6 @@ export default function Home() {
 
       <section className="home-section home-section--how">
         <Reveal className="how-intro">
-          <span className="section-kicker">{sectionCopy.howKicker}</span>
           <h2>{sectionCopy.howTitle}<br /><em>{sectionCopy.howSoul}</em></h2>
           <p>{sectionCopy.howDescription}</p>
           <Link className="round-arrow-link" to="/methodology"><span>{sectionCopy.readMethod}</span><ArrowUpRight aria-hidden="true" /></Link>
@@ -461,7 +447,6 @@ export default function Home() {
 
       <section className="home-section home-section--jury">
         <div className="jury-teaser-copy">
-          <span className="section-kicker">{sectionCopy.juryKicker}</span>
           <h2>{sectionCopy.juryTitle}<br /><em>{sectionCopy.jurySoul}</em></h2>
           <Link className="round-arrow-link" to="/judges"><span>{sectionCopy.meetJury}</span><ArrowUpRight aria-hidden="true" /></Link>
         </div>
@@ -487,9 +472,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-note">
-        <Play aria-hidden="true" fill="currentColor" /><span>{sectionCopy.localNote}</span>
-      </section>
     </div>
   )
 }
