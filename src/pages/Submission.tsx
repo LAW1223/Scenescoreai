@@ -12,8 +12,6 @@ export default function Submission() {
 
   const copy = isTraditional
     ? {
-        title: <>投稿<br /><em>讓作品被看見</em></>,
-        intro: 'Scene Score 持續收集值得被看見的影像故事，歡迎創作者提交短片、系列、動畫與其他螢幕作品。',
         deskLabel: '投稿入口',
         deskTitle: '把下一個場景帶進公開索引',
         deskDescription: '提交作品資料、預告片或完整觀看連結，團隊會先完成資料整理，再回覆後續安排。',
@@ -42,8 +40,6 @@ export default function Submission() {
         back: '返回排行榜',
       }
     : {
-        title: <>SUBMIT<br /><em>YOUR WORK.</em></>,
-        intro: 'Scene Score is open to screen stories worth seeing. Submit shorts, series, animation and other moving-image work for review and public consideration.',
         deskLabel: 'SUBMISSION DESK',
         deskTitle: 'Bring the next scene into the index.',
         deskDescription: 'Send the work details, a trailer or a full viewing link. We will organize the information first and reply with the next steps.',
@@ -87,11 +83,6 @@ export default function Submission() {
 
   return (
     <div className="submission-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
-      <section className="submission-hero page-hero page-hero--split">
-        <h1>{copy.title}</h1>
-        <p>{copy.intro}</p>
-      </section>
-
       <section className="submission-contact">
         <div className="submission-contact__copy">
           <span className="submission-kicker">{copy.deskLabel}</span>

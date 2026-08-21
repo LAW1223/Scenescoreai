@@ -7,10 +7,10 @@
 启动：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\run-dist.ps1
+双击 START_LOCAL_DEMO.cmd
 ```
 
-打开 `http://127.0.0.1:4173`。
+浏览器会自动打开 `http://127.0.0.1:4173`。详细说明见 `docs/LOCAL-DEMO-README.md`。
 
 ## 后端工程师版
 

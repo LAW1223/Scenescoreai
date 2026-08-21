@@ -15,6 +15,13 @@ const juryPortraits = juryStackOrder
   .map((id) => judges.find((judge) => judge.id === id))
   .filter((judge): judge is (typeof judges)[number] => Boolean(judge))
 
+const homeWorkScores = [
+  { score: '89.7', change: '↓1', trend: 'down' },
+  { score: '87.8', change: '↓1', trend: 'down' },
+  { score: '84.9', change: '↑1', trend: 'up' },
+  { score: '82.6', change: '↓1', trend: 'down' },
+] as const
+
 const HOME_VIDEO_TIME_KEY = 'scene-score-home-video-time'
 type HomeVideoStore = { time: number }
 
@@ -62,19 +69,28 @@ const AmbientVideo = ({ src, className }: { src: string; className: string }) =>
     const video = videoRef.current
     if (!video) return
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
+    let isIntersecting = false
+
+    const syncPlayback = () => {
+      if (isIntersecting && document.visibilityState === 'visible') {
         // Keep below-the-fold videos out of the initial network critical path.
         video.preload = 'metadata'
         void video.play().catch(() => {})
       } else {
         video.pause()
       }
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isIntersecting = entry.isIntersecting
+      syncPlayback()
     }, { rootMargin: '160px' })
 
     observer.observe(video)
+    document.addEventListener('visibilitychange', syncPlayback)
     return () => {
       observer.disconnect()
+      document.removeEventListener('visibilitychange', syncPlayback)
       video.pause()
     }
   }, [])
@@ -99,28 +115,30 @@ export default function Home() {
   const [heroVideoReady, setHeroVideoReady] = useState(false)
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
-  const homeCopy = isTraditional
+  const featuredCopy = isTraditional
     ? {
-        title: '計算之力塑造形式',
-        soul: '人性賦予靈魂',
-        description: '聚焦銀幕故事的透明索引，由專業眼光與創作者共同塑造',
-        explore: '探索排行榜',
+        rank: '名次 / 01',
+        summary: '把一個清晰可讀的示意結果放回影像、創作者與作品語境之中',
+        note: '第一個公開排名項目的預覽資料，等待正式評分規程確認',
+        change: '變化',
+        details: '查看作品詳情',
       }
     : {
-        title: 'Computational power gives form',
-        soul: 'Humanity gives soul',
-        description: 'A transparent index for screen stories, shaped by professional eyes and the people who make them.',
-        explore: 'EXPLORE THE RANKING',
+        rank: 'RANK / 01',
+        summary: 'Return a clear, readable sample result to the context of the image, its maker and the work.',
+        note: 'Preview data for the first public ranking entry, pending confirmation of the formal scoring protocol.',
+        change: 'CHANGE',
+        details: 'VIEW WORK DETAILS',
       }
 
   const sectionCopy = isTraditional
     ? {
-        highlightTitle: '讓第一格畫面留下印記',
-        highlightLink: '探索',
-        featuredDescription: '公開排名資料將於評分維度與評審規程確認後完整呈現',
-        openEntry: '開啟項目',
-        rankingTitle: '每個項目都保留其脈絡',
-        rankingLink: '查看完整排名',
+        worksEyebrow: '橫向作品瀏覽 / WORKS',
+        worksTitle: 'TOP 2—05',
+        worksDescription: '四個同源的預覽項目，保留名次、標題、分數與變化',
+        worksHint: '← 左右滑動 →',
+        worksAria: 'Scene Score 第二至第五名作品',
+        viewWork: '查看作品',
         howTitle: '透明始於設計',
         howSoul: '具體落實於實踐',
         howDescription: 'Scene Score 將在正式排名發布前公開評分維度、權重與異常處理方式',
@@ -133,12 +151,12 @@ export default function Home() {
         juryAria: 'Scene Score 評審照片',
       }
     : {
-        highlightTitle: 'Make the first frame count.',
-        highlightLink: 'EXPLORE',
-        featuredDescription: 'Public ranking data is intentionally left open until the scoring dimensions and jury protocol are confirmed.',
-        openEntry: 'OPEN ENTRY',
-        rankingTitle: 'Every entry keeps its context.',
-        rankingLink: 'VIEW FULL RANKING',
+        worksEyebrow: 'HORIZONTAL WORKS / 02—05',
+        worksTitle: 'TOP 2—05',
+        worksDescription: 'Four preview entries retain their rank, title, score and movement.',
+        worksHint: '← DRAG TO BROWSE →',
+        worksAria: 'Scene Score works ranked second through fifth',
+        viewWork: 'VIEW WORK',
         howTitle: 'Transparent by design.',
         howSoul: 'Specific by practice.',
         howDescription: 'Scene Score will publish its scoring dimensions, weights and anomaly handling before formal rankings go live.',
@@ -150,9 +168,6 @@ export default function Home() {
         meetJury: 'MEET THE JURY',
         juryAria: 'Scene Score jury portraits',
       }
-  const workTypeLabel = (type: string) => isTraditional
-    ? ({ Featured: '精選', 'Short Film': '短片', Series: '系列' }[type] ?? type)
-    : type
 
   useLayoutEffect(() => {
     const video = videoRef.current
@@ -364,11 +379,24 @@ export default function Home() {
           <span className="hero-curtain__rec"><i /> REC</span>
         </div>
 
-        <div className="home-hero__copy">
-          <h1>{homeCopy.title}<br /><em>{homeCopy.soul}</em></h1>
-          <p className="home-hero__description">{homeCopy.description}</p>
-          <Link className="round-arrow-link" to="/explore" aria-label="Explore the all-time ranking">
-            <span>{homeCopy.explore}</span><ArrowUpRight aria-hidden="true" />
+        <div className="home-hero__copy home-rank-card">
+          <strong className="home-rank-card__top">TOP 1</strong>
+          <span className="home-rank-card__eyebrow">{featuredCopy.rank}</span>
+          <h1>SAMPLE<br />FILM A</h1>
+          <p className="home-rank-card__summary">{featuredCopy.summary}</p>
+          <p className="home-rank-card__note">{featuredCopy.note}</p>
+          <div className="home-rank-card__metrics">
+            <span>
+              <small>SCENE SCORE</small>
+              <strong>9.8</strong>
+            </span>
+            <span>
+              <small>{featuredCopy.change}</small>
+              <strong className="home-rank-card__change">↑2</strong>
+            </span>
+          </div>
+          <Link className="home-rank-card__link" to={'/series/' + works[0].id}>
+            <span>{featuredCopy.details}</span><ArrowUpRight aria-hidden="true" />
           </Link>
         </div>
 
@@ -390,42 +418,46 @@ export default function Home() {
 
       </section>
 
-      <section id="home-highlight" className="home-section home-section--highlight">
-        <div className="section-heading">
-          <div><h2>{sectionCopy.highlightTitle}</h2></div>
-          <Link className="text-link" to="/explore">{sectionCopy.highlightLink} <ArrowUpRight aria-hidden="true" /></Link>
-        </div>
-        <Reveal className="highlight-layout">
-          <Link to={'/series/' + works[0].id} className="highlight-card scene-poster scene-poster--red">
-            <AmbientVideo src={works[0].video} className="scene-poster__video" />
-            <span className="poster-index">01 / 26</span>
-            <span className="poster-title">{works[0].title}</span>
-            <span className="poster-hover-label">VIEW DETAIL <ArrowUpRight aria-hidden="true" /></span>
-          </Link>
-          <div className="highlight-copy">
-            <span className="display-number">01</span>
-            <h3>SAMPLE FILM A</h3>
-            <p>{sectionCopy.featuredDescription}</p>
-            <Link className="text-link" to={'/series/' + works[0].id}>{sectionCopy.openEntry} <ArrowUpRight aria-hidden="true" /></Link>
+      <section id="home-highlight" className="home-section home-section--works">
+        <div className="home-works__heading">
+          <div>
+            <span className="home-works__eyebrow">{sectionCopy.worksEyebrow}</span>
+            <h2>{sectionCopy.worksTitle}</h2>
           </div>
-        </Reveal>
-      </section>
-
-      <section className="home-section home-section--ranking">
-        <div className="section-heading">
-          <div><h2>{sectionCopy.rankingTitle}</h2></div>
-          <Link className="text-link" to="/explore">{sectionCopy.rankingLink} <ArrowUpRight aria-hidden="true" /></Link>
+          <div className="home-works__intro">
+            <p>{sectionCopy.worksDescription}</p>
+            <span>{sectionCopy.worksHint}</span>
+          </div>
         </div>
-        <div className="home-ranking-list">
-          {works.slice(0, 5).map((work) => (
-            <Link to={'/series/' + work.id} className="home-ranking-row" key={work.id}>
-              <span className="home-ranking-row__index">{work.index}</span>
-              <span className="home-ranking-row__title">{work.title}</span>
-              <span>{workTypeLabel(work.type)}</span>
-              <span className="score-placeholder">—</span>
-              <ArrowUpRight aria-hidden="true" />
-            </Link>
-          ))}
+
+        <div className="home-works__track" aria-label={sectionCopy.worksAria}>
+          {works.slice(1, 5).map((work, index) => {
+            const score = homeWorkScores[index]
+
+            return (
+              <Reveal className="home-work-card-shell" key={work.id}>
+                <Link
+                  to={'/series/' + work.id}
+                  className="home-work-card"
+                  aria-label={`${sectionCopy.viewWork}: ${work.title}`}
+                >
+                  <span className="home-work-card__media">
+                    <AmbientVideo src={work.video} className="home-work-card__video" />
+                    <span className="home-work-card__index">{work.index}</span>
+                  </span>
+                  <span className="home-work-card__info">
+                    <strong>{work.title}</strong>
+                    <span className="home-work-card__score">
+                      <small>SCENE SCORE</small>
+                      <b>{score.score}</b>
+                    </span>
+                    <span className={`home-work-card__trend is-${score.trend}`}>{score.change}</span>
+                    <ArrowUpRight aria-hidden="true" />
+                  </span>
+                </Link>
+              </Reveal>
+            )
+          })}
         </div>
       </section>
 

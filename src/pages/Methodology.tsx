@@ -7,9 +7,6 @@ export default function Methodology() {
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const copy = isTraditional
     ? {
-        heroKicker: '評分方法',
-        heroTitle: <>榜單<br /><em>規則</em></>,
-        heroDescription: '一套清晰、公開的閱讀框架，說明哪些作品可以進入索引、如何計分，以及榜單何時更新',
         eligibility: {
           kicker: '收錄條件',
           title: '先確認作品，再談排名',
@@ -43,9 +40,6 @@ export default function Methodology() {
         return: '返回排行榜',
       }
     : {
-        heroKicker: 'BEHIND THE SCORE',
-        heroTitle: <>RANKING<br /><em>RULES.</em></>,
-        heroDescription: 'A clear, public reading frame for what enters the index, how every entry is scored and when the ranking is refreshed.',
         eligibility: {
           kicker: 'ELIGIBILITY',
           title: 'A clear frame comes before a rank.',
@@ -81,12 +75,6 @@ export default function Methodology() {
 
   return (
     <div className="rules-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
-      <section className="rules-hero">
-        <span className="rules-kicker">{copy.heroKicker}</span>
-        <h1>{copy.heroTitle}</h1>
-        <p>{copy.heroDescription}</p>
-      </section>
-
       <section className="rules-board" aria-label={isTraditional ? '榜單規則' : 'Ranking rules'}>
         <div className="rules-board__header">
           <span className="rules-board__mark">SCENE SCORE / {isTraditional ? '公開索引' : 'PUBLIC INDEX'}</span>
