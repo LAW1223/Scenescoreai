@@ -1,95 +1,51 @@
-import { setSeoData } from '../utils/seo'
-import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Target, Eye } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-export const About = () => {
-  const { t, i18n } = useTranslation()
-
-  useEffect(() => {
-    setSeoData(
-      `${t('about.title')} - Scenescoreai`,
-      t('about.subtitle')
-    )
-  }, [i18n.language, t])
+export default function About() {
+  const { i18n } = useTranslation()
+  const isTraditional = i18n.resolvedLanguage === 'zh-TW'
+  const copy = isTraditional
+    ? {
+        kicker: '/ 關於 SCENE SCORE',
+        title: <>讓好的<br /><em>內容被看見</em></>,
+        intro: 'Scene Score 是一個面向公眾的影像故事排名與資料體驗，專業、透明，讓作品與作品背後的語境保持靠近',
+        position: '/ 我們的立場',
+        positionTitle: <>資料可以找到場景<br /><em>人決定它為何留下</em></>,
+        values: '/ 我們重視的事',
+        valuesOne: '清晰勝過噪音，公開流程勝過神秘數字。我們希望讓帶來經驗、品味與責任感的人被好好介紹',
+        valuesTwo: '公開瀏覽、全時段排名預覽、評審焦點和評分方法說明，讓每項內容都保留清晰脈絡',
+        contact: '/ 聯絡合作',
+        contactTitle: <>下一個項目<br /><em>由此開始</em></>,
+        contactAction: '發起合作',
+        back: '查看公開索引',
+      }
+    : {
+        kicker: '/ ABOUT SCENE SCORE',
+        title: <>MAKE GOOD<br /><em>CONTENT VISIBLE.</em></>,
+        intro: 'Scene Score is a public-facing ranking and information experience for screen stories — professional, transparent and built to keep context close to the frame.',
+        position: '/ OUR POSITION',
+        positionTitle: <>Data can find the scene.<br /><em>People decide why it stays.</em></>,
+        values: '/ WHAT WE VALUE',
+        valuesOne: 'Clarity over noise. A visible process over a mysterious number. A careful introduction to the people who bring experience, taste and accountability to the conversation.',
+        valuesTwo: 'The public experience brings together all-time ranking preview, jury spotlight and a visible methodology framework.',
+        contact: '/ CONTACT',
+        contactTitle: <>THE NEXT PROJECT<br /><em>STARTS HERE.</em></>,
+        contactAction: 'INITIATE A COLLABORATION',
+        back: 'View the index',
+      }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{t('about.title')}</h1>
-        <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-          {t('about.subtitle')}
-        </p>
-      </div>
-
-      <div className="space-y-12 text-slate-300 leading-relaxed text-lg">
-
-        {/* Mission & Vision */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-blue-900/30 to-slate-900 p-8 rounded-2xl border border-blue-800/40">
-            <div className="flex items-center gap-3 mb-4">
-              <Target className="w-7 h-7 text-blue-400 flex-shrink-0" />
-              <h2 className="text-2xl font-bold text-white">{t('about.missionTitle')}</h2>
-            </div>
-            <p className="text-slate-300 text-base leading-relaxed">{t('about.missionText')}</p>
-          </div>
-          <div className="bg-gradient-to-br from-indigo-900/30 to-slate-900 p-8 rounded-2xl border border-indigo-800/40">
-            <div className="flex items-center gap-3 mb-4">
-              <Eye className="w-7 h-7 text-indigo-400 flex-shrink-0" />
-              <h2 className="text-2xl font-bold text-white">{t('about.visionTitle')}</h2>
-            </div>
-            <p className="text-slate-300 text-base leading-relaxed">{t('about.visionText')}</p>
-          </div>
-        </div>
-
-        <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 space-y-4">
-          <h2 className="text-2xl font-semibold text-white mb-4">{t('about.companyTitle')}</h2>
-          <p>{t('about.companyP1')}</p>
-          <p>{t('about.companyP2')}</p>
-          <p>{t('about.companyP3')}</p>
-          <p>{t('about.companyP4')}</p>
-        </div>
-
-        <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 space-y-4">
-          <h2 className="text-2xl font-semibold text-white mb-4">{t('about.coreBusinessTitle')}</h2>
-          <ul className="list-disc list-inside space-y-2">
-            <li><strong className="text-blue-400">{t('about.core1Title')}</strong> {t('about.core1Desc')}</li>
-            <li><strong className="text-blue-400">{t('about.core2Title')}</strong> {t('about.core2Desc')}</li>
-            <li><strong className="text-blue-400">{t('about.core3Title')}</strong> {t('about.core3Desc')}</li>
-          </ul>
-        </div>
-
-        <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 space-y-4">
-          <h2 className="text-2xl font-semibold text-white mb-4">{t('about.featuresTitle')}</h2>
-          <ul className="space-y-4">
-            <li><strong className="block text-indigo-400 mb-1">{t('about.feature1Title')}</strong> {t('about.feature1Desc')}</li>
-            <li><strong className="block text-indigo-400 mb-1">{t('about.feature2Title')}</strong> {t('about.feature2Desc')}</li>
-            <li><strong className="block text-indigo-400 mb-1">{t('about.feature3Title')}</strong> {t('about.feature3Desc')}</li>
-          </ul>
-        </div>
-
-        <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 space-y-4 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">{t('about.judgesTitle')}</h2>
-          <p className="text-xl text-slate-300 font-medium tracking-wide">
-            {t('about.judgesDesc')}
-          </p>
-          <Link
-            to="/judges"
-            className="inline-block mt-2 text-blue-400 hover:text-blue-300 font-medium transition"
-          >
-            {t('about.judgesLink')}
-          </Link>
-        </div>
-
-        <div className="text-center p-8">
-          <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-            {t('about.mission')}
-          </p>
-        </div>
-      </div>
+    <div className="about-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
+      <section className="about-hero page-hero">
+        <span className="section-kicker">{copy.kicker}</span>
+        <h1>{copy.title}</h1>
+        <p>{copy.intro}</p>
+      </section>
+      <section className="about-statement"><span className="section-kicker">{copy.position}</span><h2>{copy.positionTitle}</h2></section>
+      <section className="about-columns"><div><span className="section-kicker">{copy.values}</span></div><div><p>{copy.valuesOne}</p><p>{copy.valuesTwo}</p></div></section>
+      <section className="about-contact" id="contact"><span className="section-kicker">{copy.contact}</span><h2>{copy.contactTitle}</h2><a className="round-arrow-link" href="mailto:hello@scenescore.ai"><span>{copy.contactAction}</span><ArrowUpRight aria-hidden="true" /></a></section>
+      <Link className="about-back" to="/explore">{copy.back} <ArrowUpRight aria-hidden="true" /></Link>
     </div>
   )
 }
-
-export default About

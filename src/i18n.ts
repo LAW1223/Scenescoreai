@@ -11,7 +11,7 @@ const resources = {
 };
 
 // Check local storage for language preference or use browser language, fallback to zh-CN
-const defaultLanguage = localStorage.getItem('app-language') || 'zh-CN';
+const defaultLanguage = localStorage.getItem('app-language') || 'en';
 
 i18n
   .use(initReactI18next)

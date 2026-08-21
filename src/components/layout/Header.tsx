@@ -1,143 +1,159 @@
-import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Globe, ChevronDown } from 'lucide-react'
-import { useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Menu, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const location = useLocation()
-  const { t, i18n } = useTranslation()
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null)
+  const { pathname } = useLocation()
+  const { i18n } = useTranslation()
+  const isTraditional = i18n.resolvedLanguage === 'zh-TW'
+  const uiCopy = isTraditional
+    ? {
+        home: '首頁',
+        explore: '探索',
+        judges: '特邀評審',
+        methodology: '評分方法',
+        about: '關於我們',
+        primaryNavigation: '主要導航',
+        language: '語言',
+        status: '狀態',
+        allTime: '全時段 / 公開索引',
+        close: '關閉導航',
+        open: '開啟導航',
+        mobileStatus: '公開索引 / 2026',
+      }
+    : {
+        home: 'Home',
+        explore: 'Explore',
+        judges: 'Jury Spotlight',
+        methodology: 'Behind the Score',
+        about: 'About Us',
+        primaryNavigation: 'Primary navigation',
+        language: 'Language',
+        status: 'Status',
+        allTime: 'ALL-TIME / PUBLIC INDEX',
+        close: 'Close navigation',
+        open: 'Open navigation',
+        mobileStatus: 'PUBLIC INDEX / 2026',
+      }
 
-  const navLinks = [
-    { name: t('nav.home'), path: '/' },
-    { name: t('nav.anime'), path: '/ranking/anime' },
-    { name: t('nav.short'), path: '/ranking/short' },
-    { name: t('nav.music'), path: '/ranking/music' },
-    { name: t('nav.tools'), path: '/ranking/tools' },
-    { name: t('nav.rules'), path: '/rules' },
-    { name: t('nav.about'), path: '/about' },
-    { name: t('nav.judges'), path: '/judges' },
-  ]
+  useEffect(() => {
+    if (!isMobileMenuOpen) return
 
-  const isActive = (path: string) => location.pathname === path
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false)
+    }
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    localStorage.setItem('app-language', lng);
-  };
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [isMobileMenuOpen])
+
+  const navLinks = isTraditional
+    ? [
+        { name: uiCopy.home, path: '/' },
+        { name: uiCopy.explore, path: '/explore' },
+        { name: uiCopy.judges, path: '/judges' },
+        { name: uiCopy.methodology, path: '/methodology' },
+        { name: uiCopy.about, path: '/about' },
+      ]
+    : [
+        { name: uiCopy.home, path: '/' },
+        { name: uiCopy.explore, path: '/explore' },
+        { name: uiCopy.judges, path: '/judges' },
+        { name: uiCopy.methodology, path: '/methodology' },
+        { name: uiCopy.about, path: '/about' },
+      ]
+
+  const changeLanguage = (language: 'en' | 'zh-TW') => {
+    window.localStorage.setItem('app-language', language)
+    void i18n.changeLanguage(language)
+  }
+
+  const isDarkSurface = pathname.startsWith('/series/') || pathname.startsWith('/judges/') || pathname === '/'
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
-              Scenescoreai
-            </Link>
-          </div>
-          
-          {/* Desktop Nav */}
-          <nav className="hidden md:ml-6 md:flex md:items-center md:space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-blue-400 ${
-                  isActive(link.path) ? 'text-blue-500' : 'text-slate-300'
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Link
-              to="/contact"
-              className="ml-4 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-            >
-              {t('nav.contact')}
-            </Link>
+    <header className={`site-header ${isDarkSurface ? 'site-header--on-dark' : ''}`}>
+      <Link to="/" className="site-logo" aria-label="Scene Score home">
+        <img className="site-logo__mark site-logo__mark--dark" src="/images/logo/scenescore-logo-long-black.png" alt="" />
+        <img className="site-logo__mark site-logo__mark--light" src="/images/logo/scenescore-logo-long-white.png" alt="" />
+        <i aria-hidden="true" />
+      </Link>
 
-            {/* Language Switcher */}
-            <div className="ml-6 relative flex items-center text-slate-300 hover:text-white transition">
-              <Globe className="w-5 h-5 mr-1" />
-              <div className="relative flex items-center">
-                <select
-                  value={i18n.language}
-                  onChange={(e) => changeLanguage(e.target.value)}
-                  className="bg-transparent text-sm appearance-none outline-none cursor-pointer pr-5"
-                >
-                  <option value="zh-CN" className="bg-slate-900 text-white">简体中文</option>
-                  <option value="zh-TW" className="bg-slate-900 text-white">繁體中文</option>
-                  <option value="en" className="bg-slate-900 text-white">English</option>
-                </select>
-                <ChevronDown className="w-3 h-3 absolute right-0 pointer-events-none" />
-              </div>
-            </div>
-          </nav>
-
-          {/* Mobile menu button */}
-          <div className="flex items-center md:hidden">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+      <nav
+        className={`desktop-nav${hoveredPath ? ' has-hovered-item' : ''}`}
+        aria-label={uiCopy.primaryNavigation}
+        onMouseLeave={() => setHoveredPath(null)}
+      >
+        {navLinks.map((link, index) => (
+          <span className="nav-item" key={link.path}>
+            {index > 0 && <em aria-hidden="true">/</em>}
+            <NavLink
+              to={link.path}
+              end={link.path === '/'}
+              onMouseEnter={() => setHoveredPath(link.path)}
+              onFocus={() => setHoveredPath(link.path)}
+              onBlur={() => setHoveredPath(null)}
+              className={({ isActive }) => [
+                isActive ? 'is-active' : '',
+                hoveredPath === link.path ? 'is-hovered' : '',
+              ].filter(Boolean).join(' ') || undefined}
             >
-              <span className="sr-only">Open main menu</span>
-              {isMobileMenuOpen ? (
-                <X className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="block h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
-          </div>
-        </div>
+              {link.name}
+            </NavLink>
+          </span>
+        ))}
+      </nav>
+
+      <div className="header-language-switch" aria-label={uiCopy.language}>
+        <button type="button" className={!isTraditional ? 'is-active' : ''} aria-pressed={!isTraditional} onClick={() => changeLanguage('en')}>EN</button>
+        <span aria-hidden="true">/</span>
+        <button type="button" className={isTraditional ? 'is-active' : ''} aria-pressed={isTraditional} onClick={() => changeLanguage('zh-TW')}>繁中</button>
       </div>
 
-      {/* Mobile Nav */}
+      <div className="header-meta" aria-label={uiCopy.status}>
+        <span className="status-dot" />
+        <span>{uiCopy.allTime}</span>
+      </div>
+
+      <button
+        className="menu-trigger"
+        type="button"
+        aria-label={isMobileMenuOpen ? uiCopy.close : uiCopy.open}
+        aria-expanded={isMobileMenuOpen}
+        onClick={() => setIsMobileMenuOpen((open) => !open)}
+      >
+        {isMobileMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+      </button>
+
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-slate-900 border-b border-slate-800"
+            className="mobile-nav"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <div className="mobile-nav__inner">
               {navLinks.map((link) => (
-                <Link
+                <NavLink
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    isActive(link.path)
-                      ? 'bg-slate-800 text-blue-500'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                  }`}
+                  end={link.path === '/'}
+                  className={({ isActive }) => isActive ? 'is-active' : undefined}
                 >
                   {link.name}
-                </Link>
+                </NavLink>
               ))}
-              <Link
-                to="/contact"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block w-full text-center mt-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700"
-              >
-                {t('nav.contact')}
-              </Link>
-              <div className="mt-4 px-3 py-2 flex items-center justify-between text-slate-300">
-                <div className="flex items-center">
-                  <Globe className="w-5 h-5 mr-2" />
-                  <span>Language</span>
-                </div>
-                <select 
-                  value={i18n.language} 
-                  onChange={(e) => changeLanguage(e.target.value)}
-                  className="bg-slate-800 text-sm rounded px-2 py-1 outline-none"
-                >
-                  <option value="zh-CN">简体中文</option>
-                  <option value="zh-TW">繁體中文</option>
-                  <option value="en">English</option>
-                </select>
+              <div className="mobile-nav__language" aria-label={uiCopy.language}>
+                <button type="button" className={!isTraditional ? 'is-active' : ''} aria-pressed={!isTraditional} onClick={() => changeLanguage('en')}>EN</button>
+                <span aria-hidden="true">/</span>
+                <button type="button" className={isTraditional ? 'is-active' : ''} aria-pressed={isTraditional} onClick={() => changeLanguage('zh-TW')}>繁中</button>
               </div>
+              <div className="mobile-nav__status"><span className="status-dot" /> {uiCopy.mobileStatus}</div>
             </div>
           </motion.div>
         )}
