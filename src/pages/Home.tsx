@@ -1,19 +1,14 @@
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { judges, works } from '../data/sceneScore'
+import { works } from '../data/sceneScore'
 
 gsap.registerPlugin(ScrollTrigger)
-
-const juryStackOrder = ['paco-wong', 'chen-tai-lee', 'bennett-pang', 'edmond-wong', 'ck-chan']
-const juryPortraits = juryStackOrder
-  .map((id) => judges.find((judge) => judge.id === id))
-  .filter((judge): judge is (typeof judges)[number] => Boolean(judge))
 
 const homeWorkScores = [
   { score: '89.7', change: '↓1', trend: 'down' },
@@ -21,6 +16,9 @@ const homeWorkScores = [
   { score: '84.9', change: '↑1', trend: 'up' },
   { score: '82.6', change: '↓1', trend: 'down' },
 ] as const
+
+const homeWorkCards = works.slice(1, 5)
+const homeWorkCarouselCards = [...homeWorkCards, ...homeWorkCards, ...homeWorkCards]
 
 const HOME_VIDEO_TIME_KEY = 'scene-score-home-video-time'
 type HomeVideoStore = { time: number }
@@ -109,10 +107,66 @@ const AmbientVideo = ({ src, className }: { src: string; className: string }) =>
   )
 }
 
+const HoverPreviewVideo = ({ src, className, isActive }: { src: string; className: string; isActive: boolean }) => {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    let isIntersecting = false
+
+    const syncPlayback = () => {
+      if (isActive && isIntersecting && document.visibilityState === 'visible') {
+        void video.play().catch(() => {})
+      } else {
+        video.pause()
+      }
+    }
+
+    const observer = typeof IntersectionObserver === 'undefined'
+      ? null
+      : new IntersectionObserver(([entry]) => {
+          isIntersecting = entry.isIntersecting && entry.intersectionRatio >= 0.5
+          syncPlayback()
+        }, { threshold: [0, 0.5] })
+
+    observer?.observe(video)
+    syncPlayback()
+    document.addEventListener('visibilitychange', syncPlayback)
+    return () => {
+      observer?.disconnect()
+      document.removeEventListener('visibilitychange', syncPlayback)
+      video.pause()
+    }
+  }, [isActive])
+
+  return (
+    <video
+      ref={videoRef}
+      className={className}
+      src={src}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      draggable={false}
+      aria-hidden="true"
+    />
+  )
+}
+
 export default function Home() {
   const pageRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const homeWorksTrackRef = useRef<HTMLDivElement>(null)
+  const homeWorksDragRef = useRef({ pointerId: -1, startX: 0, startScroll: 0, moved: false })
+  const homeWorksMetricsRef = useRef({ step: 0, groupWidth: 0 })
+  const homeWorksProgrammaticRef = useRef({ active: false, timer: 0 })
+  const suppressHomeWorkClickRef = useRef(false)
   const [heroVideoReady, setHeroVideoReady] = useState(false)
+  const [activeHomeWork, setActiveHomeWork] = useState<string | null>(null)
+  const [homeWorksDragging, setHomeWorksDragging] = useState(false)
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const featuredCopy = isTraditional
@@ -133,41 +187,250 @@ export default function Home() {
 
   const sectionCopy = isTraditional
     ? {
-        worksEyebrow: '橫向作品瀏覽 / WORKS',
-        worksTitle: 'TOP 2—05',
-        worksDescription: '四個同源的預覽項目，保留名次、標題、分數與變化',
-        worksHint: '← 左右滑動 →',
-        worksAria: 'Scene Score 第二至第五名作品',
+        worksAria: 'Scene Score TOP 2—10 作品輪播',
         viewWork: '查看作品',
+        rankingAria: '查看完整排行榜',
+        viewRanking: '查看完整排行榜',
         howTitle: '透明始於設計',
         howSoul: '具體落實於實踐',
         howDescription: 'Scene Score 將在正式排名發布前公開評分維度、權重與異常處理方式',
         readMethod: '閱讀評分方式',
         howItems: ['評分維度', '權重配置', '評審規程'],
         pending: '待確認',
-        juryTitle: '好的判斷',
-        jurySoul: '需要觀看的角度',
-        meetJury: '認識評審',
-        juryAria: 'Scene Score 評審照片',
       }
     : {
-        worksEyebrow: 'HORIZONTAL WORKS / 02—05',
-        worksTitle: 'TOP 2—05',
-        worksDescription: 'Four preview entries retain their rank, title, score and movement.',
-        worksHint: '← DRAG TO BROWSE →',
-        worksAria: 'Scene Score works ranked second through fifth',
+        worksAria: 'Scene Score TOP 2—10 works carousel',
         viewWork: 'VIEW WORK',
+        rankingAria: 'View full ranking',
+        viewRanking: 'VIEW FULL RANKING',
         howTitle: 'Transparent by design.',
         howSoul: 'Specific by practice.',
         howDescription: 'Scene Score will publish its scoring dimensions, weights and anomaly handling before formal rankings go live.',
         readMethod: 'READ THE METHOD',
         howItems: ['Dimensions', 'Weighting', 'Jury protocol'],
         pending: 'Pending confirmation',
-        juryTitle: 'Good judgment',
-        jurySoul: 'needs a point of view.',
-        meetJury: 'MEET THE JURY',
-        juryAria: 'Scene Score jury portraits',
       }
+
+  const measureHomeWorks = () => {
+    const track = homeWorksTrackRef.current
+    if (!track) return homeWorksMetricsRef.current
+
+    const cards = Array.from(track.querySelectorAll<HTMLElement>('.home-work-card-shell'))
+    const firstCard = cards[0]
+    const secondCard = cards[1]
+    const middleGroupFirstCard = cards[homeWorkCards.length]
+    if (!firstCard || !secondCard || !middleGroupFirstCard) return homeWorksMetricsRef.current
+
+    homeWorksMetricsRef.current = {
+      step: secondCard.offsetLeft - firstCard.offsetLeft,
+      groupWidth: (secondCard.offsetLeft - firstCard.offsetLeft) * homeWorkCards.length,
+    }
+    return homeWorksMetricsRef.current
+  }
+
+  const normalizeHomeWorksTarget = (target: number) => {
+    const { groupWidth } = homeWorksMetricsRef.current
+    if (!groupWidth) return target
+
+    const lowerBound = groupWidth * 0.5
+    const upperBound = groupWidth * 1.5
+    let normalizedTarget = target
+    while (normalizedTarget < lowerBound) normalizedTarget += groupWidth
+    while (normalizedTarget > upperBound) normalizedTarget -= groupWidth
+    return normalizedTarget
+  }
+
+  const prepareHomeWorksTarget = (track: HTMLDivElement, target: number, groupWidth: number) => {
+    const lowerBound = groupWidth * 0.5
+    const upperBound = groupWidth * 1.5
+
+    if (target < lowerBound) {
+      track.scrollTo({ left: track.scrollLeft + groupWidth, behavior: 'auto' })
+      return target + groupWidth
+    }
+
+    if (target > upperBound) {
+      track.scrollTo({ left: track.scrollLeft - groupWidth, behavior: 'auto' })
+      return target - groupWidth
+    }
+
+    return target
+  }
+
+  const normalizeHomeWorksScroll = () => {
+    const track = homeWorksTrackRef.current
+    if (!track) return
+
+    const metrics = homeWorksMetricsRef.current.step ? homeWorksMetricsRef.current : measureHomeWorks()
+    if (!metrics.groupWidth) return
+
+    const normalizedScroll = normalizeHomeWorksTarget(track.scrollLeft)
+    if (Math.abs(normalizedScroll - track.scrollLeft) > 0.5) {
+      track.scrollTo({ left: normalizedScroll, behavior: 'auto' })
+    }
+  }
+
+  const scrollHomeWorksTo = (track: HTMLDivElement, target: number, behavior: ScrollBehavior) => {
+    const programmatic = homeWorksProgrammaticRef.current
+    if (programmatic.timer) window.clearTimeout(programmatic.timer)
+
+    programmatic.active = behavior === 'smooth'
+    track.scrollTo({ left: target, behavior })
+
+    if (!programmatic.active) {
+      programmatic.timer = 0
+      return
+    }
+
+    // Native smooth scrolling emits several scroll events. Keep those events
+    // from wrapping the track mid-animation, then normalize once it settles.
+    programmatic.timer = window.setTimeout(() => {
+      programmatic.active = false
+      programmatic.timer = 0
+      normalizeHomeWorksScroll()
+    }, 700)
+  }
+
+  const snapHomeWorks = () => {
+    const track = homeWorksTrackRef.current
+    const metrics = homeWorksMetricsRef.current.step ? homeWorksMetricsRef.current : measureHomeWorks()
+    if (!track || !metrics.step) return
+
+    const rawTarget = Math.round(track.scrollLeft / metrics.step) * metrics.step
+    const target = prepareHomeWorksTarget(track, rawTarget, metrics.groupWidth)
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+    scrollHomeWorksTo(track, target, behavior)
+  }
+
+  const handleHomeWorksPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return
+
+    const track = event.currentTarget
+    homeWorksDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startScroll: track.scrollLeft,
+      moved: false,
+    }
+    setActiveHomeWork(null)
+    setHomeWorksDragging(false)
+    track.setPointerCapture(event.pointerId)
+  }
+
+  const handleHomeWorksPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = homeWorksDragRef.current
+    if (drag.pointerId !== event.pointerId) return
+
+    const distance = event.clientX - drag.startX
+    if (!drag.moved && Math.abs(distance) > 7) {
+      drag.moved = true
+      setHomeWorksDragging(true)
+    }
+    if (!drag.moved) return
+
+    event.preventDefault()
+    event.currentTarget.scrollTo({ left: drag.startScroll - distance, behavior: 'auto' })
+    normalizeHomeWorksScroll()
+  }
+
+  const finishHomeWorksDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = homeWorksDragRef.current
+    if (drag.pointerId !== event.pointerId) return
+
+    const wasMoved = drag.moved
+    homeWorksDragRef.current.pointerId = -1
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    if (wasMoved) {
+      suppressHomeWorkClickRef.current = true
+      window.setTimeout(() => {
+        suppressHomeWorkClickRef.current = false
+      }, 0)
+    }
+    setHomeWorksDragging(false)
+    snapHomeWorks()
+  }
+
+  const handleHomeWorkClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (!suppressHomeWorkClickRef.current) return
+    event.preventDefault()
+    event.stopPropagation()
+    suppressHomeWorkClickRef.current = false
+  }
+
+  const scrollHomeWorks = (direction: -1 | 1) => {
+    const track = homeWorksTrackRef.current
+    const metrics = homeWorksMetricsRef.current.step ? homeWorksMetricsRef.current : measureHomeWorks()
+    if (!track || !metrics.step) return
+
+    normalizeHomeWorksScroll()
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+    const rawTarget = track.scrollLeft + direction * metrics.step
+    const target = prepareHomeWorksTarget(track, rawTarget, metrics.groupWidth)
+    scrollHomeWorksTo(track, target, behavior)
+  }
+
+  useLayoutEffect(() => {
+    const track = homeWorksTrackRef.current
+    if (!track) return
+    const programmatic = homeWorksProgrammaticRef.current
+
+    const initialize = () => {
+      measureHomeWorks()
+      if (homeWorksMetricsRef.current.groupWidth) {
+        track.scrollTo({ left: homeWorksMetricsRef.current.groupWidth, behavior: 'auto' })
+      }
+    }
+    // Browsers can restore an overflow container's previous scroll position
+    // after the first paint. Re-apply the middle copy after that restoration
+    // so the carousel always opens on TOP2 without a visible jump.
+    const frame = window.requestAnimationFrame(() => {
+      initialize()
+      window.requestAnimationFrame(initialize)
+    })
+    const delayedInitialization = window.setTimeout(initialize, 80)
+    const handleResize = () => {
+      const previousStep = homeWorksMetricsRef.current.step
+      const previousIndex = previousStep
+        ? Math.round(track.scrollLeft / previousStep) % homeWorkCards.length
+        : 0
+      measureHomeWorks()
+      if (homeWorksMetricsRef.current.step) {
+        const normalizedIndex = (previousIndex + homeWorkCards.length) % homeWorkCards.length
+        track.scrollTo({
+          left: homeWorksMetricsRef.current.groupWidth + normalizedIndex * homeWorksMetricsRef.current.step,
+          behavior: 'auto',
+        })
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    const layoutObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => {
+      const previousStep = homeWorksMetricsRef.current.step
+      const previousGroupWidth = homeWorksMetricsRef.current.groupWidth
+      const nextMetrics = measureHomeWorks()
+      const layoutChanged = !previousStep
+        || Math.abs(nextMetrics.step - previousStep) > 0.5
+        || Math.abs(nextMetrics.groupWidth - previousGroupWidth) > 0.5
+      if (layoutChanged && nextMetrics.groupWidth) {
+        track.scrollTo({ left: nextMetrics.groupWidth, behavior: 'auto' })
+      }
+    })
+    layoutObserver?.observe(track)
+    track.querySelectorAll<HTMLElement>('.home-work-card-shell').forEach(card => layoutObserver?.observe(card))
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(delayedInitialization)
+      window.removeEventListener('resize', handleResize)
+      layoutObserver?.disconnect()
+      if (programmatic.timer) {
+        window.clearTimeout(programmatic.timer)
+      }
+      programmatic.active = false
+      programmatic.timer = 0
+    }
+  }, [])
 
   useLayoutEffect(() => {
     const video = videoRef.current
@@ -352,7 +615,7 @@ export default function Home() {
           <video
             ref={videoRef}
             className={`home-hero__video${heroVideoReady ? ' is-ready' : ''}`}
-            src="/media/scene-score-home.mp4"
+            src="/media/scene-score-home.webm"
             muted
             loop
             playsInline
@@ -420,44 +683,74 @@ export default function Home() {
 
       <section id="home-highlight" className="home-section home-section--works">
         <div className="home-works__heading">
-          <div>
-            <span className="home-works__eyebrow">{sectionCopy.worksEyebrow}</span>
-            <h2>{sectionCopy.worksTitle}</h2>
-          </div>
-          <div className="home-works__intro">
-            <p>{sectionCopy.worksDescription}</p>
-            <span>{sectionCopy.worksHint}</span>
-          </div>
+          <h2>
+            <span className="home-works__heading-top">TOP</span>
+            <span>2—10</span>
+          </h2>
         </div>
 
-        <div className="home-works__track" aria-label={sectionCopy.worksAria}>
-          {works.slice(1, 5).map((work, index) => {
-            const score = homeWorkScores[index]
+        <div className="home-works__carousel" role="region" aria-label={sectionCopy.worksAria} aria-roledescription="carousel">
+          <button className="home-works__control home-works__control--prev" type="button" aria-label={isTraditional ? '向左瀏覽作品' : 'Browse works left'} onClick={() => scrollHomeWorks(-1)}>
+            <ArrowLeft aria-hidden="true" />
+          </button>
+          <div
+            ref={homeWorksTrackRef}
+            className={`home-works__track${homeWorksDragging ? ' is-dragging' : ''}`}
+            onPointerDown={handleHomeWorksPointerDown}
+            onPointerMove={handleHomeWorksPointerMove}
+            onPointerUp={finishHomeWorksDrag}
+            onPointerCancel={finishHomeWorksDrag}
+            onLostPointerCapture={finishHomeWorksDrag}
+            onScroll={() => {
+              if (!homeWorksProgrammaticRef.current.active) normalizeHomeWorksScroll()
+            }}
+          >
+            {homeWorkCarouselCards.map((work, index) => {
+              const score = homeWorkScores[index % homeWorkScores.length]
+              const cardKey = `${work.id}-${index}`
 
-            return (
-              <Reveal className="home-work-card-shell" key={work.id}>
-                <Link
-                  to={'/series/' + work.id}
-                  className="home-work-card"
-                  aria-label={`${sectionCopy.viewWork}: ${work.title}`}
-                >
-                  <span className="home-work-card__media">
-                    <AmbientVideo src={work.video} className="home-work-card__video" />
-                    <span className="home-work-card__index">{work.index}</span>
-                  </span>
-                  <span className="home-work-card__info">
-                    <strong>{work.title}</strong>
-                    <span className="home-work-card__score">
-                      <small>SCENE SCORE</small>
-                      <b>{score.score}</b>
+              return (
+                <Reveal className="home-work-card-shell" key={cardKey}>
+                  <Link
+                    to={'/series/' + work.id}
+                    className="home-work-card"
+                    draggable={false}
+                    aria-label={`${sectionCopy.viewWork}: ${work.title}`}
+                    onClick={handleHomeWorkClick}
+                    onPointerEnter={() => {
+                      if (homeWorksDragRef.current.pointerId === -1) setActiveHomeWork(cardKey)
+                    }}
+                    onPointerLeave={() => setActiveHomeWork(null)}
+                    onFocus={() => setActiveHomeWork(cardKey)}
+                    onBlur={() => setActiveHomeWork(null)}
+                  >
+                    <span className="home-work-card__media">
+                      <HoverPreviewVideo src={work.video} className="home-work-card__video" isActive={activeHomeWork === cardKey} />
+                      <span className="home-work-card__index">{work.index}</span>
                     </span>
-                    <span className={`home-work-card__trend is-${score.trend}`}>{score.change}</span>
-                    <ArrowUpRight aria-hidden="true" />
-                  </span>
-                </Link>
-              </Reveal>
-            )
-          })}
+                    <span className="home-work-card__info">
+                      <strong>{work.title}</strong>
+                      <span className="home-work-card__score">
+                        <small>SCENE SCORE</small>
+                        <b>{score.score}</b>
+                      </span>
+                      <span className={`home-work-card__trend is-${score.trend}`}>{score.change}</span>
+                      <ArrowUpRight aria-hidden="true" />
+                    </span>
+                  </Link>
+                </Reveal>
+              )
+            })}
+          </div>
+          <button className="home-works__control home-works__control--next" type="button" aria-label={isTraditional ? '向右瀏覽作品' : 'Browse works right'} onClick={() => scrollHomeWorks(1)}>
+            <ArrowRight aria-hidden="true" />
+          </button>
+        </div>
+        <div className="home-works__footer">
+          <Link className="home-works__ranking-link" to="/explore" aria-label={sectionCopy.rankingAria}>
+            <span>{sectionCopy.viewRanking}</span>
+            <ArrowUpRight aria-hidden="true" />
+          </Link>
         </div>
       </section>
 
@@ -473,33 +766,6 @@ export default function Home() {
               <AmbientVideo src={works[index + 1].video} className="method-card__video" />
               <span>0{index + 1}</span><h3>{item}</h3><p>{sectionCopy.pending}</p>
             </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="home-section home-section--jury">
-        <div className="jury-teaser-copy">
-          <h2>{sectionCopy.juryTitle}<br /><em>{sectionCopy.jurySoul}</em></h2>
-          <Link className="round-arrow-link" to="/judges"><span>{sectionCopy.meetJury}</span><ArrowUpRight aria-hidden="true" /></Link>
-        </div>
-        <div className="jury-stack" aria-label={sectionCopy.juryAria}>
-          {juryPortraits.map((judge) => (
-            <Link
-              key={judge.id}
-              to={`/judges/${judge.id}`}
-              className="jury-stack__link"
-              aria-label={`${isTraditional ? judge.name : judge.romanized} — ${isTraditional ? '查看評委資料' : 'View profile'}`}
-            >
-              <img
-                src={judge.image}
-                alt={judge.romanized}
-                loading="lazy"
-                decoding="async"
-              />
-              <span className="jury-stack__label">
-                {isTraditional ? '查看資料' : 'VIEW PROFILE'} <ArrowUpRight aria-hidden="true" />
-              </span>
-            </Link>
           ))}
         </div>
       </section>

@@ -10,14 +10,12 @@ export const Footer = () => {
         jury: '評審',
         methodology: '評分方法',
         submission: '投稿',
-        local: '© 2026 / 公開索引',
       }
     : {
         explore: 'Ranking',
         jury: 'Jury',
         methodology: 'Methodology',
         submission: 'Submission',
-        local: '© 2026 / PUBLIC INDEX',
       }
 
   return (
@@ -30,7 +28,6 @@ export const Footer = () => {
           <Link to="/methodology">{copy.methodology}</Link>
           <Link to="/submission">{copy.submission}</Link>
         </div>
-        <span>{copy.local}</span>
       </div>
     </footer>
   )

@@ -19,11 +19,8 @@ export const Header = () => {
         submission: '投稿',
         primaryNavigation: '主要導航',
         language: '語言',
-        status: '狀態',
-        allTime: '全時段 / 公開索引',
         close: '關閉導航',
         open: '開啟導航',
-        mobileStatus: '公開索引 / 2026',
       }
     : {
         home: 'Home',
@@ -33,11 +30,8 @@ export const Header = () => {
         submission: 'Submission',
         primaryNavigation: 'Primary navigation',
         language: 'Language',
-        status: 'Status',
-        allTime: 'ALL-TIME / PUBLIC INDEX',
         close: 'Close navigation',
         open: 'Open navigation',
-        mobileStatus: 'PUBLIC INDEX / 2026',
       }
 
   useEffect(() => {
@@ -112,13 +106,6 @@ export const Header = () => {
         <button type="button" className={isTraditional ? 'is-active' : ''} aria-pressed={isTraditional} onClick={() => changeLanguage('zh-TW')}>繁中</button>
       </div>
 
-      {pathname !== '/' && (
-        <div className="header-meta" aria-label={uiCopy.status}>
-          <span className="status-dot" />
-          <span>{uiCopy.allTime}</span>
-        </div>
-      )}
-
       <button
         className="menu-trigger"
         type="button"
@@ -154,7 +141,6 @@ export const Header = () => {
                 <span aria-hidden="true">/</span>
                 <button type="button" className={isTraditional ? 'is-active' : ''} aria-pressed={isTraditional} onClick={() => changeLanguage('zh-TW')}>繁中</button>
               </div>
-              {pathname !== '/' && <div className="mobile-nav__status"><span className="status-dot" /> {uiCopy.mobileStatus}</div>}
             </div>
           </motion.div>
         )}

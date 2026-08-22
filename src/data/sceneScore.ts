@@ -42,7 +42,7 @@ export const works: SceneWork[] = [
     accent: 'red',
     note: 'A placeholder entry for the first public ranking release.',
     image: '/images/works/work-01.png',
-    video: '/media/ranking/work-01.mp4',
+    video: '/media/ranking/work-01.webm',
   },
   {
     id: 'sample-film-b',
@@ -64,7 +64,7 @@ export const works: SceneWork[] = [
     accent: 'blue',
     note: 'A visual language built around rhythm, atmosphere and restraint.',
     image: '/images/works/work-02.png',
-    video: '/media/ranking/work-02.mp4',
+    video: '/media/ranking/work-02.webm',
   },
   {
     id: 'sample-film-c',
@@ -86,7 +86,7 @@ export const works: SceneWork[] = [
     accent: 'gold',
     note: 'A short-form scene awaiting its first verified jury read.',
     image: '/images/works/work-03.png',
-    video: '/media/ranking/work-03.mp4',
+    video: '/media/ranking/work-03.webm',
   },
   {
     id: 'sample-film-d',
@@ -108,7 +108,7 @@ export const works: SceneWork[] = [
     accent: 'green',
     note: 'A series marker reserved for the next curation cycle.',
     image: '/images/works/work-04.png',
-    video: '/media/ranking/work-04.mp4',
+    video: '/media/ranking/work-04.webm',
   },
   {
     id: 'sample-film-e',
@@ -130,7 +130,7 @@ export const works: SceneWork[] = [
     accent: 'violet',
     note: 'The fifth entry in the current preview dataset.',
     image: '/images/works/work-05.png',
-    video: '/media/ranking/work-05.mp4',
+    video: '/media/ranking/work-05.webm',
   },
 ]
 

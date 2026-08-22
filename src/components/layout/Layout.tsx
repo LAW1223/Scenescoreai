@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, usePresence } from 'framer-motion'
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
@@ -12,6 +12,8 @@ type RouteTransitionStageProps = {
 
 const RouteTransitionStage = ({ pathname, shouldAnimateRoute, children }: RouteTransitionStageProps) => {
   const stageRef = useRef<HTMLDivElement>(null)
+  const [isPresent, safeToRemove] = usePresence()
+  const hasEnteredRef = useRef(!shouldAnimateRoute)
   const [routeReady, setRouteReady] = useState(!shouldAnimateRoute)
 
   return (
@@ -35,6 +37,16 @@ const RouteTransitionStage = ({ pathname, shouldAnimateRoute, children }: RouteT
         borderRadius: '0px',
       }}
       onAnimationComplete={() => {
+        // Framer Motion calls this callback for both the enter and exit
+        // animation. The exiting sheet must be removed only after its right
+        // shift has finished; clearing its transform would briefly reveal
+        // the previous page again.
+        if (!isPresent) {
+          safeToRemove()
+          return
+        }
+        if (hasEnteredRef.current) return
+        hasEnteredRef.current = true
         // Remove the completed paper transform so fixed scroll pinning is
         // relative to the viewport instead of a transformed route wrapper.
         stageRef.current?.style.removeProperty('transform')
@@ -44,6 +56,9 @@ const RouteTransitionStage = ({ pathname, shouldAnimateRoute, children }: RouteT
         window.dispatchEvent(new CustomEvent('scene-score-route-transition-complete', { detail: { pathname } }))
       }}
       transition={{
+        // Keep the exit duration available to the initial route as well;
+        // otherwise the first page would disappear instantly on its first
+        // menu navigation.
         duration: 1.25,
         ease: [0.16, 1, 0.3, 1],
       }}
@@ -57,6 +72,7 @@ export const Layout = () => {
   const location = useLocation()
   const { pathname } = location
   const shouldAnimateRoute = location.key !== 'default'
+  const shouldAnimateRouteTransition = shouldAnimateRoute
 
   useLayoutEffect(() => {
     const previousRestoration = window.history.scrollRestoration
@@ -67,7 +83,7 @@ export const Layout = () => {
   }, [])
 
   useLayoutEffect(() => {
-    if (!shouldAnimateRoute) return
+    if (!shouldAnimateRouteTransition) return
 
     const root = document.documentElement
     const unlockScroll = (event?: Event) => {
@@ -85,7 +101,7 @@ export const Layout = () => {
       window.clearTimeout(unlockFallback)
       root.classList.remove('route-scroll-locked')
     }
-  }, [pathname, shouldAnimateRoute])
+  }, [pathname, shouldAnimateRouteTransition])
 
   useLayoutEffect(() => {
     // Reset once at route start. The transition-complete handler only unlocks
@@ -97,12 +113,12 @@ export const Layout = () => {
   return (
     <div className="site-shell">
       <Header />
-      <div className="route-transition-frame">
+      <div className="route-transition-frame" data-route-destination={pathname}>
         <AnimatePresence mode="sync">
           <RouteTransitionStage
             key={location.pathname}
             pathname={pathname}
-            shouldAnimateRoute={shouldAnimateRoute}
+            shouldAnimateRoute={shouldAnimateRouteTransition}
           >
             <main className="site-main"><Outlet /></main>
           </RouteTransitionStage>
