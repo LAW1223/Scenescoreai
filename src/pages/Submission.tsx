@@ -11,8 +11,7 @@ export default function Submission() {
   const [form, setForm] = useState({ name: '', email: '', title: '', message: '' })
 
   const copy = isTraditional
-    ? {
-        deskLabel: '投稿入口',
+      ? {
         deskTitle: '把下一個場景帶進公開索引',
         deskDescription: '提交作品資料、預告片或完整觀看連結，團隊會先完成資料整理，再回覆後續安排。',
         emailLabel: '投稿信箱',
@@ -25,7 +24,6 @@ export default function Submission() {
           ['02', '觀看連結', '預告片、完整作品或可公開瀏覽的影片連結'],
           ['03', '創作說明', '作品的創作背景、AI 使用方式與希望被看見的重點'],
         ],
-        formLabel: '快速投稿',
         formTitle: '用一封郵件開始',
         formIntro: '填寫基本資料後，按下按鈕會開啟你的郵件程式，內容可再確認後寄出。',
         name: '稱呼／團隊名稱',
@@ -39,8 +37,7 @@ export default function Submission() {
         send: '建立投稿郵件',
         back: '返回排行榜',
       }
-    : {
-        deskLabel: 'SUBMISSION DESK',
+      : {
         deskTitle: 'Bring the next scene into the index.',
         deskDescription: 'Send the work details, a trailer or a full viewing link. We will organize the information first and reply with the next steps.',
         emailLabel: 'SUBMISSION EMAIL',
@@ -53,7 +50,6 @@ export default function Submission() {
           ['02', 'VIEWING LINK', 'A trailer, full work or publicly accessible video link'],
           ['03', 'CREATIVE NOTE', 'The context, AI workflow and the point of view you want us to notice'],
         ],
-        formLabel: 'QUICK SUBMISSION',
         formTitle: 'Start with an email.',
         formIntro: 'Complete the basics and the button will open your mail app with a draft you can review before sending.',
         name: 'NAME / TEAM',
@@ -85,7 +81,6 @@ export default function Submission() {
     <div className="submission-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
       <section className="submission-contact">
         <div className="submission-contact__copy">
-          <span className="submission-kicker">{copy.deskLabel}</span>
           <h2>{copy.deskTitle}</h2>
           <p>{copy.deskDescription}</p>
         </div>
@@ -100,7 +95,6 @@ export default function Submission() {
 
       <section className="submission-guidelines">
         <div className="submission-guidelines__intro">
-          <span className="submission-kicker">{isTraditional ? '投稿資料' : 'SUBMISSION NOTES'}</span>
           <h2>{copy.guideTitle}</h2>
           <p>{copy.guideIntro}</p>
         </div>
@@ -118,7 +112,6 @@ export default function Submission() {
 
       <section className="submission-form-section" id="submission-form">
         <div className="submission-form-section__intro">
-          <span className="submission-kicker">{copy.formLabel}</span>
           <h2>{copy.formTitle}</h2>
           <p>{copy.formIntro}</p>
         </div>

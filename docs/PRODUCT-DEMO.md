@@ -2,6 +2,20 @@
 
 这份说明只用于查看 UI 和交互，不需要后端服务、数据库或账号。
 
+## 产品经理版压缩包
+
+压缩包已经同时包含源码和已构建的 `dist/`，解压后可以让 Codex 打开项目目录进行查看。
+
+最快启动方式是在项目根目录运行：
+
+```powershell
+node .\scripts\serve-dist.mjs
+```
+
+然后打开 `http://127.0.0.1:4173/`。Windows 也可以双击根目录的 `START_LOCAL_DEMO.cmd`。
+
+如果需要修改 UI，再使用下面的源码启动方式；首次启动需要执行一次 `npm install`。
+
 ## 方式一：从源码启动（推荐）
 
 电脑需要 Node.js 24。PowerShell 打开项目目录：
@@ -68,9 +82,9 @@ node .\scripts\serve-dist.mjs
 
 ## 建议验收路径
 
-1. 首页 `/`：向下滚动，确认橙色遮罩先从右下向左上离开，视频在第一阶段不抖动。
-2. 继续向下滚动：确认橙色遮罩完全消失后视频才进入第二阶段，且视频自动循环播放。
-3. 点击顶部 `排行榜`、`特邀评审`、`评分方法`、`投稿`：确认新页面像纸张一样从左下进入，旧页面向右退出，转场约 1.25 秒；切换到 `EN` 后对应菜单会显示为 `RANKING`、`JURY SPOTLIGHT`、`METHODOLOGY`、`SUBMISSION`。
+1. 首页 `/`：向下滚动，确认完整橙色纸张从右下向左上离开，视频固定且不抖动、不缩放。
+2. 继续向下滚动：确认橙色纸张完全消失后页面才进入后续内容，且视频自动循环播放。
+3. 点击顶部 `排行榜`、`特邀评审`、`评分方法`、`投稿`：确认新页面像纸张一样从左下进入并覆盖旧页面，全程无闪白，转场约 1.25 秒；切换到 `EN` 后对应菜单会显示为 `RANKING`、`JURY SPOTLIGHT`、`METHODOLOGY`、`SUBMISSION`。
 4. `/explore`：切换网格/列表，点击 `All / Featured / Short Film / Series` 筛选。
 5. `/judges`：点击五位评委，确认照片完整显示、简介同步切换；向下滚动到 `教授评审`，确认五行「博士」职衔在同一列对齐。
 6. `/methodology`、`/submission`：确认评分方法与投稿页使用纸张底、黑字、红色强调配色，并可看到投稿邮箱 `marketing@scenescore.ai`。
@@ -80,5 +94,5 @@ node .\scripts\serve-dist.mjs
 
 - 作品、评委、方法论目前由静态演示数据驱动，方便先验收 UI 与交互。
 - 没有真实登录、评分提交、管理后台或后端 API。
-- 首页视频使用 `public/media/scene-score-home.mp4`；排行榜 5 个作品已接入首帧图片与 Hover 视频预览。正式发布前请确认素材授权。
+- 首页视频使用 `public/media/scene-score-home.webm`；排行榜 5 个作品已接入首帧图片与 Hover 视频预览，视频文件位于 `public/media/ranking/`。正式发布前请确认素材授权。
 - 生产部署时需要配置 SPA fallback，让 `/explore` 和 `/series/:id` 刷新不返回 404。

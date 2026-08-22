@@ -23,8 +23,8 @@ Scene Score 是一个面向影视/屏幕作品的公开索引原型。当前交�
 | 构建工具 | Vite 8 | 本地开发、HMR、生产构建 |
 | UI | React 19 + TypeScript 5.9 | 页面和组件 |
 | 路由 | react-router-dom 7 | 页面路径、动态作品详情、重定向 |
-| 页面转场 | Framer Motion 12 | 路由“纸张”从左下到右上进入、旧页面右移退出 |
-| 滚动动画 | GSAP 3 + ScrollTrigger | 首页 pin、橙色遮罩退出、视频阶段化滚动 |
+| 页面转场 | Framer Motion 12 | 路由“纸张”从左下进入并覆盖旧页面 |
+| 滚动动画 | GSAP 3 + ScrollTrigger | 首页 pin、橙色纸张刚性退出 |
 | GSAP React 集成 | @gsap/react | React 生命周期内创建/清理 GSAP 上下文 |
 | 图标 | lucide-react | 导航、箭头、播放等线性图标 |
 | 样式 | CSS + Tailwind 配置 | 目前主视觉使用 `src/styles/globals.css` |
@@ -88,7 +88,7 @@ npm run preview
 
 | 路径 | 页面 | 当前数据来源 |
 | --- | --- | --- |
-| `/` | 首页沉浸式 Hero + Highlight + Ranking + Method + Jury teaser | `src/data/sceneScore.ts` + `public/media/scene-score-home.mp4` |
+| `/` | 首页沉浸式 Hero + Highlight + Ranking + Method + Jury teaser | `src/data/sceneScore.ts` + `public/media/scene-score-home.webm` |
 | `/explore` | 作品索引，筛选和网格/列表切换 | `works` 静态数组 |
 | `/series/:id` | 单个作品详情 | `getWork(id)` |
 | `/judges` | 评委列表、选中评委照片和简介 | `judges` 静态数组 |
@@ -196,12 +196,9 @@ GET /api/v1/site-config
 
 实现文件：`src/pages/Home.tsx`，样式在 `src/styles/globals.css`。
 
-首页采用两个滚动阶段：
+首页先固定 Hero，再让完整橙色 curtain 作为刚性纸张从右下方向左上离开。纸张移动期间视频通过 `pinType: 'fixed'` 固定在视口，不缩放、不改变尺寸；纸张完全离开后才解除固定并进入后续内容。英文标题和正文位于视频层，右下滚动箭头位于独立顶层；`SCENE SCORE` 与 `REC` 留在 curtain 内并随纸张退出。
 
-1. 第一阶段：橙色 curtain 从右下方向左上离开；视频通过 `pinType: 'fixed'` 固定在视口，避免遮罩滚动时视频抖动。
-2. 第二阶段：橙色板子完全消失并留出短间隔后，视频才开始轻微缩放。
-
-不要在第一阶段给视频增加 `top/left/width/height` 等布局动画；如要替换首页视频，只需要替换 `src` 或 `public/media/scene-score-home.mp4`，保留 `muted loop playsInline`。视频现在由脚本启动：首次进入 Home 可以播放；离开 Home 时会暂停并记录 `currentTime`，从其他路由切回 Home 时恢复到原位置，等 1.25 秒纸张转场完成后再继续播放，避免解码和转场同时发生。
+不要给视频增加 `top/left/width/height` 或缩放动画；如要替换首页视频，只需要替换 `public/media/scene-score-home.webm`，保留 `muted loop playsInline`。视频现在由脚本启动：首次进入 Home 可以播放；离开 Home 时会暂停并记录 `currentTime`；从其他路由切回 Home 时恢复到原位置，等 1.25 秒纸张转场完成后再继续播放，避免解码和转场同时发生。
 
 视频必须适合静音自动播放。若后端返回视频 URL，建议提供 MP4/H.264 主格式，并保留一个静态封面或 CSS fallback。
 
@@ -210,7 +207,7 @@ GET /api/v1/site-config
 实现文件：`src/components/layout/Layout.tsx`。
 
 - 新页面从左下角进入，覆盖当前页面。
-- 旧页面向右退出。
+- 旧页面保持在下层，直到新页面纸张将它完全覆盖，避免闪白和新页面重复渲染。
 - 当前时长为 1.25 秒。
 - Home 初始化 ScrollTrigger 会等待 `route-transition-complete`，避免切回首页时测量 pin 位置造成卡顿。
 - 路由切换时使用即时 `window.scrollTo`，不使用全局 smooth scroll。
@@ -229,9 +226,9 @@ GET /api/v1/site-config
 
 ## 8. 素材与授权
 
-- 首页视频：`public/media/scene-score-home.mp4`。
+- 首页实际引用视频：`public/media/scene-score-home.webm`；同目录 MP4 作为源素材/兼容素材保留。
 - 作品首帧图片：`public/images/works/work-01.png` 至 `work-05.png`。
-- 作品视频：`public/media/ranking/work-01.mp4` 至 `work-05.mp4`，由 `src/data/sceneScore.ts` 映射到 5 个作品详情；Explore 默认展示图片，Hover 后淡入视频。
+- 作品实际引用视频：`public/media/ranking/work-01.webm` 至 `work-05.webm`，由 `src/data/sceneScore.ts` 映射到 5 个作品详情；同目录 MP4 作为源素材/兼容素材保留。Explore 默认展示图片，Hover 后淡入视频。
 - 旧 The Line 参考视频：`public/media/the-line-home-hero.mp4`，仅用于比较，不作为正式素材。
 - 旧占位视频：`public/media/scene-score-hero.mp4`，仅用于比较，正式素材确定后可移除。
 - 视频来源及临时授权说明：`public/media/ATTRIBUTION.md`。
@@ -239,7 +236,7 @@ GET /api/v1/site-config
 - 评委照片：`public/images/judges/`。
 - `images/` 根目录保留了旧素材副本，当前 Scene Score 页面主要引用 `public/images/` 下的文件；整理素材时不要误删 public 版本。
 
-替换正式素材时，优先保持文件名和路径不变，能避免修改组件。首页路径是 `scene-score-home.mp4`，作品视频路径由 `src/data/sceneScore.ts` 管理；若必须改名，需同步检查 `Home.tsx`、`Explore.tsx` 和 `SeriesDetail.tsx`。
+替换正式素材时，优先保持文件名和路径不变，能避免修改组件。首页路径是 `scene-score-home.webm`，作品视频路径由 `src/data/sceneScore.ts` 管理；若必须改名，需同步检查 `Home.tsx`、`Explore.tsx` 和 `SeriesDetail.tsx`。
 
 ## 9. 后端接手建议顺序
 
@@ -261,7 +258,7 @@ npm run check
 
 浏览器至少检查：
 
-- `/` 首次滚动：橙色遮罩先移动，视频不抖动；遮罩消失后视频才进入第二阶段。
+- `/` 首次滚动：橙色纸张先整体移动，视频不抖动、不缩放；纸张完全离开后页面才进入后续内容。
 - 从 `/explore`、`/judges`、`/methodology`、`/submission` 切回 `/`：1.25 秒纸张转场结束后首页 pin 正常。
 - `/explore` 的筛选与网格/列表按钮。
 - `/judges` 点击五位评委，照片不被灰色边框挤压且显示完整。

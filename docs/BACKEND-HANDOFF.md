@@ -1,6 +1,6 @@
 # Scene Score 后端交接说明
 
-> 交接日期：2026-08-19
+> 交接日期：2026-08-22
 > 项目状态：前端 UI / 交互预览站，可本地运行并部署；当前仍使用静态示例数据。
 > 前端底座：Vite + React + TypeScript，不迁移到 Next.js。
 
@@ -9,7 +9,7 @@
 在解压后的项目根目录执行：
 
 ```powershell
-npm install
+npm ci
 npm run check
 npm run dev -- --host 127.0.0.1
 ```
@@ -130,16 +130,17 @@ type Judge = {
 ### 首页滚动
 
 - 首页使用 GSAP ScrollTrigger pin。
-- 第一阶段只移动橙色遮罩板，视频保持固定，避免视频抖动。
-- `SCENE SCORE®`、`REC` 属于橙色遮罩的子内容，会随遮罩一起退出。
-- 遮罩完全消失后，视频才进入轻微缩放阶段。
+- 第一阶段只移动橙色纸张，视频保持固定，避免视频抖动或尺寸跳变。
+- `SCENE SCORE` 与 `REC` 属于橙色纸张的子内容，会随整张纸一起退出；首页英文标题和正文位于视频层，不随纸张移动。
+- 右下滚动箭头位于独立顶层，纸张覆盖或移出后都保持可点击。
+- 橙色纸张完全离开后才解除 Hero 固定并进入后续内容；视频本身不做缩放动画。
 - 视频必须保留 `muted loop playsInline`，以支持静音自动播放。
 - 切换到其他菜单时，首页视频会暂停并保留 `currentTime`；回到 Home 后从原位置继续播放，不从头重播。
-- 当前首页视频为 `public/media/scene-score-home.mp4`；作品首帧图片为 `public/images/works/work-01.png` 至 `work-05.png`，作品视频为 `public/media/ranking/work-01.mp4` 至 `work-05.mp4`；正式发布前必须确认这些素材已获授权。
+- 当前首页实际引用 `public/media/scene-score-home.webm`；作品首帧图片为 `public/images/works/work-01.png` 至 `work-05.png`，作品 Hover 视频实际引用 `public/media/ranking/work-01.webm` 至 `work-05.webm`。同目录 MP4 文件作为源素材/兼容素材保留；正式发布前必须确认这些素材已获授权。
 
 ### 菜单转场
 
-- 页面像纸张一样从左下角进入，旧页面向右退出。
+- 新页面像纸张一样从左下角进入；旧页面保持在下层，直到新页面纸张将其覆盖，避免路由切换闪白或重复渲染新页面。
 - 当前转场时长约 `1.25s`。
 - Home 等转场完成事件后再初始化 ScrollTrigger，避免切回首页卡顿。
 - 导航 active 状态使用矩形边框和红点，不要改成普通下划线。

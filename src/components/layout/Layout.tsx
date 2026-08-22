@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, usePresence } from 'framer-motion'
-import { Outlet, useLocation } from 'react-router-dom'
+import { AnimatePresence, MotionConfig, motion, usePresence } from 'framer-motion'
+import { useLocation, useOutlet } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
@@ -28,19 +28,20 @@ const RouteTransitionStage = ({ pathname, shouldAnimateRoute, children }: RouteT
         scale: 1.02,
         borderRadius: '30px 30px 0 0',
       } : false}
-      animate={{ x: '0vw', y: '0vh', rotate: 0, scale: 1, borderRadius: '0px' }}
+      animate={{ x: '0vw', y: '0vh', rotate: 0, scale: 1, opacity: 1, borderRadius: '0px' }}
       exit={{
-        x: '104vw',
+        // Keep the outgoing page fully painted behind the incoming page.
+        // This prevents the frame background from flashing between sheets.
+        x: '0vw',
         y: '0vh',
-        rotate: 1,
-        scale: .985,
+        rotate: 0,
+        scale: 1,
+        opacity: .999,
         borderRadius: '0px',
       }}
       onAnimationComplete={() => {
-        // Framer Motion calls this callback for both the enter and exit
-        // animation. The exiting sheet must be removed only after its right
-        // shift has finished; clearing its transform would briefly reveal
-        // the previous page again.
+        // Framer Motion calls this callback for both enter and exit. Keep the
+        // outgoing sheet mounted until the incoming sheet covers it.
         if (!isPresent) {
           safeToRemove()
           return
@@ -56,9 +57,6 @@ const RouteTransitionStage = ({ pathname, shouldAnimateRoute, children }: RouteT
         window.dispatchEvent(new CustomEvent('scene-score-route-transition-complete', { detail: { pathname } }))
       }}
       transition={{
-        // Keep the exit duration available to the initial route as well;
-        // otherwise the first page would disappear instantly on its first
-        // menu navigation.
         duration: 1.25,
         ease: [0.16, 1, 0.3, 1],
       }}
@@ -70,6 +68,7 @@ const RouteTransitionStage = ({ pathname, shouldAnimateRoute, children }: RouteT
 
 export const Layout = () => {
   const location = useLocation()
+  const outlet = useOutlet()
   const { pathname } = location
   const shouldAnimateRoute = location.key !== 'default'
   const shouldAnimateRouteTransition = shouldAnimateRoute
@@ -113,16 +112,18 @@ export const Layout = () => {
   return (
     <div className="site-shell">
       <Header />
-      <div className="route-transition-frame" data-route-destination={pathname}>
-        <AnimatePresence mode="sync">
-          <RouteTransitionStage
-            key={location.pathname}
-            pathname={pathname}
-            shouldAnimateRoute={shouldAnimateRouteTransition}
-          >
-            <main className="site-main"><Outlet /></main>
-          </RouteTransitionStage>
-        </AnimatePresence>
+      <div className="route-transition-frame">
+        <MotionConfig reducedMotion="never">
+          <AnimatePresence mode="sync">
+            <RouteTransitionStage
+              key={location.pathname}
+              pathname={pathname}
+              shouldAnimateRoute={shouldAnimateRouteTransition}
+            >
+              <main className="site-main">{outlet}</main>
+            </RouteTransitionStage>
+          </AnimatePresence>
+        </MotionConfig>
       </div>
       <Footer />
     </div>

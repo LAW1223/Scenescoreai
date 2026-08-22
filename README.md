@@ -4,10 +4,10 @@ Scene Score 是一个 Vite + React 的可部署前端演示站，包含首页沉
 
 ## 快速启动
 
-需要 Node.js 24（npm 随 Node.js 安装）。在项目根目录执行：
+建议使用 Node.js 24（npm 随 Node.js 安装）。在项目根目录执行：
 
 ```powershell
-npm install
+npm ci
 npm run dev
 ```
 
@@ -52,4 +52,22 @@ npm run dev -- --host 127.0.0.1
 
 ## 打包原则
 
-后端源码交付包不包含 `node_modules/`、`dist/`、`output/`、`.playwright-cli/` 和 `.git/`；后端或新设备拿到源码后重新执行 `npm install` 即可。产品经理 UI 演示包会额外保留已构建的 `dist/`，便于直接预览。
+后端源码交付包不包含 `node_modules/`、`dist/`、`output/`、`.playwright-cli/` 和 `.git/`；后端或新设备拿到源码后执行 `npm ci` 即可按锁文件还原依赖。产品经理 UI 演示包会额外保留已构建的 `dist/`，便于直接预览。
+
+## 生产部署
+
+```powershell
+npm ci
+npm run check
+npm run build
+```
+
+将生成的 `dist/` 作为静态站点目录发布。生产服务器必须启用 SPA fallback，让不存在的文件路径返回 `index.html`，否则直接刷新 `/explore`、`/judges` 或 `/series/:id` 会得到 404。Nginx 的核心规则如下：
+
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+视频文件位于 `public/media/`，构建后会原样复制到 `dist/media/`。部署平台需要允许 `.webm` / `.mp4` 静态文件和 HTTP Range 请求，建议为媒体设置长期缓存。

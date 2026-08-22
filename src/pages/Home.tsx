@@ -10,11 +10,11 @@ import { works } from '../data/sceneScore'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const homeWorkScores = [
-  { score: '89.7', change: '↓1', trend: 'down' },
-  { score: '87.8', change: '↓1', trend: 'down' },
-  { score: '84.9', change: '↑1', trend: 'up' },
-  { score: '82.6', change: '↓1', trend: 'down' },
+const homeWorkChanges = [
+  { change: '↓1', trend: 'down' },
+  { change: '↓1', trend: 'down' },
+  { change: '↑1', trend: 'up' },
+  { change: '↓1', trend: 'down' },
 ] as const
 
 const homeWorkCards = works.slice(1, 5)
@@ -188,6 +188,9 @@ export default function Home() {
   const sectionCopy = isTraditional
     ? {
         worksAria: 'Scene Score TOP 2—10 作品輪播',
+        highlightAria: 'Scene Score TOP 1 精選作品',
+        highlight: 'HIGHLIGHT',
+        director: '導演',
         viewWork: '查看作品',
         rankingAria: '查看完整排行榜',
         viewRanking: '查看完整排行榜',
@@ -200,6 +203,9 @@ export default function Home() {
       }
     : {
         worksAria: 'Scene Score TOP 2—10 works carousel',
+        highlightAria: 'Scene Score TOP 1 highlighted work',
+        highlight: 'HIGHLIGHT',
+        director: 'DIRECTOR',
         viewWork: 'VIEW WORK',
         rankingAria: 'View full ranking',
         viewRanking: 'VIEW FULL RANKING',
@@ -520,7 +526,10 @@ export default function Home() {
 
   useGSAP((_, contextSafe) => {
     let initialized = false
+    let heroTimeline: gsap.core.Timeline | undefined
     let removeLoadListener: (() => void) | undefined
+    let routeFallbackTimer = 0
+    let settledRefreshTimer = 0
 
     const initializeHomeScroll = () => {
       if (initialized) return
@@ -533,17 +542,14 @@ export default function Home() {
       initialized = true
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      if (reduceMotion) {
-        gsap.set(curtain, { autoAlpha: 0.86 })
-        return
-      }
-
-      const isMobile = window.matchMedia('(max-width: 780px)').matches
-      const heroTimeline = gsap.timeline({
+      ScrollTrigger.getById('home-curtain-scroll')?.kill(true)
+      gsap.set(curtain, { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1 })
+      heroTimeline = gsap.timeline({
         scrollTrigger: {
+          id: 'home-curtain-scroll',
           trigger: hero,
           start: 'top top',
-          end: () => '+=' + (isMobile ? Math.round(window.innerHeight * 0.78) : Math.round(window.innerHeight * 0.96)),
+          end: () => '+=' + Math.round(window.innerHeight),
           scrub: true,
           pin: true,
           // The route sheet's completed transform is removed before this
@@ -552,6 +558,7 @@ export default function Home() {
           pinSpacing: true,
           anticipatePin: 0,
           invalidateOnRefresh: true,
+          refreshPriority: -10,
           onUpdate: (self) => {
             if (header) header.classList.toggle('site-header--on-dark', self.progress < 0.94)
           },
@@ -562,7 +569,27 @@ export default function Home() {
       // while the orange sheet exits, then continues with the page's natural
       // scroll after the pinned hero releases.
       heroTimeline
-        .to(curtain, { duration: 1, xPercent: -108, yPercent: -108, rotation: -4, autoAlpha: 0, ease: 'none' }, 0)
+        .to(
+          curtain,
+          {
+            duration: 0.9,
+            xPercent: -108,
+            yPercent: -108,
+            rotation: reduceMotion ? 0 : -3,
+            ease: 'none',
+            force3D: true,
+          },
+          0,
+        )
+        .to(
+          curtain,
+          {
+            duration: 0.1,
+            autoAlpha: 0,
+            ease: 'none',
+          },
+          0.9,
+        )
 
       pageRef.current?.querySelectorAll<HTMLElement>('.home-section').forEach((section) => {
         gsap.fromTo(
@@ -583,28 +610,45 @@ export default function Home() {
         )
       })
 
+      ScrollTrigger.refresh()
       const refresh = () => ScrollTrigger.refresh()
+      const refreshFrame = window.requestAnimationFrame(refresh)
+      settledRefreshTimer = window.setTimeout(refresh, 240)
       window.addEventListener('load', refresh, { once: true })
-      removeLoadListener = () => window.removeEventListener('load', refresh)
+      removeLoadListener = () => {
+        window.cancelAnimationFrame(refreshFrame)
+        window.clearTimeout(settledRefreshTimer)
+        window.removeEventListener('load', refresh)
+      }
     }
+
+    const cleanupHomeScroll = () => {
+      window.clearTimeout(routeFallbackTimer)
+      removeLoadListener?.()
+      heroTimeline?.scrollTrigger?.kill(true)
+      heroTimeline?.kill()
+      heroTimeline = undefined
+      if (initialized) document.querySelector<HTMLElement>('.site-header')?.classList.remove('site-header--on-dark')
+    }
+
     const safeInitializeHomeScroll = contextSafe ? contextSafe(initializeHomeScroll) : initializeHomeScroll
 
     const routeStage = pageRef.current?.closest<HTMLElement>('.route-transition-stage')
     if (routeStage?.dataset.routeReady === 'false') {
-      const handleRouteReady = () => safeInitializeHomeScroll()
+      const handleRouteReady = () => {
+        window.clearTimeout(routeFallbackTimer)
+        safeInitializeHomeScroll()
+      }
       routeStage.addEventListener('route-transition-complete', handleRouteReady, { once: true })
+      routeFallbackTimer = window.setTimeout(safeInitializeHomeScroll, 1500)
       return () => {
         routeStage.removeEventListener('route-transition-complete', handleRouteReady)
-        removeLoadListener?.()
-        if (initialized) document.querySelector<HTMLElement>('.site-header')?.classList.remove('site-header--on-dark')
+        cleanupHomeScroll()
       }
     }
 
     safeInitializeHomeScroll()
-    return () => {
-      removeLoadListener?.()
-      if (initialized) document.querySelector<HTMLElement>('.site-header')?.classList.remove('site-header--on-dark')
-    }
+    return cleanupHomeScroll
   }, { scope: pageRef })
 
   return (
@@ -623,44 +667,31 @@ export default function Home() {
             aria-label="Abstract art motion background"
           />
           <div className="hero-media-vignette" aria-hidden="true" />
+
+          <div className="home-hero__content home-hero__copy home-brand-statement" lang="en">
+            <h1>
+              <span>The Leaderboard</span>
+              <span>for AI's Best</span>
+              <span>Storytellers.</span>
+            </h1>
+            <p>Judged by the researchers building tomorrow's AI and the artists shaping today's industry — SceneScore finds the AI manga and short dramas worth watching, before anyone else does.</p>
+          </div>
         </div>
 
-        <div className="hero-curtain" aria-hidden="true">
-          <div className="hero-curtain__texture" />
-          <div className="hero-title-lockup">
+        <div className="hero-curtain">
+          <div className="hero-curtain__texture" aria-hidden="true" />
+          <div className="hero-title-lockup" aria-hidden="true">
             <div className="hero-wordmark" aria-label="Scene Score">
               <span className="hero-wordmark__scene">SCENE</span>
               <span className="hero-score-lockup">
                 <span className="hero-wordmark__score">SCORE</span>
-                <sup>®</sup>
                 <span className="hero-leaderboard" aria-label="Leaderboard">
                   {'LEADERBOARD'.split('').map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
                 </span>
               </span>
             </div>
           </div>
-          <span className="hero-curtain__rec"><i /> REC</span>
-        </div>
-
-        <div className="home-hero__copy home-rank-card">
-          <strong className="home-rank-card__top">TOP 1</strong>
-          <span className="home-rank-card__eyebrow">{featuredCopy.rank}</span>
-          <h1>SAMPLE<br />FILM A</h1>
-          <p className="home-rank-card__summary">{featuredCopy.summary}</p>
-          <p className="home-rank-card__note">{featuredCopy.note}</p>
-          <div className="home-rank-card__metrics">
-            <span>
-              <small>SCENE SCORE</small>
-              <strong>9.8</strong>
-            </span>
-            <span>
-              <small>{featuredCopy.change}</small>
-              <strong className="home-rank-card__change">↑2</strong>
-            </span>
-          </div>
-          <Link className="home-rank-card__link" to={'/series/' + works[0].id}>
-            <span>{featuredCopy.details}</span><ArrowUpRight aria-hidden="true" />
-          </Link>
+          <span className="hero-curtain__rec" aria-hidden="true"><i /> REC</span>
         </div>
 
         <button
@@ -678,14 +709,52 @@ export default function Home() {
           <span className="home-next-cue__chevron" aria-hidden="true" />
           <span className="home-next-cue__chevron" aria-hidden="true" />
         </button>
-
       </section>
 
-      <section id="home-highlight" className="home-section home-section--works">
+      <section id="home-highlight" className="home-section home-highlight" aria-label={sectionCopy.highlightAria}>
+        <div className="home-highlight__feature">
+          <Reveal className="home-highlight__media">
+            <Link to={'/series/' + works[0].id} aria-label={`${sectionCopy.viewWork}: ${works[0].title}`}>
+              <AmbientVideo src={works[0].video} className="home-highlight__video" />
+              <span className="home-highlight__index">01</span>
+            </Link>
+          </Reveal>
+
+          <Reveal className="home-highlight__info">
+            <p className="home-highlight__rank" aria-label="Top 1">
+              <span>TOP</span><strong>1</strong>
+            </p>
+            <div className="home-highlight__meta">
+              <span>{featuredCopy.rank}</span>
+              <span>{sectionCopy.director} / {works[0].director}</span>
+            </div>
+            <h3>{works[0].title}</h3>
+            <p className="home-highlight__summary">{featuredCopy.summary}</p>
+            <p className="home-highlight__note">{featuredCopy.note}</p>
+            <div className="home-highlight__metrics">
+              <span>
+                <small>SCENE SCORE</small>
+                <strong>{works[0].score.toFixed(1)}</strong>
+              </span>
+              <span>
+                <small>{featuredCopy.change}</small>
+                <strong className="home-highlight__change">↑2</strong>
+              </span>
+            </div>
+            <Link className="home-highlight__link" to={'/series/' + works[0].id}>
+              <span>{featuredCopy.details}</span><ArrowUpRight aria-hidden="true" />
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
+      <section id="home-ranking" className="home-section home-section--works">
         <div className="home-works__heading">
           <h2>
             <span className="home-works__heading-top">TOP</span>
-            <span>2—10</span>
+            <span className="home-works__range" aria-label={isTraditional ? '第 2 至第 10 名' : 'Ranks 2 to 10'}>
+              <span>2</span><i className="home-works__range-mark" aria-hidden="true" /><span>10</span>
+            </span>
           </h2>
         </div>
 
@@ -706,7 +775,7 @@ export default function Home() {
             }}
           >
             {homeWorkCarouselCards.map((work, index) => {
-              const score = homeWorkScores[index % homeWorkScores.length]
+              const change = homeWorkChanges[index % homeWorkChanges.length]
               const cardKey = `${work.id}-${index}`
 
               return (
@@ -732,9 +801,9 @@ export default function Home() {
                       <strong>{work.title}</strong>
                       <span className="home-work-card__score">
                         <small>SCENE SCORE</small>
-                        <b>{score.score}</b>
+                        <b>{work.score.toFixed(1)}</b>
                       </span>
-                      <span className={`home-work-card__trend is-${score.trend}`}>{score.change}</span>
+                      <span className={`home-work-card__trend is-${change.trend}`}>{change.change}</span>
                       <ArrowUpRight aria-hidden="true" />
                     </span>
                   </Link>
