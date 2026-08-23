@@ -13,7 +13,7 @@ export const Header = () => {
   const uiCopy = isTraditional
     ? {
         home: '首頁',
-        explore: '排行榜',
+        explore: '流行榜',
         judges: '特邀評審',
         methodology: '評分方法',
         submission: '投稿',

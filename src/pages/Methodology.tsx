@@ -37,7 +37,7 @@ export default function Methodology() {
             'AI 短劇：每季度更新，精選本季度最具焦點與影響力的 AI 短劇',
           ],
         },
-        return: '返回排行榜',
+        return: '返回流行榜',
       }
     : {
         eligibility: {

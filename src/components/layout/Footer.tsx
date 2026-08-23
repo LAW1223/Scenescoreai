@@ -6,7 +6,7 @@ export const Footer = () => {
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const copy = isTraditional
     ? {
-        explore: '排行榜',
+        explore: '流行榜',
         jury: '評審',
         methodology: '評分方法',
         submission: '投稿',

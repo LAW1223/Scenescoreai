@@ -35,7 +35,7 @@ export default function Submission() {
         message: '作品簡介與連結',
         messagePlaceholder: '請簡述作品、創作團隊與觀看連結…',
         send: '建立投稿郵件',
-        back: '返回排行榜',
+        back: '返回流行榜',
       }
       : {
         deskTitle: 'Bring the next scene into the index.',
