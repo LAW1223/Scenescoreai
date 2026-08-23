@@ -1329,6 +1329,39 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
   .detail-next__link { font-size: 40px; }
 }
 
+@media (min-width: 640px) and (max-width: 780px) {
+  .judge-feature__image-link img {
+    width: 56%;
+    margin-left: auto;
+    padding: 0;
+    object-fit: cover;
+    object-position: center 18%;
+  }
+  .judge-feature__image-link[data-judge='paco-wong'] img { object-position: center 24%; }
+  .judge-feature__image-link[data-judge='chen-tai-lee'] img { object-position: center; }
+  .judge-feature__image-link[data-judge='bennett-pang'] img { object-position: center 12%; }
+  .judge-feature__image-link[data-judge='edmond-wong'] img { object-position: center 18%; }
+  .judge-feature__image-link[data-judge='ck-chan'] img { object-position: center 4%; }
+  .judge-feature::after {
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, .9) 0%, rgba(0, 0, 0, .76) 46%, rgba(0, 0, 0, .18) 76%, rgba(0, 0, 0, .34) 100%),
+      linear-gradient(180deg, transparent 20%, rgba(0, 0, 0, .7) 100%);
+  }
+  .judge-feature__overlay {
+    right: auto;
+    bottom: 18px;
+    left: 20px;
+    width: 49%;
+  }
+  .judge-feature__name { font-size: clamp(42px, 7.2vw, 52px); }
+  .judge-feature__headline { max-width: none; font-size: clamp(19px, 3.1vw, 23px); }
+  .judge-feature__bio { max-width: none; font-size: 12px; line-height: 1.5; }
+  .judge-feature__overlay .text-link { margin-top: 14px; }
+  .judges-page[lang="zh-Hant"] .judge-feature__name { font-size: clamp(42px, 7.2vw, 52px); }
+  .judges-page[lang="zh-Hant"] .judge-feature__headline { font-size: clamp(18px, 3vw, 22px); line-height: 1.25; }
+  .judges-page[lang="zh-Hant"] .judge-feature__bio { font-size: 12px; line-height: 1.5; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
