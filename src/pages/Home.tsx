@@ -539,6 +539,17 @@ export default function Home() {
     let removeLoadListener: (() => void) | undefined
     let routeFallbackTimer = 0
     let settledRefreshTimer = 0
+    let routeReadyRefreshFrame = 0
+    let routeReadyRefreshTimer = 0
+
+    const refreshAfterRouteSettles = () => {
+      window.cancelAnimationFrame(routeReadyRefreshFrame)
+      window.clearTimeout(routeReadyRefreshTimer)
+      routeReadyRefreshFrame = window.requestAnimationFrame(() => {
+        ScrollTrigger.refresh()
+        routeReadyRefreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 240)
+      })
+    }
 
     const initializeHomeScroll = () => {
       if (initialized) return
@@ -633,6 +644,8 @@ export default function Home() {
 
     const cleanupHomeScroll = () => {
       window.clearTimeout(routeFallbackTimer)
+      window.cancelAnimationFrame(routeReadyRefreshFrame)
+      window.clearTimeout(routeReadyRefreshTimer)
       removeLoadListener?.()
       heroTimeline?.scrollTrigger?.kill(true)
       heroTimeline?.kill()
@@ -646,7 +659,9 @@ export default function Home() {
     if (routeStage?.dataset.routeReady === 'false') {
       const handleRouteReady = () => {
         window.clearTimeout(routeFallbackTimer)
+        const initializedBeforeRouteReady = initialized
         safeInitializeHomeScroll()
+        if (initializedBeforeRouteReady) refreshAfterRouteSettles()
       }
       routeStage.addEventListener('route-transition-complete', handleRouteReady, { once: true })
       routeFallbackTimer = window.setTimeout(safeInitializeHomeScroll, 1500)
