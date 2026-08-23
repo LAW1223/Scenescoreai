@@ -290,7 +290,6 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .method-card > *:not(.method-card__video) { position: relative; z-index: 1; }
 .method-card__video { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: .78; filter: saturate(1.18) contrast(1.08); transform: scale(1.04); transition: opacity .35s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
 .method-card:hover .method-card__video, .method-card:focus-within .method-card__video { opacity: .92; transform: scale(1); }
-.method-card > span { color: var(--red); font: 11px/1 var(--mono); }
 .method-card h3 { margin: auto 0 8px; font-size: clamp(24px, 2.5vw, 42px); line-height: .86; letter-spacing: -.08em; }
 .method-card p { margin: 0; color: var(--muted); font: 11px/1 var(--mono); }
 .page-hero { min-height: 480px; display: grid; grid-template-columns: 1fr .5fr; align-content: end; gap: 40px; padding: 50px 0 clamp(70px, 10vw, 140px); border-bottom: 1px solid var(--ink); }
@@ -1414,7 +1413,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .hero-title-lockup {
   position: absolute;
   z-index: 2;
-  top: clamp(82px, 10vh, 124px);
+  top: clamp(98px, 12vh, 142px);
   right: clamp(20px, 4vw, 64px);
   display: flex;
   flex-direction: column;
@@ -1433,7 +1432,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
   font-size: clamp(64px, 9.6vw, 168px);
   font-weight: 800;
   line-height: .82;
-  letter-spacing: -.1em;
+  letter-spacing: -.06em;
   text-transform: uppercase;
   white-space: nowrap;
   text-align: right;
@@ -1498,7 +1497,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 }
 
 .hero-curtain__rec {
-  top: 8%;
+  top: clamp(80px, 11vh, 118px);
   right: 7%;
   color: var(--red);
   font-size: 12px;
@@ -1869,7 +1868,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 
 @media (max-height: 600px) and (min-width: 781px) {
   .hero-title-lockup {
-    top: 78px;
+    top: 96px;
     right: 52px;
   }
 
@@ -1923,7 +1922,6 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .hero-curtain__caption { font-size: 11px; }
 
 .eyebrow,
-.method-card > span,
 .method-card p,
 .method-panel > span,
 .method-panel i { font-size: 12px; }

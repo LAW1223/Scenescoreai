@@ -855,7 +855,7 @@ export default function Home() {
           {sectionCopy.howItems.map((item, index) => (
             <Reveal className="method-card" key={item}>
               <AmbientVideo src={works[index + 1].video} className="method-card__video" />
-              <span>0{index + 1}</span><h3>{item}</h3><p>{sectionCopy.pending}</p>
+              <h3>{item}</h3><p>{sectionCopy.pending}</p>
             </Reveal>
           ))}
         </div>
