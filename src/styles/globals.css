@@ -956,6 +956,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .submission-contact h2 { max-width: 760px; margin: 0 0 28px; overflow-wrap: anywhere; font-size: clamp(42px, 6vw, 96px); line-height: .9; letter-spacing: -.09em; text-transform: uppercase; }
 .submission-contact__copy p { max-width: 460px; margin: 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
 .submission-email {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -974,7 +975,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .submission-email:focus-visible .submission-email__icon { border-color: var(--white); color: var(--white); }
 .submission-email__icon svg { width: 26px; height: 26px; }
 .submission-email__label { margin-bottom: 12px; color: var(--red); font: 700 12px/1 var(--mono); letter-spacing: .08em; }
-.submission-email strong { display: block; font-size: clamp(22px, 3.2vw, 48px); line-height: .95; letter-spacing: -.06em; white-space: nowrap; }
+.submission-email strong { display: block; max-width: 100%; font-size: clamp(16px, 8.1cqw, 46px); line-height: .95; letter-spacing: -.06em; white-space: nowrap; }
 .submission-email__description { margin-top: 18px; color: currentColor; opacity: .62; font-size: 14px; line-height: 1.35; }
 .submission-email__action { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; font: 700 12px/1 var(--mono); }
 .submission-email__action svg { width: 15px; height: 15px; transition: transform .25s ease; }
@@ -1275,7 +1276,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
   .submission-contact h2 { font-size: clamp(42px, 12vw, 70px); line-height: 1.1; letter-spacing: .04em; text-transform: none; }
   .submission-contact__copy p { font-size: 14px; line-height: 1.75; }
   .submission-email { min-height: 250px; margin-top: 38px; padding: 20px; }
-  .submission-email strong { font-size: clamp(17px, 5.4vw, 27px); line-height: 1.05; letter-spacing: -.035em; }
+  .submission-email strong { font-size: clamp(16px, 8.1cqw, 25px); line-height: 1.05; letter-spacing: -.035em; }
   .submission-guidelines,
   .submission-form-section { display: block; padding: 70px 0; }
   .submission-guidelines__intro h2,
@@ -2034,7 +2035,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
   letter-spacing: .045em;
 }
 
-.submission-page[lang="zh-Hant"] .submission-email strong { letter-spacing: .01em; }
+.submission-page[lang="zh-Hant"] .submission-email strong { letter-spacing: -.04em; }
 
 .rules-page[lang="zh-Hant"] {
   font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
