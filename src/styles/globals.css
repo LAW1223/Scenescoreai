@@ -399,8 +399,9 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .judge-list__item:hover strong, .judge-list__item.is-active strong { color: var(--red); padding-left: 10px; }
 .judge-list__item:hover i, .judge-list__item.is-active i { opacity: 1; transform: translate(2px, -2px); }
 .judge-feature { position: relative; height: min(720px, 58vw); min-height: 480px; overflow: hidden; background: var(--black); }
-.judge-feature__image-link { position: absolute; inset: 0; z-index: 0; display: block; }
-.judge-feature__image-link img { position: relative; z-index: 0; width: 100%; height: 100%; min-height: 0; object-fit: cover; object-position: center 30%; }
+.judge-feature__image-link { position: absolute; inset: 0; z-index: 0; display: block; isolation: isolate; overflow: hidden; background: var(--black); }
+.judge-feature__image-link::before { content: ''; position: absolute; inset: -24px; z-index: 0; background-image: var(--judge-feature-image); background-position: center 24%; background-size: cover; filter: blur(20px) saturate(.72) brightness(.58); transform: scale(1.06); }
+.judge-feature__image-link img { position: relative; z-index: 1; width: 100%; height: 100%; min-height: 0; padding: clamp(14px, 1.5vw, 24px); object-fit: contain; object-position: center; }
 .judge-feature__image-link:focus-visible { outline: 2px solid var(--red); outline-offset: -6px; }
 .judge-feature::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, transparent 17%, rgba(0, 0, 0, .78) 100%); pointer-events: none; }
 .judge-feature__overlay { position: absolute; z-index: 2; right: 24px; bottom: 24px; left: 24px; max-width: 570px; color: var(--white); text-shadow: 0 1px 12px rgba(0, 0, 0, .45); pointer-events: none; }
@@ -411,6 +412,16 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .judge-feature__headline { max-width: 550px; margin-top: 14px; color: var(--red); font: italic clamp(21px, 2.2vw, 34px)/.98 var(--serif); letter-spacing: -.035em; }
 .judge-feature__role { margin-top: 14px; color: var(--red); font: 11px/1.1 var(--mono); text-transform: uppercase; }
 .judge-feature__bio { max-width: 540px; margin-top: 9px; font-size: 14px; line-height: 1.34; }
+@media (min-width: 1440px) {
+  .judges-showcase { max-width: 1320px; margin-inline: auto; }
+  .judge-feature { height: clamp(720px, min(calc(420px + 20.833vw), calc(100svh - 160px)), 820px); }
+  .judge-feature__image-link img { padding: 0; object-fit: cover; object-position: center 18%; }
+  .judge-feature__image-link[data-judge='paco-wong'] img { object-position: center 25%; }
+  .judge-feature__image-link[data-judge='chen-tai-lee'] img { object-position: center; }
+  .judge-feature__image-link[data-judge='bennett-pang'] img { object-position: center 12%; }
+  .judge-feature__image-link[data-judge='edmond-wong'] img { object-position: center 18%; }
+  .judge-feature__image-link[data-judge='ck-chan'] img { object-position: center 4%; }
+}
 .judges-page[lang="zh-Hant"] {
   font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
 }

@@ -1,7 +1,7 @@
 import { ArrowUpRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
-import { useState, type ReactNode } from 'react'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { academicJudges, judges } from '../data/sceneScore'
 
@@ -75,12 +75,14 @@ export default function Judges() {
               key={`image-${active.id}`}
               to={`/judges/${active.id}`}
               className="judge-feature__image-link"
+              data-judge={active.id}
+              style={{ '--judge-feature-image': `url("${active.image}")` } as CSSProperties}
               aria-label={`${isTraditional ? active.name : active.romanized} — ${isTraditional ? '查看完整資料' : 'View full profile'}`}
             >
               <motion.img
                 src={active.image}
                 alt={active.romanized}
-                initial={{ opacity: 0, scale: 1.05 }}
+                initial={{ opacity: 0, scale: 1.02 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.42 }}
