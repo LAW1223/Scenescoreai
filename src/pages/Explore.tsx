@@ -1,4 +1,4 @@
-import { ArrowUpRight, Grid2X2, List, RotateCcw, ArrowUp } from 'lucide-react'
+import { ArrowUpRight, Grid2X2, List } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -15,9 +15,7 @@ export default function Explore() {
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const copy = isTraditional
     ? {
-        filters: { All: '全部', Featured: '精選', 'Short Film': '短片', Series: '系列' },
-        reset: '重設',
-        top: '頂部',
+      filters: { All: '全部', Featured: '精選', 'Short Film': '短片', Series: '系列' },
         viewMode: '檢視模式',
         grid: '網格',
         list: '列表',
@@ -34,8 +32,6 @@ export default function Explore() {
       }
     : {
         filters: { All: 'All', Featured: 'Featured', 'Short Film': 'Short Film', Series: 'Series' },
-        reset: 'RESET',
-        top: 'TOP',
         viewMode: 'View mode',
         grid: 'GRID',
         list: 'LIST',
@@ -59,8 +55,6 @@ export default function Explore() {
   const workDescription = (work: typeof works[number]) => isTraditional ? work.rankingDescriptionZhHant : work.rankingDescription
   const workStyle = (work: typeof works[number]) => isTraditional ? work.rankingStyleZhHant : work.rankingStyle
   const workTags = (work: typeof works[number]) => isTraditional ? work.rankingTagsZhHant : work.rankingTags
-
-  const reset = () => { setView('list'); setFilter('All'); setHovered(null); setPlayingPreview(null) }
 
   const renderRankingRow = (work: typeof works[number]) => {
     const isFocused = hovered === work.id
@@ -161,8 +155,6 @@ export default function Explore() {
           {filters.map((item) => <button className={filter === item ? 'is-active' : ''} key={item} type="button" onClick={() => setFilter(item)}>{copy.filters[item as keyof typeof copy.filters]} <span>[{item === 'All' ? works.length : works.filter((work) => work.type === item).length}]</span></button>)}
         </div>
         <div className="explore-actions">
-          <button type="button" onClick={reset}><RotateCcw aria-hidden="true" /> {copy.reset}</button>
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><ArrowUp aria-hidden="true" /> {copy.top}</button>
           <div className="view-toggle" aria-label={copy.viewMode}>
             <button type="button" className={view === 'grid' ? 'is-active' : ''} aria-label={copy.grid} onClick={() => setView('grid')}><Grid2X2 aria-hidden="true" /> {copy.grid}</button>
             <button type="button" className={view === 'list' ? 'is-active' : ''} aria-label={copy.list} onClick={() => setView('list')}><List aria-hidden="true" /> {copy.list}</button>

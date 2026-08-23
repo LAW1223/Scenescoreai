@@ -308,7 +308,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
 .explore-actions { display: flex; align-items: center; gap: 20px; }
 .explore-actions button { display: inline-flex; align-items: center; gap: 7px; }
 .explore-actions svg, .view-toggle svg { width: 14px; height: 14px; }
-.view-toggle { display: flex; gap: 14px; padding-left: 14px; border-left: 1px solid var(--line); }
+.view-toggle { display: flex; gap: 14px; }
 .ranking-table { padding-top: 8px; }
 .ranking-table__head {
   display: grid;
@@ -1159,7 +1159,7 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
   .page-hero > p { max-width: 320px; margin-left: 25%; }
   .explore-toolbar { display: block; }
   .explore-filters { gap: 8px 16px; padding-bottom: 20px; }
-  .explore-actions { justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--line); }
+  .explore-actions { justify-content: flex-end; padding-top: 16px; border-top: 1px solid var(--line); }
   .ranking-table { padding-top: 0; }
   .ranking-table__head { grid-template-columns: 1fr; min-height: 0; padding: 12px 0; }
   .ranking-table__head span:first-child { display: none; }
@@ -1580,6 +1580,21 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
   line-height: 1.55;
 }
 
+.home-page[lang="zh-Hant"] .home-brand-statement h1 {
+  max-width: none;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  font-size: clamp(48px, 5.2vw, 84px);
+  line-height: 1.02;
+  letter-spacing: -.045em;
+}
+
+.home-page[lang="zh-Hant"] .home-brand-statement p {
+  max-width: 46em;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  line-height: 1.7;
+  letter-spacing: .025em;
+}
+
 .home-rank-card__top {
   display: block;
   margin-bottom: 12px;
@@ -1768,6 +1783,15 @@ h1 em, h2 em { color: var(--red); font-family: var(--serif); font-weight: 400; l
     margin-top: 16px;
     font-size: 12px;
     line-height: 1.55;
+  }
+
+  .home-page[lang="zh-Hant"] .home-brand-statement h1 {
+    font-size: clamp(36px, 10vw, 50px);
+    line-height: 1.08;
+  }
+
+  .home-page[lang="zh-Hant"] .home-brand-statement p {
+    line-height: 1.65;
   }
 
   .home-rank-card__top {

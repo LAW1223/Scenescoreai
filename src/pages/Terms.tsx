@@ -1,12 +1,8 @@
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { termsIntroduction, termsMeta, termsSections } from '../data/termsOfUse'
 
 export default function Terms() {
-  const { i18n } = useTranslation()
-  const isTraditional = i18n.resolvedLanguage === 'zh-TW'
-
   return (
     <div className="terms-page page-pad" lang="en">
       <header className="terms-hero">
@@ -49,7 +45,7 @@ export default function Terms() {
       </div>
 
       <Link className="terms-back" to="/">
-        {isTraditional ? '返回首頁' : 'RETURN HOME'} <ArrowUpRight aria-hidden="true" />
+        RETURN HOME <ArrowUpRight aria-hidden="true" />
       </Link>
     </div>
   )

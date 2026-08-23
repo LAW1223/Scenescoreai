@@ -169,6 +169,15 @@ export default function Home() {
   const [homeWorksDragging, setHomeWorksDragging] = useState(false)
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
+  const heroCopy = isTraditional
+    ? {
+        titleLines: ['定義 AI 影像', '創作的新標準'],
+        description: 'Scene Score AI 以專業評審、透明標準與全球視野，發掘最具突破性的 AI 漫劇與短劇，讓真正代表未來的作品，被世界看見',
+      }
+    : {
+        titleLines: ['The Leaderboard', "for AI's Best", 'Storytellers.'],
+        description: "Judged by the researchers building tomorrow's AI and the artists shaping today's industry — SceneScore finds the AI manga and short dramas worth watching, before anyone else does.",
+      }
   const featuredCopy = isTraditional
     ? {
         rank: '名次 / 01',
@@ -668,13 +677,11 @@ export default function Home() {
           />
           <div className="hero-media-vignette" aria-hidden="true" />
 
-          <div className="home-hero__content home-hero__copy home-brand-statement" lang="en">
+          <div className="home-hero__content home-hero__copy home-brand-statement" lang={isTraditional ? 'zh-Hant' : 'en'}>
             <h1>
-              <span>The Leaderboard</span>
-              <span>for AI's Best</span>
-              <span>Storytellers.</span>
+              {heroCopy.titleLines.map((line) => <span key={line}>{line}</span>)}
             </h1>
-            <p>Judged by the researchers building tomorrow's AI and the artists shaping today's industry — SceneScore finds the AI manga and short dramas worth watching, before anyone else does.</p>
+            <p>{heroCopy.description}</p>
           </div>
         </div>
 
