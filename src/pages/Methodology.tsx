@@ -1,146 +1,229 @@
-import { ArrowUpRight, Check, ChevronRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowUpRight, ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { methodologyContent, type MethodologyLanguage } from '../data/methodologyContent'
+
+const compactMethodologyQuery = '(max-width: 780px)'
+
+function useCompactMethodologyLayout() {
+  const [isCompact, setIsCompact] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia(compactMethodologyQuery).matches
+  ))
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(compactMethodologyQuery)
+    const handleChange = (event: MediaQueryListEvent) => setIsCompact(event.matches)
+
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
+
+  return isCompact
+}
 
 export default function Methodology() {
   const { i18n } = useTranslation()
-  const isTraditional = i18n.resolvedLanguage === 'zh-TW'
-  const copy = isTraditional
-    ? {
-        eligibility: {
-          kicker: '收錄條件',
-          title: '先確認作品，再談排名',
-          description: '符合以下條件的作品，才會進入 Scene Score 公開索引',
-          points: [
-            '包含超過 50% 的 AI 生成畫面（Midjourney、Stable Diffusion、Runway、Pika 等）',
-            '故事主線清晰，人物與邏輯具備連貫性',
-            '成片已發布於公開串流或社交平台（B站、抖音、紅果短劇、YouTube、TikTok、Drama Wave 等）',
-            '無低俗、侵權或嚴重違規內容',
-          ],
-        },
-        scoring: {
-          kicker: '評分邏輯',
-          title: '滿分 10 分',
-          description: '最終得分由以下四個維度加權得出',
-          dimensions: [
-            { number: '01', title: '視聽質量', weight: '30%', description: '畫面的連貫性、人物一致性、光影審美，以及聲音與畫面的契合度' },
-            { number: '02', title: '劇本敘事', weight: '30%', description: '故事節奏、懸念設置、邏輯自洽，以及台詞水準' },
-            { number: '03', title: '觀眾反響', weight: '20%', description: '全網播放量、點讚率、評論互動率及好評比例' },
-            { number: '04', title: '技術突破', weight: '20%', description: '是否運用了新的 AI 流程，突破常規生成限制或實現高難度動態效果' },
-          ],
-        },
-        updates: {
-          kicker: '更新頻率',
-          title: '榜單保持新鮮',
-          points: [
-            'AI 漫劇：每季度更新，呈現本季度最優質的 AI 漫劇作品',
-            'AI 短劇：每季度更新，精選本季度最具焦點與影響力的 AI 短劇',
-          ],
-        },
-        return: '返回流行榜',
-      }
-    : {
-        eligibility: {
-          kicker: 'ELIGIBILITY',
-          title: 'A clear frame comes before a rank.',
-          description: 'A work can enter the public index when it meets these conditions.',
-          points: [
-            'More than 50% of the finished image is AI-generated, using tools such as Midjourney, Stable Diffusion, Runway or Pika',
-            'The story line is clear, with coherent characters and internal logic',
-            'The finished work is publicly released on a streaming or social platform such as Bilibili, YouTube, TikTok or Drama Wave',
-            'No vulgar, infringing or seriously non-compliant content',
-          ],
-        },
-        scoring: {
-          kicker: 'SCORING LOGIC',
-          title: 'A 10-point reading frame.',
-          description: 'The final score is weighted across four dimensions.',
-          dimensions: [
-            { number: '01', title: 'AUDIOVISUAL QUALITY', weight: '30%', description: 'Visual continuity, character consistency, lighting, aesthetics and the fit between sound and image' },
-            { number: '02', title: 'SCRIPT & STORY', weight: '30%', description: 'Pacing, suspense, internal logic and the quality of the dialogue' },
-            { number: '03', title: 'AUDIENCE RESPONSE', weight: '20%', description: 'Reach, like rate, comment activity and the proportion of positive response' },
-            { number: '04', title: 'TECHNICAL BREAKTHROUGH', weight: '20%', description: 'New AI workflows, lifted generation limits or difficult dynamic effects' },
-          ],
-        },
-        updates: {
-          kicker: 'UPDATE FREQUENCY',
-          title: 'The ranking keeps moving.',
-          points: [
-            'AI animation: refreshed quarterly with the strongest AI animated works of the season',
-            'AI short drama: refreshed quarterly with the season’s most focused and influential short dramas',
-          ],
-        },
-        return: 'RETURN TO RANKING',
-      }
+  const language: MethodologyLanguage = i18n.resolvedLanguage === 'zh-TW' ? 'zh-TW' : 'en'
+  const copy = methodologyContent[language]
+  const isCompact = useCompactMethodologyLayout()
+  const [expandedDimensions, setExpandedDimensions] = useState<Set<string>>(
+    () => new Set([methodologyContent.en.dimensions.items[0].id]),
+  )
+
+  const toggleDimension = (id: string) => {
+    if (!isCompact) return
+
+    setExpandedDimensions((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   return (
-    <div className="rules-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
-      <section className="rules-board" aria-label={isTraditional ? '榜單規則' : 'Ranking rules'}>
-        <div className="rules-board__header">
-          <span className="rules-board__mark">SCENE SCORE / {isTraditional ? '公開索引' : 'PUBLIC INDEX'}</span>
-          <span className="rules-board__scale">{isTraditional ? '滿分 10 分' : '10 POINT SCALE'}</span>
+    <div className="rules-page page-pad" lang={language === 'zh-TW' ? 'zh-Hant' : 'en'}>
+      <section className="rules-board" aria-labelledby="methodology-title">
+        <header className="rules-board__header">
+          <span className="rules-board__mark">{copy.meta.mark}</span>
+          <span className="rules-board__scale">{copy.meta.scale}</span>
+        </header>
+
+        <section className="methodology-hero" id="method-overview">
+          <div className="methodology-hero__title">
+            <span className="rules-kicker">{copy.overview.kicker}</span>
+            <h1 id="methodology-title">{copy.meta.title}</h1>
+          </div>
+
+          <div className="methodology-scorecard" aria-label={`${copy.meta.summaryLabel} ${copy.meta.totalScore} ${copy.meta.pointsUnit}`}>
+            <span>{copy.meta.summaryLabel}</span>
+            <strong>{copy.meta.totalScore}</strong>
+            <small>{copy.meta.pointsUnit}</small>
+          </div>
+
+          <div className="methodology-score-strip" aria-label={copy.dimensions.title}>
+            {copy.dimensions.items.map((dimension) => (
+              <div key={dimension.id}>
+                <span>{dimension.number}</span>
+                <strong>{dimension.score}</strong>
+                <small>{copy.meta.pointsUnit}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="methodology-overview-copy">
+            <div>
+              <h2>{copy.overview.title}</h2>
+              {copy.overview.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </div>
+            <div className="methodology-principles">
+              <h3>{copy.overview.principlesTitle}</h3>
+              {copy.overview.principles.map((principle, index) => (
+                <p key={principle}><span>0{index + 1}</span>{principle}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <div className="methodology-layout">
+          <aside className="methodology-index" aria-label={language === 'zh-TW' ? '頁內目錄' : 'On-page contents'}>
+            <span>INDEX / 50</span>
+            <nav>
+              {copy.navigation.map((item, index) => (
+                <a href={item.href} key={item.href}><span>0{index + 1}</span>{item.label}</a>
+              ))}
+            </nav>
+          </aside>
+
+          <main className="methodology-content">
+            <section className="methodology-section methodology-section--bands" id="method-bands" aria-labelledby="method-bands-title">
+              <div className="methodology-section__heading">
+                <span className="rules-kicker">{copy.bands.kicker}</span>
+                <h2 id="method-bands-title">{copy.bands.title}</h2>
+                <p>{copy.bands.intro}</p>
+              </div>
+              <div className="methodology-bands">
+                {copy.bands.items.map((band, index) => (
+                  <article key={band.range}>
+                    <span className="methodology-bands__index">0{index + 1}</span>
+                    <strong>{band.range}</strong>
+                    <div>
+                      <h3>{band.label}</h3>
+                      <p>{band.description}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="methodology-section methodology-section--organization" id="method-organization" aria-labelledby="method-organization-title">
+              <div className="methodology-section__heading">
+                <span className="rules-kicker">{copy.organization.kicker}</span>
+                <h2 id="method-organization-title">{copy.organization.title}</h2>
+              </div>
+              <ol className="methodology-numbered-list">
+                {copy.organization.points.map((point, index) => (
+                  <li key={point}><span>0{index + 1}</span><p>{point}</p></li>
+                ))}
+              </ol>
+              <div className="methodology-formula">
+                <span>{copy.organization.formulaLabel}</span>
+                <strong>{copy.organization.formula}</strong>
+              </div>
+              <div className="methodology-ties">
+                <h3>{copy.organization.tieTitle}</h3>
+                <ol>
+                  {copy.organization.tieBreakers.map((rule, index) => (
+                    <li key={rule}><span>{index + 1}</span><p>{rule}</p></li>
+                  ))}
+                </ol>
+              </div>
+            </section>
+
+            <section className="methodology-section methodology-section--dimensions" id="method-dimensions" aria-labelledby="method-dimensions-title">
+              <div className="methodology-section__heading">
+                <span className="rules-kicker">{copy.dimensions.kicker}</span>
+                <h2 id="method-dimensions-title">{copy.dimensions.title}</h2>
+                <p>{copy.dimensions.intro}</p>
+              </div>
+              <div className="methodology-dimensions">
+                {copy.dimensions.items.map((dimension) => {
+                  const isExpanded = !isCompact || expandedDimensions.has(dimension.id)
+                  const contentId = `dimension-${dimension.id}-content`
+
+                  return (
+                    <article className={`methodology-dimension${isExpanded ? ' is-expanded' : ''}`} key={dimension.id}>
+                      <h3>
+                        <button
+                          type="button"
+                          aria-controls={contentId}
+                          aria-expanded={isExpanded}
+                          disabled={!isCompact}
+                          onClick={() => toggleDimension(dimension.id)}
+                        >
+                          <span className="methodology-dimension__topline">
+                            <span>{dimension.number}</span>
+                            <strong>{dimension.score}<small>{copy.meta.pointsUnit}</small></strong>
+                          </span>
+                          <span className="methodology-dimension__title">{dimension.title}</span>
+                          <span className="methodology-dimension__action">
+                            {isExpanded ? copy.dimensions.collapseLabel : copy.dimensions.expandLabel}
+                            <ChevronDown aria-hidden="true" />
+                          </span>
+                        </button>
+                      </h3>
+                      <div className="methodology-dimension__content" id={contentId} hidden={!isExpanded}>
+                        <p className="methodology-dimension__description">{dimension.description}</p>
+                        <div className="methodology-dimension__criteria">
+                          <span>{copy.dimensions.criteriaLabel}</span>
+                          <ol>
+                            {dimension.criteria.map((criterion, index) => (
+                              <li key={criterion}><span>{String(index + 1).padStart(2, '0')}</span><p>{criterion}</p></li>
+                            ))}
+                          </ol>
+                        </div>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </section>
+
+            <section className="methodology-section methodology-section--eligibility" id="method-eligibility" aria-labelledby="method-eligibility-title">
+              <div className="methodology-section__heading">
+                <span className="rules-kicker">{copy.eligibility.kicker}</span>
+                <h2 id="method-eligibility-title">{copy.eligibility.title}</h2>
+                <p>{copy.eligibility.intro}</p>
+              </div>
+              <ol className="methodology-rule-list">
+                {copy.eligibility.points.map((point, index) => (
+                  <li key={point}><span>{String(index + 1).padStart(2, '0')}</span><p>{point}</p></li>
+                ))}
+              </ol>
+            </section>
+
+            <section className="methodology-section methodology-section--deductions" id="method-deductions" aria-labelledby="method-deductions-title">
+              <div className="methodology-section__heading">
+                <span className="rules-kicker">{copy.deductions.kicker}</span>
+                <h2 id="method-deductions-title">{copy.deductions.title}</h2>
+              </div>
+              <ol className="methodology-rule-list methodology-rule-list--warning">
+                {copy.deductions.points.map((point, index) => (
+                  <li key={point}><span>{String(index + 1).padStart(2, '0')}</span><p>{point}</p></li>
+                ))}
+              </ol>
+            </section>
+          </main>
         </div>
-
-        <section className="rules-section rules-section--eligibility">
-          <div className="rules-section__heading">
-            <span className="rules-section__number">01</span>
-            <div>
-              <span className="rules-kicker">{copy.eligibility.kicker}</span>
-              <h2>{copy.eligibility.title}</h2>
-              <p>{copy.eligibility.description}</p>
-            </div>
-          </div>
-          <ul className="rules-checklist">
-            {copy.eligibility.points.map((point) => (
-              <li key={point}><Check aria-hidden="true" /><span>{point}</span></li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="rules-section rules-section--scoring">
-          <div className="rules-section__heading">
-            <span className="rules-section__number">02</span>
-            <div>
-              <span className="rules-kicker">{copy.scoring.kicker}</span>
-              <h2>{copy.scoring.title}</h2>
-              <p>{copy.scoring.description}</p>
-            </div>
-          </div>
-          <div className="rules-dimensions">
-            {copy.scoring.dimensions.map((dimension) => (
-              <article className="rules-dimension" key={dimension.number}>
-                <div className="rules-dimension__topline">
-                  <span>{dimension.number}</span>
-                  <strong>{dimension.weight}</strong>
-                </div>
-                <h3>{dimension.title}</h3>
-                <p>{dimension.description}</p>
-                <ChevronRight aria-hidden="true" />
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="rules-section rules-section--updates">
-          <div className="rules-section__heading">
-            <span className="rules-section__number">03</span>
-            <div>
-              <span className="rules-kicker">{copy.updates.kicker}</span>
-              <h2>{copy.updates.title}</h2>
-            </div>
-          </div>
-          <ul className="rules-update-list">
-            {copy.updates.points.map((point, index) => (
-              <li key={point}><span>0{index + 1}</span><p>{point}</p></li>
-            ))}
-          </ul>
-        </section>
       </section>
 
-      <section className="rules-cta">
-        <p>{isTraditional ? '評分規則會隨正式評審協議確認後持續更新，公開排名將同步標示版本與狀態' : 'The rules will continue to evolve with the formal jury protocol. Published rankings will carry the current version and status.'}</p>
-        <Link className="round-arrow-link" to="/explore"><span>{copy.return}</span><ArrowUpRight aria-hidden="true" /></Link>
-      </section>
+      <footer className="rules-cta rules-cta--methodology">
+        <Link className="round-arrow-link" to="/explore">
+          <span>{copy.returnToRanking}</span>
+          <ArrowUpRight aria-hidden="true" />
+        </Link>
+      </footer>
     </div>
   )
 }

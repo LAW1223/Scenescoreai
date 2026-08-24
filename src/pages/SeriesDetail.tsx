@@ -40,7 +40,7 @@ export default function SeriesDetail() {
         back: 'BACK TO INDEX',
         crew: 'THE CREW',
         preview: 'PREVIEW FRAME',
-        overviewTitle: 'A scene is never only a score.',
+        overviewTitle: 'A scene is never only a score',
         transparency: 'Scene Score is keeping this entry transparent: the score, ranking logic and full jury breakdown will appear only after the methodology has been confirmed.',
         behind: 'BEHIND THE SCORE',
         production: 'Production details will be added when the official entry data is confirmed.',

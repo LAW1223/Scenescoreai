@@ -17,12 +17,12 @@ export default function About() {
         back: '查看公開索引',
       }
     : {
-        title: <>MAKE GOOD<br /><em>CONTENT VISIBLE.</em></>,
+        title: <>MAKE GOOD<br /><em>CONTENT VISIBLE</em></>,
         intro: 'Scene Score is a public-facing ranking and information experience for screen stories — professional, transparent and built to keep context close to the frame.',
-        positionTitle: <>Data can find the scene.<br /><em>People decide why it stays.</em></>,
+        positionTitle: <>Data can find the scene<br /><em>People decide why it stays</em></>,
         valuesOne: 'Clarity over noise. A visible process over a mysterious number. A careful introduction to the people who bring experience, taste and accountability to the conversation.',
         valuesTwo: 'The public experience brings together all-time ranking preview, jury spotlight and a visible methodology framework.',
-        contactTitle: <>THE NEXT PROJECT<br /><em>STARTS HERE.</em></>,
+        contactTitle: <>THE NEXT PROJECT<br /><em>STARTS HERE</em></>,
         contactAction: 'INITIATE A COLLABORATION',
         back: 'View the index',
       }

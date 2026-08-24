@@ -169,13 +169,14 @@ export default function Home() {
   const [homeWorksDragging, setHomeWorksDragging] = useState(false)
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
+  const heroRankingLabel = isTraditional ? '流行榜' : 'LEADERBOARD'
   const heroCopy = isTraditional
     ? {
-        titleLines: ['定義 AI 影像', '創作的新標準'],
+        titleLines: ['權威評審', '定義AI影像新標竿'],
         description: 'Scene Score AI 以專業評審、透明標準與全球視野，發掘最具突破性的 AI 漫劇與短劇，讓真正代表未來的作品，被世界看見',
       }
     : {
-        titleLines: ['The Leaderboard', "for AI's Best", 'Storytellers.'],
+        titleLines: ['The Leaderboard', "for AI's Best", 'Storytellers'],
         description: "Judged by the researchers building tomorrow's AI and the artists shaping today's industry — SceneScore finds the AI manga and short dramas worth watching, before anyone else does.",
       }
   const featuredCopy = isTraditional
@@ -218,8 +219,8 @@ export default function Home() {
         viewWork: 'VIEW WORK',
         rankingAria: 'View full ranking',
         viewRanking: 'VIEW FULL RANKING',
-        howTitle: 'Transparent by design.',
-        howSoul: 'Specific by practice.',
+        howTitle: 'Transparent by design',
+        howSoul: 'Specific by practice',
         howDescription: 'Scene Score will publish its scoring dimensions, weights and anomaly handling before formal rankings go live.',
         readMethod: 'READ THE METHOD',
         howItems: ['Dimensions', 'Weighting', 'Jury protocol'],
@@ -703,12 +704,17 @@ export default function Home() {
         <div className="hero-curtain">
           <div className="hero-curtain__texture" aria-hidden="true" />
           <div className="hero-title-lockup" aria-hidden="true">
-            <div className="hero-wordmark" aria-label="Scene Score">
+            <div className="hero-wordmark" aria-label="Scene Score AI">
               <span className="hero-wordmark__scene">SCENE</span>
               <span className="hero-score-lockup">
                 <span className="hero-wordmark__score">SCORE</span>
-                <span className="hero-leaderboard" aria-label="Leaderboard">
-                  {'LEADERBOARD'.split('').map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
+                <span className="hero-wordmark__ai">AI</span>
+                <span className="hero-leaderboard" aria-label={heroRankingLabel}>
+                  {isTraditional
+                    ? Array.from(heroRankingLabel).map((character, index) => (
+                        <span className="hero-leaderboard__character" key={`${character}-${index}`}>{character}</span>
+                      ))
+                    : heroRankingLabel}
                 </span>
               </span>
             </div>

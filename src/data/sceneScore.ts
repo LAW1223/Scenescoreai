@@ -172,8 +172,8 @@ const judgeDirectory: Judge[] = [
     role: 'Talent Manager / Film Producer',
     roleZhHant: '藝人經理人／電影監製',
     headline: 'Artificial Human Talent Manager',
-    headlineZhHant: '升級的經紀人',
-    image: '/images/judges/paco-wong.jpeg',
+    headlineZhHant: '金牌電影監製及娛樂產業領袖',
+    image: '/images/judges/paco-wong-v3.png',
     bio: [
       'A defining Hong Kong talent manager who helped shape the careers of Danny Chan, George Lam, Sally Yeh, Sammi Cheng, Andy Hui, Miriam Yeung, Leo Ku and Stephy Tang',
       'Across more than half a century in music and film, he has connected Hong Kong artists with the wider Chinese-language entertainment market through an instinct for talent and audience',
@@ -208,8 +208,8 @@ const judgeDirectory: Judge[] = [
     role: 'Musician / Performer',
     roleZhHant: '音樂人／演員',
     headline: 'The Wynners’ lead guitarist and band anchor',
-    headlineZhHant: '溫拿樂隊的靈魂主音結他手',
-    image: '/images/judges/bennett-pang.jpeg',
+    headlineZhHant: '殿堂級音樂人',
+    image: '/images/judges/bennett-pang-v2.png',
     bio: [
       'The lead guitarist and organising force of The Wynners, a band whose music and screen presence have shaped Hong Kong popular culture for more than half a century',
       'His music includes the theme from Second Class Citizens, A Love Song, Never Say No and the solo albums Sunshine Clearance Sale and Borrowed Dreams',
@@ -226,7 +226,7 @@ const judgeDirectory: Judge[] = [
     role: 'Photographer',
     roleZhHant: '攝影師',
     headline: 'A recorder of light, character and time',
-    headlineZhHant: '光影時間的紀錄者',
+    headlineZhHant: '攝影藝術大師',
     image: '/images/judges/ck-chan.jpeg',
     bio: [
       'A photographer with more than fifteen years of experience, known for independently photographing nominee portraits for the Hong Kong Film Awards over many consecutive years',
@@ -244,7 +244,7 @@ const judgeDirectory: Judge[] = [
     role: 'Director / Screenwriter',
     roleZhHant: '導演／編劇',
     headline: 'A local storyteller shaped by screenwriting',
-    headlineZhHant: '由編劇到導演的港產本土說書人',
+    headlineZhHant: '資深電影編劇',
     image: '/images/judges/chen-tai-lee.jpeg',
     bio: [
       'A Hong Kong filmmaker educated in film and television at Hong Kong Baptist University and in cultural studies at the Chinese University of Hong Kong',
@@ -271,7 +271,7 @@ export const academicJudges: AcademicJudge[] = [
   {
     id: 'tianrui-zhou',
     nameZhHant: '\u5468\u738b\u6625\u6f8d 博士',
-    nameEn: 'Wangchun Zhou, PhD',
+    nameEn: 'Wangchun Zhou PhD',
     focusZhHant: '人工智慧、AGI 與大型語言模型研究員',
     focusEn: 'AGI and large language model researcher',
     bioZhHant: '研究通用人工智慧、智能代理與自然語言處理，並參與大型模型的角色理解與效率研究',
@@ -292,7 +292,7 @@ export const academicJudges: AcademicJudge[] = [
   {
     id: 'ruisong-yuan',
     nameZhHant: '\u8881\u745e\u6ff1 博士',
-    nameEn: 'Ruibin Yuan, PhD',
+    nameEn: 'Ruibin Yuan PhD',
     focusZhHant: 'AI 音樂、多模態與音樂資訊檢索學者',
     focusEn: 'AI music and multimodal scholar',
     bioZhHant: '研究音樂生成、音樂資訊檢索與電腦音樂，探索音樂、語音及影像的多模態理解',
@@ -315,7 +315,7 @@ export const academicJudges: AcademicJudge[] = [
   {
     id: 'ziyang-ma',
     nameZhHant: '馬子陽 博士',
-    nameEn: 'Ziyang Ma, PhD',
+    nameEn: 'Ziyang Ma PhD',
     focusZhHant: '語音、語言與多模態學習研究員',
     focusEn: 'Senior researcher at Shanghai Jiao Tong University',
     bioZhHant: '現為上海交通大學研究人員，專注於語音語言模型、自監督學習與多模態學習',
@@ -336,7 +336,7 @@ export const academicJudges: AcademicJudge[] = [
   {
     id: 'jiaheng-liu',
     nameZhHant: '劉佳恒 博士',
-    nameEn: 'Jiaheng Liu, PhD',
+    nameEn: 'Jiaheng Liu PhD',
     focusZhHant: '大型語言模型與角色扮演研究員',
     focusEn: 'Nanjing University and M-A-P research collaborator',
     bioZhHant: '與南京大學及 M-A-P 開源社區保持學術聯繫，研究模型蒸餾、長文本建模與角色扮演能力',
@@ -357,7 +357,7 @@ export const academicJudges: AcademicJudge[] = [
   {
     id: 'yexin-liu',
     nameZhHant: '劉業鑫 博士',
-    nameEn: 'Yexin Liu, PhD',
+    nameEn: 'Yexin Liu PhD',
     focusZhHant: '生成式 AI、多模態模型與計算機視覺研究員',
     focusEn: 'AI PhD researcher',
     bioZhHant: '深耕生成式 AI、影片生成與計算機視覺，具備從數據、模型到訓練微調的完整工程經驗',

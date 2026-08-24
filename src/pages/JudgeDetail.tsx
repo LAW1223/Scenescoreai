@@ -36,7 +36,7 @@ export default function JudgeDetail() {
     <div className="judge-detail-page detail-page" lang={localeKey}>
       <section className="judge-detail-hero">
         <Link to="/judges" className="judge-detail-back"><ArrowLeft aria-hidden="true" /> {copy.back}</Link>
-        <div className="judge-detail-hero__image">
+        <div className="judge-detail-hero__image" data-judge={judge.id}>
           <img src={judge.image} alt={judge.romanized} />
           <span className="judge-detail-hero__index">0{index + 1} / 05</span>
         </div>

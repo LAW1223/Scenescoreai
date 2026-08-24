@@ -17,7 +17,7 @@ export default function Submission() {
         emailLabel: '投稿信箱',
         emailDescription: '作品自薦、合作邀請與發布資料',
         emailAction: '寄送投稿郵件',
-        guideTitle: '投稿前，先準備好作品的脈絡',
+        guideTitle: '投稿前\n先準備好\n作品的脈絡',
         guideIntro: '資料越清晰，作品越容易被完整閱讀。以下內容是投稿時的建議資料，不代表固定格式。',
         guides: [
           ['01', '作品資訊', '作品名稱、類型、導演或主創名單，以及一句話簡介'],
@@ -38,19 +38,19 @@ export default function Submission() {
         back: '返回流行榜',
       }
       : {
-        deskTitle: 'Bring the next scene into the index.',
+        deskTitle: 'Bring the next scene into the index',
         deskDescription: 'Send the work details, a trailer or a full viewing link. We will organize the information first and reply with the next steps.',
         emailLabel: 'SUBMISSION EMAIL',
         emailDescription: 'Work submissions, collaborations and release materials',
         emailAction: 'SEND AN EMAIL',
-        guideTitle: 'Give the work a clear frame.',
+        guideTitle: 'Give the work a clear frame',
         guideIntro: 'The clearer the context, the easier it is to read the work in full. These are suggested materials, not a fixed format.',
         guides: [
           ['01', 'WORK DETAILS', 'Title, format, director or core team, and a one-line logline'],
           ['02', 'VIEWING LINK', 'A trailer, full work or publicly accessible video link'],
           ['03', 'CREATIVE NOTE', 'The context, AI workflow and the point of view you want us to notice'],
         ],
-        formTitle: 'Start with an email.',
+        formTitle: 'Start with an email',
         formIntro: 'Complete the basics and the button will open your mail app with a draft you can review before sending.',
         name: 'NAME / TEAM',
         namePlaceholder: 'Your name or company',
