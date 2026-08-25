@@ -7,10 +7,11 @@ import { Link } from 'react-router-dom'
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { works } from '../data/sceneScore'
+import { formatSelectionTitle, selectionWorks } from '../data/selectionWorks'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const homeWorkCards = works.slice(1, 5)
+const homeWorkCards = selectionWorks.slice(0, 5)
 const homeWorkCarouselCards = [...homeWorkCards, ...homeWorkCards, ...homeWorkCards]
 
 const HOME_VIDEO_TIME_KEY = 'scene-score-home-video-time'
@@ -774,6 +775,7 @@ export default function Home() {
           >
             {homeWorkCarouselCards.map((work, index) => {
               const cardKey = `${work.id}-${index}`
+              const title = formatSelectionTitle(work.title)
 
               return (
                 <Reveal className="home-work-card-shell" key={cardKey}>
@@ -781,7 +783,7 @@ export default function Home() {
                     to={'/series/' + work.id}
                     className="home-work-card"
                     draggable={false}
-                    aria-label={`${sectionCopy.viewWork}: ${work.title}`}
+                    aria-label={`${sectionCopy.viewWork}: ${title}`}
                     onClick={handleHomeWorkClick}
                     onPointerEnter={() => {
                       if (homeWorksDragRef.current.pointerId === -1) setActiveHomeWork(cardKey)
@@ -794,7 +796,7 @@ export default function Home() {
                       <HoverPreviewVideo src={work.video} className="home-work-card__video" isActive={activeHomeWork === cardKey} />
                     </span>
                     <span className="home-work-card__info">
-                      <strong>{work.title}</strong>
+                      <strong className={`selection-title ${title.length > 10 ? 'selection-title--long' : ''}`}>{title}</strong>
                       <ArrowUpRight aria-hidden="true" />
                     </span>
                   </Link>

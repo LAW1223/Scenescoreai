@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "check": "npm run lint && npm run build",
+    "check": "npm run test:selection && npm run lint && npm run build",
+    "test:selection": "node scripts/check-selection-data.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "serve:dist": "node scripts/serve-dist.mjs"

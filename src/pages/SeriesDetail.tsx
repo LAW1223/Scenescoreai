@@ -4,9 +4,15 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getWork, works } from '../data/sceneScore'
+import { formatSelectionTitle, getSelectionWork, selectionWorks, type LocalizedSelectionField } from '../data/selectionWorks'
 
 export default function SeriesDetail() {
   const { id = works[0].id } = useParams()
+  const selectionWork = getSelectionWork(id)
+  const selectionIndex = selectionWork ? selectionWorks.findIndex((entry) => entry.id === selectionWork.id) : -1
+  const nextSelection = selectionWork ? selectionWorks[(selectionIndex + 1) % selectionWorks.length] : undefined
+  const selectionTitle = selectionWork ? formatSelectionTitle(selectionWork.title) : ''
+  const nextSelectionTitle = nextSelection ? formatSelectionTitle(nextSelection.title) : ''
   const work = getWork(id)
   const next = works[(works.findIndex((entry) => entry.id === work.id) + 1) % works.length]
   const [crewOpen, setCrewOpen] = useState(false)
@@ -46,6 +52,83 @@ export default function SeriesDetail() {
         production: 'Production details will be added when the official entry data is confirmed.',
         closeCrew: 'Close crew',
       }
+
+  const selectionCopy = isTraditional
+    ? {
+        back: '返回入圍作品',
+        preview: '預覽畫面',
+        title: '片名',
+        applicant: '申報公司／導演',
+        type: '類型',
+        subject: '題材',
+        next: '下一部作品',
+      }
+    : {
+        back: 'BACK TO OFFICIAL SELECTION',
+        preview: 'PREVIEW FRAME',
+        title: 'TITLE',
+        applicant: 'SUBMITTING COMPANY / DIRECTOR',
+        type: 'TYPE',
+        subject: 'SUBJECT',
+        next: 'NEXT WORK',
+      }
+  const localizedSelectionField = (field: LocalizedSelectionField) => isTraditional ? field.zhHant : field.en
+
+  if (selectionWork && nextSelection) {
+    return (
+      <div className="detail-page selection-detail-page" lang={isTraditional ? 'zh-Hant' : 'en'}>
+        <section className={`detail-hero scene-poster scene-poster--${selectionWork.accent}`}>
+          <video
+            className="detail-hero__video"
+            src={selectionWork.video}
+            poster={selectionWork.image}
+            muted
+            loop
+            playsInline
+            autoPlay
+            preload="metadata"
+            aria-hidden="true"
+          />
+          <Link to="/explore" className="detail-back"><ArrowLeft aria-hidden="true" /> {selectionCopy.back}</Link>
+          <div className="detail-hero__title"><h1 className={`selection-title ${selectionTitle.length > 10 ? 'selection-title--long' : ''}`}>{selectionTitle}</h1></div>
+          <ArrowDown className="detail-down" aria-hidden="true" />
+          <span className="detail-hero__rec"><i /> REC / {selectionCopy.preview}</span>
+        </section>
+
+        <section className="selection-detail-data page-pad" aria-label={isTraditional ? '作品資料' : 'Work information'}>
+          <div className="selection-detail-data__grid">
+            <div className="selection-detail-field selection-detail-field--title">
+              <span>{selectionCopy.title}</span>
+              <strong className={`selection-title ${selectionTitle.length > 10 ? 'selection-title--long' : ''}`}>{selectionTitle}</strong>
+            </div>
+            <div className="selection-detail-field selection-detail-field--applicant">
+              <span>{selectionCopy.applicant}</span>
+              <strong>{selectionWork.applicant}</strong>
+            </div>
+            <div className="selection-detail-field">
+              <span>{selectionCopy.type}</span>
+              <strong>{localizedSelectionField(selectionWork.type)}</strong>
+            </div>
+            <div className="selection-detail-field">
+              <span>{selectionCopy.subject}</span>
+              <strong>{localizedSelectionField(selectionWork.subject)}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="detail-stills selection-detail-stills" aria-label={selectionCopy.preview}>
+          <div className={`detail-still detail-still--one scene-poster scene-poster--${selectionWork.accent}`}><img src={selectionWork.image} alt="" loading="lazy" decoding="async" /></div>
+          <div className={`detail-still detail-still--two scene-poster scene-poster--${nextSelection.accent}`}><img src={nextSelection.image} alt="" loading="lazy" decoding="async" /></div>
+        </section>
+
+        <section className="detail-next page-pad">
+          <p className="selection-detail-next__eyebrow">{selectionCopy.next}</p>
+          <Link to={`/series/${nextSelection.id}`} className="detail-next__link"><span className={`selection-title ${nextSelectionTitle.length > 10 ? 'selection-title--long' : ''}`}>{nextSelectionTitle}</span><ArrowUpRight aria-hidden="true" /></Link>
+        </section>
+        <button className="detail-mobile-back" type="button" onClick={() => navigate('/explore')}>{selectionCopy.back}</button>
+      </div>
+    )
+  }
 
   return (
     <div className="detail-page" lang={isTraditional ? 'zh-Hant' : 'en'}>

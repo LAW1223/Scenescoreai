@@ -2,60 +2,99 @@ import { ArrowUpRight, Grid2X2, List } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { works } from '../data/sceneScore'
+import {
+  selectionTypeKeys,
+  selectionWorks,
+  formatSelectionTitle,
+  type LocalizedSelectionField,
+  type SelectionTypeKey,
+  type SelectionWork,
+} from '../data/selectionWorks'
 
 type ViewMode = 'grid' | 'list'
 
 export default function Explore() {
   const [view, setView] = useState<ViewMode>('list')
-  const [filter, setFilter] = useState('All')
+  const [filter, setFilter] = useState<SelectionTypeKey>('All')
   const [hovered, setHovered] = useState<string | null>(null)
   const [playingPreview, setPlayingPreview] = useState<string | null>(null)
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const copy = isTraditional
     ? {
-      filters: { All: '全部', Featured: '精選', 'Short Film': '短片', Series: '系列' },
+        filters: {
+          All: '全部',
+          'AI仿真人': 'AI 仿真人',
+          '3D动画': '3D 動畫',
+          '音乐动画': '音樂動畫',
+        },
         viewMode: '檢視模式',
         grid: '網格',
         list: '列表',
-        entry: '作品名稱',
-        description: '簡介',
-        style: '類型',
-        tags: '標籤',
-        notice: '排名不分先後',
-        preview: '公開預覽',
+        preview: '預覽',
+        title: '片名',
+        applicant: '申報公司／導演',
         type: '類型',
+        subject: '題材',
+        notice: '排名不分先後',
         play: '播放預覽',
         detail: '查看作品資料',
       }
     : {
-        filters: { All: 'All', Featured: 'Featured', 'Short Film': 'Short Film', Series: 'Series' },
+        filters: {
+          All: 'All',
+          'AI仿真人': 'AI Photorealistic',
+          '3D动画': '3D Animation',
+          '音乐动画': 'Music Animation',
+        },
         viewMode: 'View mode',
         grid: 'GRID',
         list: 'LIST',
-        entry: 'ENTRY',
-        description: 'DESCRIPTION',
-        style: 'STYLE',
-        tags: 'TAGS',
+        preview: 'PREVIEW',
+        title: 'TITLE',
+        applicant: 'SUBMITTING COMPANY / DIRECTOR',
+        type: 'TYPE',
+        subject: 'SUBJECT',
         notice: 'Listed in no particular order',
-        preview: 'PUBLIC PREVIEW',
-        type: 'Type',
         play: 'PLAY PREVIEW',
-        detail: 'VIEW CASE STUDY',
+        detail: 'VIEW WORK DETAILS',
       }
-  const filters = ['All', 'Featured', 'Short Film', 'Series']
-  const filteredWorks = useMemo(() => filter === 'All' ? works : works.filter((work) => work.type === filter), [filter])
-  const workTypeLabel = (work: typeof works[number]) => isTraditional
-    ? ({ Featured: '精選', 'Short Film': '短片', Series: '系列' }[work.type] ?? work.type)
-    : work.type
-  const workTitle = (work: typeof works[number]) => isTraditional ? work.rankingTitleZhHant : work.rankingTitle
-  const workDescription = (work: typeof works[number]) => isTraditional ? work.rankingDescriptionZhHant : work.rankingDescription
-  const workStyle = (work: typeof works[number]) => isTraditional ? work.rankingStyleZhHant : work.rankingStyle
-  const workTags = (work: typeof works[number]) => isTraditional ? work.rankingTagsZhHant : work.rankingTags
 
-  const renderRankingRow = (work: typeof works[number]) => {
+  const filteredWorks = useMemo(
+    () => filter === 'All' ? selectionWorks : selectionWorks.filter((work) => work.type.source === filter),
+    [filter],
+  )
+  const localizedField = (field: LocalizedSelectionField) => isTraditional ? field.zhHant : field.en
+  const filterCount = (type: SelectionTypeKey) => type === 'All'
+    ? selectionWorks.length
+    : selectionWorks.filter((work) => work.type.source === type).length
+
+  const renderGridFields = (work: SelectionWork) => (
+    <div className="work-entry__fields selection-fields">
+      <div className="selection-field selection-field--title">
+        <span className="selection-field__label">{copy.title}</span>
+        <strong className={`selection-field__value selection-title ${formatSelectionTitle(work.title).length > 10 ? 'selection-title--long' : ''}`}>{formatSelectionTitle(work.title)}</strong>
+      </div>
+      <div className="selection-field selection-field--applicant">
+        <span className="selection-field__label">{copy.applicant}</span>
+        <span className="selection-field__value">{work.applicant}</span>
+      </div>
+      <div className="selection-field selection-field--type">
+        <span className="selection-field__label">{copy.type}</span>
+        <span className="selection-field__value">{localizedField(work.type)}</span>
+      </div>
+      <div className="selection-field selection-field--subject">
+        <span className="selection-field__label">{copy.subject}</span>
+        <span className="selection-field__value">{localizedField(work.subject)}</span>
+        <ArrowUpRight aria-hidden="true" />
+      </div>
+    </div>
+  )
+
+  const renderRankingRow = (work: SelectionWork) => {
     const isFocused = hovered === work.id
+    const title = formatSelectionTitle(work.title)
+
     return (
       <Link
         key={work.id}
@@ -76,7 +115,7 @@ export default function Explore() {
             loop
             playsInline
             preload="none"
-            aria-label={`${work.title} ${copy.play}`}
+            aria-label={`${title} ${copy.play}`}
             onMouseEnter={(event) => {
               setPlayingPreview(work.id)
               void event.currentTarget.play().catch(() => setPlayingPreview(null))
@@ -91,15 +130,16 @@ export default function Explore() {
         </div>
         <div className="ranking-row__body">
           <div className="ranking-row__topline">
-            <div className="ranking-row__title-wrap">
-              <strong>{workTitle(work)}</strong>
-              <div className="ranking-row__chips"><span>{workStyle(work)}</span><span>{work.year}</span></div>
+            <span className="ranking-row__field-label">{copy.title}</span>
+            <strong className={`selection-title ${title.length > 10 ? 'selection-title--long' : ''}`}>{title}</strong>
+            <div className="ranking-row__chips">
+              <span>{localizedField(work.type)}</span>
+              <span>{localizedField(work.subject)}</span>
             </div>
           </div>
-          <p className="ranking-row__description">{workDescription(work)}</p>
+          <div className="ranking-row__summary-slot" aria-hidden="true" />
+          <p className="ranking-row__applicant"><span>{copy.applicant}</span>{work.applicant}</p>
           <div className="ranking-row__footer">
-            <span className="ranking-row__trend">{copy.tags} / {workTags(work).join(isTraditional ? '、' : ', ')}</span>
-            <span className="ranking-row__tags">{work.year} · {copy.preview}</span>
             <span className="ranking-row__detail">{copy.detail} <ArrowUpRight aria-hidden="true" /></span>
           </div>
         </div>
@@ -107,8 +147,10 @@ export default function Explore() {
     )
   }
 
-  const renderGridEntry = (work: typeof works[number]) => {
+  const renderGridEntry = (work: SelectionWork) => {
     const isFocused = hovered === work.id
+    const title = formatSelectionTitle(work.title)
+
     return (
       <Link
         key={work.id}
@@ -119,7 +161,6 @@ export default function Explore() {
         onFocus={() => setHovered(work.id)}
         onBlur={() => setHovered(null)}
       >
-        <div className="work-entry__meta"><span>{copy.type} <em>/</em> {workTypeLabel(work)}</span></div>
         <div className={`work-entry__visual scene-poster scene-poster--${work.accent}`}>
           <img className="scene-poster__image" src={work.image} alt="" loading="lazy" decoding="async" />
           <video
@@ -130,15 +171,17 @@ export default function Explore() {
             loop
             playsInline
             preload="none"
-            aria-hidden="true"
+            aria-label={`${title} ${copy.play}`}
             onMouseEnter={(event) => void event.currentTarget.play()}
-            onMouseLeave={(event) => event.currentTarget.pause()}
+            onMouseLeave={(event) => {
+              event.currentTarget.pause()
+              event.currentTarget.currentTime = 0
+            }}
           />
-          <span className="poster-title">{workTitle(work)}</span>
           <span className="poster-rec"><i /> REC</span>
           <span className="poster-hover-label">{copy.detail} <ArrowUpRight aria-hidden="true" /></span>
         </div>
-        <div className="work-entry__info"><strong>{workTitle(work)}</strong><span>{work.year} <em>/</em> {workStyle(work)}</span><span className="status-label">{isTraditional ? '待發布' : work.status}</span><ArrowUpRight aria-hidden="true" /></div>
+        {renderGridFields(work)}
       </Link>
     )
   }
@@ -147,7 +190,16 @@ export default function Explore() {
     <div className="explore-page page-pad" lang={isTraditional ? 'zh-Hant' : 'en'}>
       <div className="explore-toolbar">
         <div className="explore-filters">
-          {filters.map((item) => <button className={filter === item ? 'is-active' : ''} key={item} type="button" onClick={() => setFilter(item)}>{copy.filters[item as keyof typeof copy.filters]} <span>[{item === 'All' ? works.length : works.filter((work) => work.type === item).length}]</span></button>)}
+          {selectionTypeKeys.map((item) => (
+            <button
+              className={filter === item ? 'is-active' : ''}
+              key={item}
+              type="button"
+              onClick={() => setFilter(item)}
+            >
+              {copy.filters[item]} <span>[{filterCount(item)}]</span>
+            </button>
+          ))}
         </div>
         <div className="explore-actions">
           <div className="view-toggle" aria-label={copy.viewMode}>
@@ -163,7 +215,8 @@ export default function Explore() {
         {view === 'list' ? (
           <>
             <div className="ranking-table__head" aria-hidden="true">
-              <span>{copy.entry}</span><span>{copy.description} · {copy.style} · {copy.tags}</span>
+              <span>{copy.preview}</span>
+              <span>{copy.title} · {copy.applicant} · {copy.type} · {copy.subject}</span>
             </div>
             {filteredWorks.map(renderRankingRow)}
           </>
