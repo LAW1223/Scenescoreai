@@ -163,7 +163,7 @@ export const termsSections: TermsSection[] = [
       { text: '(a) Entire agreement / severability / waiver / assignment. This Agreement (with the Privacy Policy and any Contest Rules) is the entire agreement between you and us on its subject matter. If any provision is held invalid, the rest remains in effect. Our failure to enforce a provision is not a waiver. You may not assign this Agreement without our consent; we may assign it freely.' },
       { text: '(b) Contact.' },
       { text: 'Operator: Hong Kong Artificial Intelligence Visual Limited' },
-      { text: 'Email: [SUPPORT / LEGAL EMAIL]' },
+      { text: 'Email: marketing@scenescore.ai' },
     ],
   },
 ]

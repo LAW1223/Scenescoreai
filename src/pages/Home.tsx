@@ -13,6 +13,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const homeWorkCards = selectionWorks.slice(0, 5)
 const homeWorkCarouselCards = [...homeWorkCards, ...homeWorkCards, ...homeWorkCards]
+const officialSelectionShowreel = 'https://scenescore-ai.oss-cn-hongkong.aliyuncs.com/20260826/%E5%85%A5%E5%9B%B4%E4%BD%9C%E5%93%81%E9%9B%86%E9%94%A6.mp4'
 
 const HOME_VIDEO_TIME_KEY = 'scene-score-home-video-time'
 type HomeVideoStore = { time: number }
@@ -163,7 +164,7 @@ export default function Home() {
   const [homeWorksDragging, setHomeWorksDragging] = useState(false)
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
-  const heroRankingLabel = isTraditional ? '流行榜' : 'LEADERBOARD'
+  const heroRankingLabel = isTraditional ? '智影榜' : 'LEADERBOARD'
   const heroCopy = isTraditional
     ? {
         titleLines: ['權威評審', '定義AI影像新標竿'],
@@ -190,7 +191,6 @@ export default function Home() {
         worksAria: 'Scene Score 入圍優秀作品輪播',
         highlightAria: 'Scene Score 入圍作品集錦',
         highlight: 'HIGHLIGHT',
-        director: '導演',
         viewWork: '查看作品',
         worksTitle: '入圍優秀作品',
         rankingAria: '查看全部入圍作品',
@@ -206,7 +206,6 @@ export default function Home() {
         worksAria: 'Scene Score official selection highlights carousel',
         highlightAria: 'Scene Score official selection showcase',
         highlight: 'HIGHLIGHT',
-        director: 'DIRECTOR',
         viewWork: 'VIEW WORK',
         worksTitle: 'Official Selection Highlights',
         rankingAria: 'View the Official Selection',
@@ -676,7 +675,7 @@ export default function Home() {
           <video
             ref={videoRef}
             className={`home-hero__video${heroVideoReady ? ' is-ready' : ''}`}
-            src="/media/scene-score-home.webm"
+            src="https://scenescore-ai.oss-cn-hongkong.aliyuncs.com/20260826/%E9%A6%96%E9%A1%B5%E5%A4%A7%E5%B1%8F%E8%A7%86%E9%A2%91.mp4"
             muted
             loop
             playsInline
@@ -734,18 +733,18 @@ export default function Home() {
       <section id="home-highlight" className="home-section home-highlight" aria-label={sectionCopy.highlightAria}>
         <div className="home-highlight__feature">
           <Reveal className="home-highlight__media">
-            <Link to={'/series/' + works[0].id} aria-label={`${sectionCopy.viewWork}: ${works[0].title}`}>
-              <AmbientVideo src={works[0].video} className="home-highlight__video" />
+            <Link to="/explore" aria-label={sectionCopy.rankingAria}>
+              <AmbientVideo src={officialSelectionShowreel} className="home-highlight__video" />
             </Link>
           </Reveal>
 
           <Reveal className="home-highlight__info">
             <h2 className="home-highlight__showcase-title">{featuredCopy.heading}</h2>
             <div className="home-highlight__meta">
-              <span>{sectionCopy.director} / {works[0].director}</span>
+              <span>{sectionCopy.worksTitle} / {selectionWorks.length}</span>
             </div>
             <p className="home-highlight__description">{featuredCopy.description}</p>
-            <Link className="home-highlight__link" to={'/series/' + works[0].id}>
+            <Link className="home-highlight__link" to="/explore">
               <span>{featuredCopy.details}</span><ArrowUpRight aria-hidden="true" />
             </Link>
           </Reveal>

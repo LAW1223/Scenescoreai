@@ -173,7 +173,7 @@ const judgeDirectory: Judge[] = [
     roleZhHant: '藝人經理人／電影監製',
     headline: 'Artificial Human Talent Manager',
     headlineZhHant: '金牌電影監製及娛樂產業領袖',
-    image: '/images/judges/paco-wong-v3.png',
+    image: 'https://scenescore-ai.oss-cn-hongkong.aliyuncs.com/20260826/%E8%A9%95%E5%A7%94_%E9%BB%83%E6%9F%8F%E9%AB%98.png',
     bio: [
       'A defining Hong Kong talent manager who helped shape the careers of Danny Chan, George Lam, Sally Yeh, Sammi Cheng, Andy Hui, Miriam Yeung, Leo Ku and Stephy Tang',
       'Across more than half a century in music and film, he has connected Hong Kong artists with the wider Chinese-language entertainment market through an instinct for talent and audience',
@@ -191,7 +191,7 @@ const judgeDirectory: Judge[] = [
     roleZhHant: '電影編劇／監製／出品人',
     headline: 'Renowned film screenwriter, producer and executive producer',
     headlineZhHant: '著名電影編劇、監製及出品人',
-    image: '/images/judges/edmond-wong.jpeg',
+    image: 'https://scenescore-ai.oss-cn-hongkong.aliyuncs.com/20260826/%E8%A9%95%E5%A7%94_%E9%BB%83%E5%AD%90%E6%A1%93.jpeg',
     bio: [
       'A leading Hong Kong screenwriter, producer and executive producer with more than twenty years across content development, production execution and market distribution',
       'His work spans action, fantasy and historical productions, including Dragon Tiger Gate, Saving General Yang, The Monkey King and the Ip Man series',
@@ -209,7 +209,7 @@ const judgeDirectory: Judge[] = [
     roleZhHant: '音樂人／演員',
     headline: 'The Wynners’ lead guitarist and band anchor',
     headlineZhHant: '殿堂級音樂人',
-    image: '/images/judges/bennett-pang-v2.png',
+    image: 'https://scenescore-ai.oss-cn-hongkong.aliyuncs.com/20260826/%E8%A9%95%E5%A7%94_%E5%BD%AD%E5%81%A5%E6%96%B0.png',
     bio: [
       'The lead guitarist and organising force of The Wynners, a band whose music and screen presence have shaped Hong Kong popular culture for more than half a century',
       'His music includes the theme from Second Class Citizens, A Love Song, Never Say No and the solo albums Sunshine Clearance Sale and Borrowed Dreams',
@@ -227,7 +227,7 @@ const judgeDirectory: Judge[] = [
     roleZhHant: '攝影師',
     headline: 'A recorder of light, character and time',
     headlineZhHant: '攝影藝術大師',
-    image: '/images/judges/ck-chan.jpeg',
+    image: 'https://scenescore-ai.oss-cn-hongkong.aliyuncs.com/20260826/%E8%A9%95%E5%A7%94_%E9%99%B3%E9%8C%A6%E5%BC%B7.jpeg',
     bio: [
       'A photographer with more than fifteen years of experience, known for independently photographing nominee portraits for the Hong Kong Film Awards over many consecutive years',
       'His practice favours the honest instant over spectacle, turning light, weather, place and personality into images with a quiet documentary pulse',
@@ -245,7 +245,7 @@ const judgeDirectory: Judge[] = [
     roleZhHant: '導演／編劇',
     headline: 'A local storyteller shaped by screenwriting',
     headlineZhHant: '資深電影編劇',
-    image: '/images/judges/chen-tai-lee.jpeg',
+    image: 'https://scenescore-ai.oss-cn-hongkong.aliyuncs.com/20260826/%E8%A9%95%E5%A7%94_%E9%99%B3%E5%A4%A7%E5%88%A9.jpeg',
     bio: [
       'A Hong Kong filmmaker educated in film and television at Hong Kong Baptist University and in cultural studies at the Chinese University of Hong Kong',
       'His writing includes the Ip Man series, The Way We Dance, Twilight of the Warriors: Walled In and Blades of the Guardians: Wind Rises in the Desert',

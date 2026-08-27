@@ -62,16 +62,6 @@ export default function Methodology() {
             <small>{copy.meta.pointsUnit}</small>
           </div>
 
-          <div className="methodology-score-strip" aria-label={copy.dimensions.title}>
-            {copy.dimensions.items.map((dimension) => (
-              <div key={dimension.id}>
-                <span>{dimension.number}</span>
-                <strong>{dimension.score}</strong>
-                <small>{copy.meta.pointsUnit}</small>
-              </div>
-            ))}
-          </div>
-
           <div className="methodology-overview-copy">
             <div>
               <h2>{copy.overview.title}</h2>
@@ -88,7 +78,7 @@ export default function Methodology() {
 
         <div className="methodology-layout">
           <aside className="methodology-index" aria-label={language === 'zh-TW' ? '頁內目錄' : 'On-page contents'}>
-            <span>INDEX / 50</span>
+            <span>INDEX / {copy.meta.totalScore}</span>
             <nav>
               {copy.navigation.map((item, index) => (
                 <a href={item.href} key={item.href}><span>0{index + 1}</span>{item.label}</a>

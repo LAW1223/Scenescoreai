@@ -130,7 +130,6 @@ export default function Explore() {
         </div>
         <div className="ranking-row__body">
           <div className="ranking-row__topline">
-            <span className="ranking-row__field-label">{copy.title}</span>
             <strong className={`selection-title ${title.length > 10 ? 'selection-title--long' : ''}`}>{title}</strong>
             <div className="ranking-row__chips">
               <span>{localizedField(work.type)}</span>

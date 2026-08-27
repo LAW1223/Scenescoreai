@@ -4,13 +4,16 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getWork, works } from '../data/sceneScore'
-import { formatSelectionTitle, getSelectionWork, selectionWorks, type LocalizedSelectionField } from '../data/selectionWorks'
+import { formatSelectionTitle, getSelectionWork, selectionWorks } from '../data/selectionWorks'
 
 export default function SeriesDetail() {
   const { id = works[0].id } = useParams()
   const selectionWork = getSelectionWork(id)
   const selectionIndex = selectionWork ? selectionWorks.findIndex((entry) => entry.id === selectionWork.id) : -1
   const nextSelection = selectionWork ? selectionWorks[(selectionIndex + 1) % selectionWorks.length] : undefined
+  const selectionDetailImages = selectionWork && nextSelection
+    ? selectionWork.detailImages ?? [selectionWork.image, nextSelection.image]
+    : []
   const selectionTitle = selectionWork ? formatSelectionTitle(selectionWork.title) : ''
   const nextSelectionTitle = nextSelection ? formatSelectionTitle(nextSelection.title) : ''
   const work = getWork(id)
@@ -57,22 +60,13 @@ export default function SeriesDetail() {
     ? {
         back: '返回入圍作品',
         preview: '預覽畫面',
-        title: '片名',
-        applicant: '申報公司／導演',
-        type: '類型',
-        subject: '題材',
         next: '下一部作品',
       }
     : {
         back: 'BACK TO OFFICIAL SELECTION',
         preview: 'PREVIEW FRAME',
-        title: 'TITLE',
-        applicant: 'SUBMITTING COMPANY / DIRECTOR',
-        type: 'TYPE',
-        subject: 'SUBJECT',
         next: 'NEXT WORK',
       }
-  const localizedSelectionField = (field: LocalizedSelectionField) => isTraditional ? field.zhHant : field.en
 
   if (selectionWork && nextSelection) {
     return (
@@ -95,30 +89,9 @@ export default function SeriesDetail() {
           <span className="detail-hero__rec"><i /> REC / {selectionCopy.preview}</span>
         </section>
 
-        <section className="selection-detail-data page-pad" aria-label={isTraditional ? '作品資料' : 'Work information'}>
-          <div className="selection-detail-data__grid">
-            <div className="selection-detail-field selection-detail-field--title">
-              <span>{selectionCopy.title}</span>
-              <strong className={`selection-title ${selectionTitle.length > 10 ? 'selection-title--long' : ''}`}>{selectionTitle}</strong>
-            </div>
-            <div className="selection-detail-field selection-detail-field--applicant">
-              <span>{selectionCopy.applicant}</span>
-              <strong>{selectionWork.applicant}</strong>
-            </div>
-            <div className="selection-detail-field">
-              <span>{selectionCopy.type}</span>
-              <strong>{localizedSelectionField(selectionWork.type)}</strong>
-            </div>
-            <div className="selection-detail-field">
-              <span>{selectionCopy.subject}</span>
-              <strong>{localizedSelectionField(selectionWork.subject)}</strong>
-            </div>
-          </div>
-        </section>
-
         <section className="detail-stills selection-detail-stills" aria-label={selectionCopy.preview}>
-          <div className={`detail-still detail-still--one scene-poster scene-poster--${selectionWork.accent}`}><img src={selectionWork.image} alt="" loading="lazy" decoding="async" /></div>
-          <div className={`detail-still detail-still--two scene-poster scene-poster--${nextSelection.accent}`}><img src={nextSelection.image} alt="" loading="lazy" decoding="async" /></div>
+          <div className={`detail-still detail-still--one scene-poster scene-poster--${selectionWork.accent}`}><img src={selectionDetailImages[0]} alt="" loading="lazy" decoding="async" /></div>
+          <div className={`detail-still detail-still--two scene-poster scene-poster--${selectionWork.accent}`}><img src={selectionDetailImages[1]} alt="" loading="lazy" decoding="async" /></div>
         </section>
 
         <section className="detail-next page-pad">

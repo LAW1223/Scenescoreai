@@ -73,10 +73,10 @@ export type MethodologyContent = {
 const traditional: MethodologyContent = {
   meta: {
     mark: 'SCENE SCORE / 技術側評分規則',
-    scale: 'TECHNICAL REVIEW / 50 POINTS',
+    scale: 'TECHNICAL REVIEW / 10 POINTS',
     title: 'AI 短劇 Leaderboard 技術側評分規則',
     summaryLabel: '技術側滿分',
-    totalScore: 50,
+    totalScore: 10,
     pointsUnit: '分',
   },
   navigation: [
@@ -96,7 +96,7 @@ const traditional: MethodologyContent = {
     ],
     principlesTitle: '評分總則',
     principles: [
-      '本文僅定義技術與 Workflow 評審部分，技術側滿分 50 分。',
+      '本文僅定義技術與 Workflow 評審部分，技術側滿分 10 分。',
       '技術側重點評估 AI 在短劇創作中的實際參與方式、Workflow 完整性、生成品質控制、角色／風格一致性、可復現性與規模化潛力。',
     ],
   },
@@ -105,11 +105,11 @@ const traditional: MethodologyContent = {
     title: '評分等級建議',
     intro: '技術側分數按照以下五個區間形成推薦結論。',
     items: [
-      { range: '45–50', label: '技術側強推薦', description: 'Workflow 與成片執行均具備示範意義。' },
-      { range: '40–44', label: '技術側推薦', description: '整體完成度較高，存在明確技術亮點。' },
-      { range: '35–39', label: '技術側候選', description: '部分維度突出，但完整度或穩定性仍有短板。' },
-      { range: '30–34', label: '觀察樣本', description: '可作為觀察樣本，不建議作為技術側重點推薦作品。' },
-      { range: '30 分以下', label: '不建議推薦', description: '不建議進入技術側推薦名單。' },
+      { range: '9-10', label: '技術側強推薦', description: 'Workflow 與成片執行均具備示範意義。' },
+      { range: '8-8.9', label: '技術側推薦', description: '整體完成度較高，存在明確技術亮點。' },
+      { range: '7-7.9', label: '技術側候選', description: '部分維度突出，但完整度或穩定性仍有短板。' },
+      { range: '6-6.9', label: '觀察樣本', description: '可作為觀察樣本，不建議作為技術側重點推薦作品。' },
+      { range: '6以下', label: '不建議推薦', description: '不建議進入技術側推薦名單。' },
     ],
   },
   organization: {
@@ -132,7 +132,7 @@ const traditional: MethodologyContent = {
   dimensions: {
     kicker: '04 / TECHNICAL & WORKFLOW',
     title: '技術與 Workflow 評審規則',
-    intro: '五個維度合計 50 分。每個維度均以實際材料、生成過程與最終成片為依據。',
+    intro: '五個維度合計 10 分。每個維度均以實際材料、生成過程與最終成片為依據。',
     criteriaLabel: '評分要點',
     expandLabel: '展開完整評分要點',
     collapseLabel: '收起完整評分要點',
@@ -141,7 +141,7 @@ const traditional: MethodologyContent = {
         id: 'ai-participation',
         number: '01',
         title: 'AI 參與度與實質貢獻',
-        score: 5,
+        score: 1,
         description: '考察 AI 是否在劇本生成、角色設計、分鏡、影片生成、聲音、剪輯、後期等關鍵環節產生實質貢獻，而不是僅在局部素材或包裝層面輕度使用。',
         criteria: [
           'AI 參與環節清晰可說明。',
@@ -155,7 +155,7 @@ const traditional: MethodologyContent = {
         id: 'workflow',
         number: '02',
         title: 'Workflow 完整性與可解釋性',
-        score: 10,
+        score: 2,
         description: '考察參賽方是否能夠清楚說明從創意、劇本、角色、分鏡、影片生成、音訊到後期合成的完整流程，並描述每一步的輸入、操作、輸出、工具、模型、版本和關鍵參數。',
         criteria: [
           '流程鏈路完整。',
@@ -169,7 +169,7 @@ const traditional: MethodologyContent = {
         id: 'storyboard-prompts',
         number: '03',
         title: '分鏡與提示詞設計能力',
-        score: 10,
+        score: 2,
         description: '考察參賽方是否能夠將劇本內容準確拆解為可執行的鏡頭方案，並透過結構化提示詞或控制條件，把角色、場景、動作、構圖、運鏡、光影、情緒和畫面風格轉化為模型可執行的生成指令。本維度主要評估設計階段的拆解、表達和迭代能力，不直接以最終成片品質作為主要依據；成片執行效果在第 4 項評審。',
         criteria: [
           '能夠依據劇情、人物關係和情緒變化合理拆分鏡頭，鏡頭數量、景別和時長安排與敘事需求匹配。',
@@ -185,7 +185,7 @@ const traditional: MethodologyContent = {
         id: 'execution-consistency',
         number: '04',
         title: '劇本到成片的執行一致性',
-        score: 15,
+        score: 3,
         description: '考察作品在多集、多鏡頭、多模態生成過程中的成果穩定性，以及成片對劇本、分鏡和鏡頭表的執行準確度。該維度重點判斷參賽方是否能夠穩定地把文本設定、角色設定和敘事意圖轉化為連續、可觀看、可追溯的最終成片，並透過質檢、重新生成、修復或人工校驗機制控制成片品質。本維度主要評估最終視聽結果與品質控制閉環，區別於第 3 項的分鏡和提示詞設計能力。',
         criteria: [
           '成片中的角色形象、服裝、場景、美術風格在跨鏡頭、跨集情況下保持穩定。',
@@ -201,7 +201,7 @@ const traditional: MethodologyContent = {
         id: 'reproducibility',
         number: '05',
         title: '可復現性與規模化潛力',
-        score: 10,
+        score: 2,
         description: '考察 Workflow 是否可以被複用到更多劇集、更多角色或更多題材中，以及參賽方是否能夠說明其流程在效率、成本、品質穩定性和團隊協作上的可擴展性。',
         criteria: [
           '核心流程可被複用。',
@@ -241,10 +241,10 @@ const traditional: MethodologyContent = {
 const english: MethodologyContent = {
   meta: {
     mark: 'SCENE SCORE / TECHNICAL SCORING RULES',
-    scale: 'TECHNICAL REVIEW / 50 POINTS',
+    scale: 'TECHNICAL REVIEW / 10 POINTS',
     title: 'AI Short Drama Leaderboard — Technical Scoring Rules',
     summaryLabel: 'Technical maximum',
-    totalScore: 50,
+    totalScore: 10,
     pointsUnit: 'PTS',
   },
   navigation: [
@@ -264,7 +264,7 @@ const english: MethodologyContent = {
     ],
     principlesTitle: 'Scoring principles',
     principles: [
-      'This document defines only the technical and Workflow review. The technical review carries a maximum of 50 points.',
+      'This document defines only the technical and Workflow review. The technical review carries a maximum of 10 points.',
       'The technical review evaluates how AI is actually used in short-drama creation, the completeness of the Workflow, generation quality control, character and style consistency, reproducibility, and the potential to scale.',
     ],
   },
@@ -273,11 +273,11 @@ const english: MethodologyContent = {
     title: 'Recommended score bands',
     intro: 'The technical score leads to one of the following five recommendation levels.',
     items: [
-      { range: '45–50', label: 'Strong technical recommendation', description: 'Both the Workflow and final execution have exemplary value.' },
-      { range: '40–44', label: 'Technical recommendation', description: 'The work has a high overall level of completion and clear technical highlights.' },
-      { range: '35–39', label: 'Technical candidate', description: 'Some dimensions are strong, but completeness or stability still has shortcomings.' },
-      { range: '30–34', label: 'Observation sample', description: 'The work may be retained as an observation sample but is not recommended as a priority technical selection.' },
-      { range: 'Below 30', label: 'Not recommended', description: 'The work is not recommended for the technical shortlist.' },
+      { range: '9-10', label: 'Strong technical recommendation', description: 'Both the Workflow and final execution have exemplary value.' },
+      { range: '8-8.9', label: 'Technical recommendation', description: 'The work has a high overall level of completion and clear technical highlights.' },
+      { range: '7-7.9', label: 'Technical candidate', description: 'Some dimensions are strong, but completeness or stability still has shortcomings.' },
+      { range: '6-6.9', label: 'Observation sample', description: 'The work may be retained as an observation sample but is not recommended as a priority technical selection.' },
+      { range: 'Below 6', label: 'Not recommended', description: 'The work is not recommended for the technical shortlist.' },
     ],
   },
   organization: {
@@ -300,7 +300,7 @@ const english: MethodologyContent = {
   dimensions: {
     kicker: '04 / TECHNICAL & WORKFLOW',
     title: 'Technical and Workflow evaluation rules',
-    intro: 'The five dimensions total 50 points. Each dimension is evaluated against the submitted evidence, generation process, and final production.',
+    intro: 'The five dimensions total 10 points. Each dimension is evaluated against the submitted evidence, generation process, and final production.',
     criteriaLabel: 'Scoring criteria',
     expandLabel: 'Expand full scoring criteria',
     collapseLabel: 'Collapse full scoring criteria',
@@ -309,7 +309,7 @@ const english: MethodologyContent = {
         id: 'ai-participation',
         number: '01',
         title: 'AI Participation & Substantive Contribution',
-        score: 5,
+        score: 1,
         description: 'Evaluates whether AI makes a substantive contribution to key stages such as script generation, character design, storyboarding, video generation, sound, editing, and post-production, rather than being used lightly for isolated assets or surface-level packaging.',
         criteria: [
           'The stages involving AI are clearly explained.',
@@ -323,7 +323,7 @@ const english: MethodologyContent = {
         id: 'workflow',
         number: '02',
         title: 'Workflow Completeness & Explainability',
-        score: 10,
+        score: 2,
         description: 'Evaluates whether the entrant can clearly explain the complete process from concept, script, characters, and storyboards through video generation, audio, and final compositing, including the input, operation, output, tools, models, versions, and key parameters used at every step.',
         criteria: [
           'The end-to-end process is complete.',
@@ -337,7 +337,7 @@ const english: MethodologyContent = {
         id: 'storyboard-prompts',
         number: '03',
         title: 'Storyboarding & Prompt Design Capability',
-        score: 10,
+        score: 2,
         description: 'Evaluates whether the entrant can accurately break the script into executable shot plans and use structured prompts or control conditions to translate characters, settings, actions, composition, camera movement, lighting, emotion, and visual style into instructions a model can execute. This dimension primarily evaluates decomposition, expression, and iteration during design; final production quality is assessed under Dimension 4.',
         criteria: [
           'Shots are divided appropriately according to plot, character relationships, and emotional changes, with shot count, framing, and duration matched to narrative needs.',
@@ -353,7 +353,7 @@ const english: MethodologyContent = {
         id: 'execution-consistency',
         number: '04',
         title: 'Script-to-Final Execution Consistency',
-        score: 15,
+        score: 3,
         description: 'Evaluates the stability of results across episodes, shots, and multimodal generation, as well as how accurately the final production executes the script, storyboard, and shot list. It considers whether textual settings, character settings, and narrative intent are consistently translated into a continuous, watchable, and traceable final production, supported by quality inspection, regeneration, repair, or human verification. This dimension evaluates the final audiovisual result and the quality-control loop, distinct from the storyboard and prompt design assessed in Dimension 3.',
         criteria: [
           'Character appearance, costume, setting, and art direction remain stable across shots and episodes.',
@@ -369,7 +369,7 @@ const english: MethodologyContent = {
         id: 'reproducibility',
         number: '05',
         title: 'Reproducibility & Scalability Potential',
-        score: 10,
+        score: 2,
         description: 'Evaluates whether the Workflow can be reused for more episodes, characters, or genres, and whether the entrant can explain how the process scales in efficiency, cost, quality stability, and team collaboration.',
         criteria: [
           'The core process can be reused.',

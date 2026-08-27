@@ -1,4 +1,5 @@
 import selectionWorksData from './selectionWorks.json'
+import { selectionVideoUrls } from './selectionVideoUrls'
 
 export const selectionTypeKeys = ['All', 'AI仿真人', '3D动画', '音乐动画'] as const
 
@@ -20,9 +21,13 @@ export type SelectionWork = {
   accent: SelectionAccent
   image: string
   video: string
+  detailImages?: readonly string[]
 }
 
-export const selectionWorks = selectionWorksData as SelectionWork[]
+export const selectionWorks = selectionWorksData.map((work) => ({
+  ...work,
+  video: selectionVideoUrls[work.id] ?? work.video,
+})) as SelectionWork[]
 
 export const getSelectionWork = (id: string) => selectionWorks.find((work) => work.id === id)
 
