@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowLeft, ArrowUpRight, X } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getWork, works } from '../data/sceneScore'
@@ -20,6 +20,7 @@ export default function SeriesDetail() {
   const next = works[(works.findIndex((entry) => entry.id === work.id) + 1) % works.length]
   const [crewOpen, setCrewOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const { i18n } = useTranslation()
   const isTraditional = i18n.resolvedLanguage === 'zh-TW'
   const typeLabel = isTraditional
@@ -68,6 +69,14 @@ export default function SeriesDetail() {
         next: 'NEXT WORK',
       }
 
+  const returnToPreviousPage = (fallbackPath: string) => {
+    if (location.key !== 'default' && window.history.length > 1) {
+      navigate(-1)
+      return
+    }
+    navigate(fallbackPath, { replace: true })
+  }
+
   if (selectionWork && nextSelection) {
     return (
       <div className="detail-page selection-detail-page" lang={isTraditional ? 'zh-Hant' : 'en'}>
@@ -83,7 +92,7 @@ export default function SeriesDetail() {
             preload="metadata"
             aria-hidden="true"
           />
-          <Link to="/explore" className="detail-back"><ArrowLeft aria-hidden="true" /> {selectionCopy.back}</Link>
+          <button type="button" className="detail-back" onClick={() => returnToPreviousPage('/explore')}><ArrowLeft aria-hidden="true" /> {selectionCopy.back}</button>
           <div className="detail-hero__title"><h1 className={`selection-title ${selectionTitle.length > 10 ? 'selection-title--long' : ''}`}>{selectionTitle}</h1></div>
           <ArrowDown className="detail-down" aria-hidden="true" />
           <span className="detail-hero__rec"><i /> REC / {selectionCopy.preview}</span>
@@ -98,7 +107,7 @@ export default function SeriesDetail() {
           <p className="selection-detail-next__eyebrow">{selectionCopy.next}</p>
           <Link to={`/series/${nextSelection.id}`} className="detail-next__link"><span className={`selection-title ${nextSelectionTitle.length > 10 ? 'selection-title--long' : ''}`}>{nextSelectionTitle}</span><ArrowUpRight aria-hidden="true" /></Link>
         </section>
-        <button className="detail-mobile-back" type="button" onClick={() => navigate('/explore')}>{selectionCopy.back}</button>
+        <button className="detail-mobile-back" type="button" onClick={() => returnToPreviousPage('/explore')}>{selectionCopy.back}</button>
       </div>
     )
   }
@@ -117,7 +126,7 @@ export default function SeriesDetail() {
           preload="metadata"
           aria-hidden="true"
         />
-        <Link to="/explore" className="detail-back"><ArrowLeft aria-hidden="true" /> {copy.back}</Link>
+        <button type="button" className="detail-back" onClick={() => returnToPreviousPage('/explore')}><ArrowLeft aria-hidden="true" /> {copy.back}</button>
         <div className="detail-hero__meta"><span>{work.year} / {typeLabel}</span><span>{work.index} / 05</span><span>SCENE SCORE / —</span></div>
         <div className="detail-hero__title"><h1>{work.title}</h1></div>
         <button className="detail-crew-button" type="button" onClick={() => setCrewOpen(true)}>{copy.crew} <ArrowUpRight aria-hidden="true" /></button>
@@ -145,7 +154,7 @@ export default function SeriesDetail() {
           <h2>{work.title}</h2><p>{copy.production}</p>
         </motion.div>
       )}
-      <button className="detail-mobile-back" type="button" onClick={() => navigate('/explore')}>{copy.back}</button>
+      <button className="detail-mobile-back" type="button" onClick={() => returnToPreviousPage('/explore')}>{copy.back}</button>
     </div>
   )
 }

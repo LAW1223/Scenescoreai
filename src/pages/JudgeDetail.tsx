@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getJudge, judgeProfilesEn, judgeProfilesZhHant, judges, type JudgeProfileSection } from '../data/sceneScore'
 
@@ -7,6 +7,8 @@ export default function JudgeDetail() {
   const { id = '' } = useParams()
   const judge = getJudge(id)
   const { i18n } = useTranslation()
+  const location = useLocation()
+  const navigate = useNavigate()
 
   if (!judge) return <Navigate to="/judges" replace />
 
@@ -32,10 +34,18 @@ export default function JudgeDetail() {
         view: 'VIEW ALL JUDGES',
       }
 
+  const returnToJury = () => {
+    if (location.key !== 'default' && window.history.length > 1) {
+      navigate(-1)
+      return
+    }
+    navigate('/judges', { replace: true })
+  }
+
   return (
     <div className="judge-detail-page detail-page" lang={localeKey}>
       <section className="judge-detail-hero">
-        <Link to="/judges" className="judge-detail-back"><ArrowLeft aria-hidden="true" /> {copy.back}</Link>
+        <button type="button" className="judge-detail-back" onClick={returnToJury}><ArrowLeft aria-hidden="true" /> {copy.back}</button>
         <div className="judge-detail-hero__image" data-judge={judge.id}>
           <img src={judge.image} alt={judge.romanized} />
           <span className="judge-detail-hero__index">0{index + 1} / 05</span>

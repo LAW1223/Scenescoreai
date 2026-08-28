@@ -18,6 +18,132 @@ const officialSelectionShowreel = 'https://scenescore-ai.oss-cn-hongkong.aliyunc
 const HOME_VIDEO_TIME_KEY = 'scene-score-home-video-time'
 type HomeVideoStore = { time: number }
 
+const HOME_RETURN_STATE_KEY = 'scene-score-home-return-state'
+const HOME_RETURN_STATE_MAX_AGE = 30 * 60 * 1000
+const HOME_RETURN_INTERACTION_EVENT = 'scene-score-home-return-interaction'
+
+type HomeCarouselReturnSnapshot = {
+  kind: 'carousel'
+  scrollY: number
+  carouselScrollLeft: number
+  carouselGroupWidth: number
+  carouselViewportTop: number
+  workId: string
+}
+
+type HomeAnchorReturnSnapshot = {
+  kind: 'anchor'
+  scrollY: number
+  anchorId: string
+  anchorViewportTop: number
+}
+
+type HomeReturnSnapshot = HomeCarouselReturnSnapshot | HomeAnchorReturnSnapshot
+type HomeReturnState = HomeReturnSnapshot & {
+  savedAt: number
+}
+
+let homeReturnStateFallback: HomeReturnState | null = null
+
+const normalizeHomeReturnState = (state: unknown): HomeReturnState | null => {
+  if (!state || typeof state !== 'object') return null
+  const candidate = state as Partial<HomeReturnState> & {
+    carouselScrollLeft?: number
+    carouselGroupWidth?: number
+    carouselViewportTop?: number
+    workId?: string
+  }
+  const hasValidBase = Number.isFinite(candidate.scrollY)
+    && Number.isFinite(candidate.savedAt)
+    && Date.now() - Number(candidate.savedAt) <= HOME_RETURN_STATE_MAX_AGE
+
+  if (!hasValidBase) return null
+
+  if (candidate.kind === 'anchor') {
+    return typeof candidate.anchorId === 'string'
+      && Number.isFinite(candidate.anchorViewportTop)
+      ? candidate as HomeReturnState
+      : null
+  }
+
+  const isLegacyOrCarouselState = candidate.kind === undefined || candidate.kind === 'carousel'
+  if (!isLegacyOrCarouselState
+    || !Number.isFinite(candidate.carouselScrollLeft)
+    || !Number.isFinite(candidate.carouselGroupWidth)
+    || !Number.isFinite(candidate.carouselViewportTop)
+    || typeof candidate.workId !== 'string') {
+    return null
+  }
+
+  return { ...candidate, kind: 'carousel' } as HomeReturnState
+}
+
+const readHomeReturnState = (): HomeReturnState | null => {
+  const historyState = window.history.state as {
+    usr?: { homeReturnState?: unknown }
+  } | null
+  const historyReturnState = historyState?.usr?.homeReturnState
+  let state = normalizeHomeReturnState(historyReturnState) ?? homeReturnStateFallback
+
+  if (!state) {
+    try {
+      const storedState = window.sessionStorage?.getItem(HOME_RETURN_STATE_KEY)
+      if (storedState) state = normalizeHomeReturnState(JSON.parse(storedState))
+    } catch {
+      // The module-level fallback still covers normal SPA route changes.
+    }
+  }
+
+  if (!state) return null
+
+  homeReturnStateFallback = state
+  return state
+}
+
+const writeHomeReturnState = (state: HomeReturnSnapshot) => {
+  const nextState = { ...state, savedAt: Date.now() }
+  homeReturnStateFallback = nextState
+  const historyState = window.history.state as {
+    usr?: Record<string, unknown>
+    [key: string]: unknown
+  } | null
+  window.history.replaceState({
+    ...historyState,
+    usr: {
+      ...(historyState?.usr ?? {}),
+      homeReturnState: nextState,
+    },
+  }, '')
+  try {
+    window.sessionStorage?.setItem(HOME_RETURN_STATE_KEY, JSON.stringify(nextState))
+  } catch {
+    // The module-level fallback still covers normal SPA route changes.
+  }
+}
+
+const clearHomeReturnState = () => {
+  homeReturnStateFallback = null
+  if (window.location.pathname === '/') {
+    const historyState = window.history.state as {
+      usr?: Record<string, unknown>
+      [key: string]: unknown
+    } | null
+    if (historyState?.usr?.homeReturnState) {
+      const remainingUserState = { ...historyState.usr }
+      delete remainingUserState.homeReturnState
+      window.history.replaceState({
+        ...historyState,
+        usr: Object.keys(remainingUserState).length ? remainingUserState : null,
+      }, '')
+    }
+  }
+  try {
+    window.sessionStorage?.removeItem(HOME_RETURN_STATE_KEY)
+  } catch {
+    // Nothing else is required when storage is unavailable.
+  }
+}
+
 const homeVideoStore = ((globalThis as typeof globalThis & {
   __sceneScoreHomeVideoStore?: HomeVideoStore
 }).__sceneScoreHomeVideoStore ??= { time: 0 })
@@ -155,10 +281,20 @@ export default function Home() {
   const pageRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const homeWorksTrackRef = useRef<HTMLDivElement>(null)
-  const homeWorksDragRef = useRef({ pointerId: -1, startX: 0, startScroll: 0, moved: false })
+  const homeWorksDragRef = useRef({
+    pointerId: -1,
+    startX: 0,
+    startScroll: 0,
+    startWindowScroll: null as number | null,
+    startTrackViewportTop: null as number | null,
+    moved: false,
+  })
   const homeWorksMetricsRef = useRef({ step: 0, groupWidth: 0 })
   const homeWorksProgrammaticRef = useRef({ active: false, timer: 0 })
   const suppressHomeWorkClickRef = useRef(false)
+  const homeReturnCarouselRatioRef = useRef<number | null>(null)
+  const homeReturnStateRef = useRef<HomeReturnState | null | undefined>(undefined)
+  if (homeReturnStateRef.current === undefined) homeReturnStateRef.current = readHomeReturnState()
   const [heroVideoReady, setHeroVideoReady] = useState(false)
   const [activeHomeWork, setActiveHomeWork] = useState<string | null>(null)
   const [homeWorksDragging, setHomeWorksDragging] = useState(false)
@@ -277,6 +413,63 @@ export default function Home() {
     }
   }
 
+  const restoreHomeWorksPosition = () => {
+    const persistedState = readHomeReturnState()
+    if (!persistedState) {
+      homeReturnStateRef.current = null
+      homeReturnCarouselRatioRef.current = null
+    } else {
+      homeReturnStateRef.current = persistedState
+    }
+
+    const state = homeReturnStateRef.current
+    const track = homeWorksTrackRef.current
+    if (!track) return false
+
+    const metrics = measureHomeWorks()
+    if (!metrics.groupWidth) return false
+
+    const savedRatio = state?.kind === 'carousel'
+      ? state.carouselScrollLeft / (state.carouselGroupWidth || metrics.groupWidth)
+      : homeReturnCarouselRatioRef.current
+    if (savedRatio === null) return false
+
+    homeReturnCarouselRatioRef.current = savedRatio
+    const target = normalizeHomeWorksTarget(savedRatio * metrics.groupWidth)
+    track.scrollTo({ left: target, behavior: 'auto' })
+    return true
+  }
+
+  const restoreHomeScrollPosition = (state: HomeReturnState) => {
+    const target = state.kind === 'anchor'
+      ? document.getElementById(state.anchorId)
+      : homeWorksTrackRef.current
+    const savedViewportTop = state.kind === 'anchor'
+      ? state.anchorViewportTop
+      : state.carouselViewportTop
+    if (!target) return false
+
+    const currentViewportTop = target.getBoundingClientRect().top
+    if (Math.abs(currentViewportTop - savedViewportTop) > 0.5) {
+      window.scrollTo({
+        top: window.scrollY + currentViewportTop - savedViewportTop,
+        left: 0,
+        behavior: 'auto',
+      })
+    }
+
+    const restoredViewportTop = target.getBoundingClientRect().top
+    return Math.abs(restoredViewportTop - savedViewportTop) <= 1
+  }
+
+  const restoreHomePosition = () => {
+    const state = homeReturnStateRef.current
+    if (!state) return
+
+    if (state.kind === 'carousel') restoreHomeWorksPosition()
+    restoreHomeScrollPosition(state)
+  }
+
   const scrollHomeWorksTo = (track: HTMLDivElement, target: number, behavior: ScrollBehavior) => {
     const programmatic = homeWorksProgrammaticRef.current
     if (programmatic.timer) window.clearTimeout(programmatic.timer)
@@ -313,15 +506,20 @@ export default function Home() {
     if (event.pointerType === 'mouse' && event.button !== 0) return
 
     const track = event.currentTarget
+    window.dispatchEvent(new Event(HOME_RETURN_INTERACTION_EVENT))
+    homeReturnCarouselRatioRef.current = null
+    homeReturnStateRef.current = null
+    clearHomeReturnState()
     homeWorksDragRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
       startScroll: track.scrollLeft,
+      startWindowScroll: window.scrollY,
+      startTrackViewportTop: track.getBoundingClientRect().top,
       moved: false,
     }
     setActiveHomeWork(null)
     setHomeWorksDragging(false)
-    track.setPointerCapture(event.pointerId)
   }
 
   const handleHomeWorksPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -332,6 +530,7 @@ export default function Home() {
     if (!drag.moved && Math.abs(distance) > 7) {
       drag.moved = true
       setHomeWorksDragging(true)
+      event.currentTarget.setPointerCapture(event.pointerId)
     }
     if (!drag.moved) return
 
@@ -353,17 +552,57 @@ export default function Home() {
       suppressHomeWorkClickRef.current = true
       window.setTimeout(() => {
         suppressHomeWorkClickRef.current = false
+        homeWorksDragRef.current.startWindowScroll = null
+        homeWorksDragRef.current.startTrackViewportTop = null
+      }, 0)
+      snapHomeWorks()
+    } else {
+      window.setTimeout(() => {
+        homeWorksDragRef.current.startWindowScroll = null
+        homeWorksDragRef.current.startTrackViewportTop = null
       }, 0)
     }
     setHomeWorksDragging(false)
-    snapHomeWorks()
   }
 
-  const handleHomeWorkClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
-    if (!suppressHomeWorkClickRef.current) return
-    event.preventDefault()
-    event.stopPropagation()
-    suppressHomeWorkClickRef.current = false
+  const handleHomeWorkClick = (event: ReactMouseEvent<HTMLAnchorElement>, workId: string) => {
+    if (suppressHomeWorkClickRef.current) {
+      event.preventDefault()
+      event.stopPropagation()
+      suppressHomeWorkClickRef.current = false
+      return
+    }
+
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+
+    const track = homeWorksTrackRef.current
+    const metrics = homeWorksMetricsRef.current.groupWidth
+      ? homeWorksMetricsRef.current
+      : measureHomeWorks()
+    writeHomeReturnState({
+      kind: 'carousel',
+      scrollY: homeWorksDragRef.current.startWindowScroll ?? window.scrollY,
+      carouselScrollLeft: track?.scrollLeft ?? metrics.groupWidth,
+      carouselGroupWidth: metrics.groupWidth,
+      carouselViewportTop: homeWorksDragRef.current.startTrackViewportTop
+        ?? track?.getBoundingClientRect().top
+        ?? event.currentTarget.getBoundingClientRect().top,
+      workId,
+    })
+  }
+
+  const handleHomeMethodologyClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+
+    const anchor = document.getElementById('home-methodology')
+    if (!anchor) return
+
+    writeHomeReturnState({
+      kind: 'anchor',
+      scrollY: window.scrollY,
+      anchorId: anchor.id,
+      anchorViewportTop: anchor.getBoundingClientRect().top,
+    })
   }
 
   const scrollHomeWorks = (direction: -1 | 1) => {
@@ -371,6 +610,10 @@ export default function Home() {
     const metrics = homeWorksMetricsRef.current.step ? homeWorksMetricsRef.current : measureHomeWorks()
     if (!track || !metrics.step) return
 
+    window.dispatchEvent(new Event(HOME_RETURN_INTERACTION_EVENT))
+    homeReturnCarouselRatioRef.current = null
+    homeReturnStateRef.current = null
+    clearHomeReturnState()
     normalizeHomeWorksScroll()
     const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
     const rawTarget = track.scrollLeft + direction * metrics.step
@@ -385,7 +628,7 @@ export default function Home() {
 
     const initialize = () => {
       measureHomeWorks()
-      if (homeWorksMetricsRef.current.groupWidth) {
+      if (!restoreHomeWorksPosition() && homeWorksMetricsRef.current.groupWidth) {
         track.scrollTo({ left: homeWorksMetricsRef.current.groupWidth, behavior: 'auto' })
       }
     }
@@ -398,6 +641,8 @@ export default function Home() {
     })
     const delayedInitialization = window.setTimeout(initialize, 80)
     const handleResize = () => {
+      if (restoreHomeWorksPosition()) return
+
       const previousStep = homeWorksMetricsRef.current.step
       const previousIndex = previousStep
         ? Math.round(track.scrollLeft / previousStep) % homeWorkCards.length
@@ -421,7 +666,9 @@ export default function Home() {
         || Math.abs(nextMetrics.step - previousStep) > 0.5
         || Math.abs(nextMetrics.groupWidth - previousGroupWidth) > 0.5
       if (layoutChanged && nextMetrics.groupWidth) {
-        track.scrollTo({ left: nextMetrics.groupWidth, behavior: 'auto' })
+        if (!restoreHomeWorksPosition()) {
+          track.scrollTo({ left: nextMetrics.groupWidth, behavior: 'auto' })
+        }
       }
     })
     layoutObserver?.observe(track)
@@ -437,6 +684,99 @@ export default function Home() {
       programmatic.active = false
       programmatic.timer = 0
     }
+    // This is intentionally a mount-only initializer. The restoration helper
+    // reads current DOM and snapshot refs instead of render-time values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useLayoutEffect(() => {
+    const page = pageRef.current
+    const state = homeReturnStateRef.current
+    if (!page || !state) return
+    const savedState: HomeReturnState = state
+
+    let restoreFrame = 0
+    let restoreInterval = 0
+    let restoreExpiry = 0
+    let pointerCancelTimer = 0
+    let stopped = false
+    let pageObserver: ResizeObserver | null = null
+
+    const stopRestoring = () => {
+      if (stopped) return
+      stopped = true
+      window.cancelAnimationFrame(restoreFrame)
+      window.clearInterval(restoreInterval)
+      window.clearTimeout(restoreExpiry)
+      window.clearTimeout(pointerCancelTimer)
+      pageObserver?.disconnect()
+      window.removeEventListener('scene-score-route-transition-complete', attemptRestore)
+      window.removeEventListener(HOME_RETURN_INTERACTION_EVENT, cancelRestore)
+      window.removeEventListener('pointerdown', cancelRestore, true)
+      window.removeEventListener('wheel', cancelRestore, true)
+      window.removeEventListener('touchstart', cancelRestore, true)
+      window.removeEventListener('keydown', cancelRestore, true)
+      ScrollTrigger.removeEventListener('refresh', restoreAfterScrollTriggerRefresh)
+    }
+
+    const cancelRestore = () => {
+      if (document.documentElement.classList.contains('route-scroll-locked')) return
+      homeReturnStateRef.current = null
+      homeReturnCarouselRatioRef.current = null
+      clearHomeReturnState()
+      stopRestoring()
+    }
+
+    const restoreSnapshot = () => {
+      if (savedState.kind === 'carousel') restoreHomeWorksPosition()
+      return restoreHomeScrollPosition(savedState)
+    }
+
+    function restoreAfterScrollTriggerRefresh() {
+      if (stopped) return
+      queueMicrotask(() => {
+        if (!stopped) restoreSnapshot()
+      })
+    }
+
+    function attemptRestore() {
+      if (stopped) return
+      window.cancelAnimationFrame(restoreFrame)
+      restoreFrame = window.requestAnimationFrame(() => {
+        if (document.documentElement.classList.contains('route-scroll-locked')) return
+        restoreSnapshot()
+      })
+    }
+
+    pageObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(attemptRestore)
+    pageObserver?.observe(page)
+    const routeStage = page.closest<HTMLElement>('.route-transition-stage')
+    if (routeStage) pageObserver?.observe(routeStage)
+    window.addEventListener('scene-score-route-transition-complete', attemptRestore)
+    window.addEventListener(HOME_RETURN_INTERACTION_EVENT, cancelRestore)
+    window.addEventListener('wheel', cancelRestore, { capture: true, passive: true })
+    window.addEventListener('touchstart', cancelRestore, { capture: true, passive: true })
+    window.addEventListener('keydown', cancelRestore, true)
+    ScrollTrigger.addEventListener('refresh', restoreAfterScrollTriggerRefresh)
+    pointerCancelTimer = window.setTimeout(() => {
+      window.addEventListener('pointerdown', cancelRestore, true)
+    }, 1800)
+    restoreInterval = window.setInterval(attemptRestore, 240)
+    restoreExpiry = window.setTimeout(() => {
+      window.cancelAnimationFrame(restoreFrame)
+      if (!document.documentElement.classList.contains('route-scroll-locked')) {
+        restoreSnapshot()
+      }
+      window.clearInterval(restoreInterval)
+      restoreInterval = 0
+    }, 12000)
+    restoreSnapshot()
+    attemptRestore()
+
+    return stopRestoring
+    // This restoration intentionally runs only for the snapshot captured when
+    // the Home route remounts after visiting a work detail page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useLayoutEffect(() => {
@@ -533,13 +873,33 @@ export default function Home() {
     let settledRefreshTimer = 0
     let routeReadyRefreshFrame = 0
     let routeReadyRefreshTimer = 0
+    let finalRestoreTimer = 0
+    let lateRestoreTimer = 0
+
+    const scheduleFinalRestore = () => {
+      window.clearTimeout(finalRestoreTimer)
+      finalRestoreTimer = window.setTimeout(() => {
+        ScrollTrigger.refresh()
+        restoreHomePosition()
+      }, 720)
+      window.clearTimeout(lateRestoreTimer)
+      lateRestoreTimer = window.setTimeout(() => {
+        ScrollTrigger.refresh()
+        restoreHomePosition()
+      }, 1800)
+    }
 
     const refreshAfterRouteSettles = () => {
       window.cancelAnimationFrame(routeReadyRefreshFrame)
       window.clearTimeout(routeReadyRefreshTimer)
       routeReadyRefreshFrame = window.requestAnimationFrame(() => {
         ScrollTrigger.refresh()
-        routeReadyRefreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 240)
+        restoreHomePosition()
+        routeReadyRefreshTimer = window.setTimeout(() => {
+          ScrollTrigger.refresh()
+          restoreHomePosition()
+        }, 240)
+        scheduleFinalRestore()
       })
     }
 
@@ -603,34 +963,44 @@ export default function Home() {
           0.9,
         )
 
-      pageRef.current?.querySelectorAll<HTMLElement>('.home-section').forEach((section) => {
-        gsap.fromTo(
-          section,
-          { y: 16, scale: 0.998, opacity: 0.96 },
-          {
-            y: 0,
-            scale: 1,
-            opacity: 1,
-            duration: 1.05,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 86%',
-              toggleActions: 'play none none reverse',
+      if (!homeReturnStateRef.current) {
+        pageRef.current?.querySelectorAll<HTMLElement>('.home-section').forEach((section) => {
+          gsap.fromTo(
+            section,
+            { y: 16, scale: 0.998, opacity: 0.96 },
+            {
+              y: 0,
+              scale: 1,
+              opacity: 1,
+              duration: 1.05,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: section,
+                start: 'top 86%',
+                toggleActions: 'play none none reverse',
+              },
             },
-          },
-        )
-      })
+          )
+        })
+      }
 
       ScrollTrigger.refresh()
-      const refresh = () => ScrollTrigger.refresh()
-      const refreshFrame = window.requestAnimationFrame(refresh)
-      settledRefreshTimer = window.setTimeout(refresh, 240)
-      window.addEventListener('load', refresh, { once: true })
+      restoreHomePosition()
+      if (homeReturnStateRef.current) return
+
+      const refresh = () => {
+        ScrollTrigger.refresh()
+        restoreHomePosition()
+      }
+      const refreshFrame = window.requestAnimationFrame(() => refresh())
+      settledRefreshTimer = window.setTimeout(() => refresh(), 240)
+      scheduleFinalRestore()
+      const refreshOnLoad = () => refresh()
+      window.addEventListener('load', refreshOnLoad, { once: true })
       removeLoadListener = () => {
         window.cancelAnimationFrame(refreshFrame)
         window.clearTimeout(settledRefreshTimer)
-        window.removeEventListener('load', refresh)
+        window.removeEventListener('load', refreshOnLoad)
       }
     }
 
@@ -638,6 +1008,8 @@ export default function Home() {
       window.clearTimeout(routeFallbackTimer)
       window.cancelAnimationFrame(routeReadyRefreshFrame)
       window.clearTimeout(routeReadyRefreshTimer)
+      window.clearTimeout(finalRestoreTimer)
+      window.clearTimeout(lateRestoreTimer)
       removeLoadListener?.()
       heroTimeline?.scrollTrigger?.kill(true)
       heroTimeline?.kill()
@@ -771,6 +1143,11 @@ export default function Home() {
             onScroll={() => {
               if (!homeWorksProgrammaticRef.current.active) normalizeHomeWorksScroll()
             }}
+            onWheel={() => {
+              homeReturnCarouselRatioRef.current = null
+              homeReturnStateRef.current = null
+              clearHomeReturnState()
+            }}
           >
             {homeWorkCarouselCards.map((work, index) => {
               const cardKey = `${work.id}-${index}`
@@ -783,7 +1160,8 @@ export default function Home() {
                     className="home-work-card"
                     draggable={false}
                     aria-label={`${sectionCopy.viewWork}: ${title}`}
-                    onClick={handleHomeWorkClick}
+                    onClick={(event) => handleHomeWorkClick(event, work.id)}
+                    state={{ fromHomeSelection: true }}
                     onPointerEnter={() => {
                       if (homeWorksDragRef.current.pointerId === -1) setActiveHomeWork(cardKey)
                     }}
@@ -815,11 +1193,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-section home-section--how">
+      <section id="home-methodology" className="home-section home-section--how">
         <Reveal className="how-intro">
           <h2>{sectionCopy.howTitle}<br /><em>{sectionCopy.howSoul}</em></h2>
           <p>{sectionCopy.howDescription}</p>
-          <Link className="round-arrow-link" to="/methodology"><span>{sectionCopy.readMethod}</span><ArrowUpRight aria-hidden="true" /></Link>
+          <Link className="round-arrow-link" to="/methodology" onClick={handleHomeMethodologyClick}><span>{sectionCopy.readMethod}</span><ArrowUpRight aria-hidden="true" /></Link>
         </Reveal>
         <div className="how-grid">
           {sectionCopy.howItems.map((item, index) => (

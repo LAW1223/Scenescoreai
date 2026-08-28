@@ -1,8 +1,21 @@
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import type { MouseEvent } from 'react'
 import { termsIntroduction, termsMeta, termsSections } from '../data/termsOfUse'
 
 export default function Terms() {
+  const handleIndexClick = (event: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    const section = document.getElementById(sectionId)
+    if (!section) return
+
+    event.preventDefault()
+    window.history.replaceState(window.history.state, '', `#${sectionId}`)
+    section.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }
+
   return (
     <div className="terms-page page-pad" lang="en">
       <header className="terms-hero">
@@ -18,7 +31,13 @@ export default function Terms() {
         <aside className="terms-index" aria-label="Terms sections">
           <span>CONTENTS</span>
           {termsSections.map((section, index) => (
-            <a key={section.title} href={`#terms-${index + 1}`}>{section.title}</a>
+            <a
+              key={section.title}
+              href={`#terms-${index + 1}`}
+              onClick={(event) => handleIndexClick(event, `terms-${index + 1}`)}
+            >
+              {section.title}
+            </a>
           ))}
         </aside>
 
